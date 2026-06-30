@@ -11,14 +11,14 @@
                 <div class="card-body p-4">
                     <h2 class="card-title text-center mb-4">Регистрация</h2>
                     <form action="/register" method="POST">
-                        <div class="mb-3">
+                        <div class="mb-3 d-flex">
                             <label for="email">Email:</label>
-                            <input type="email" id="email" name="email" required>
+                            <input class="ms-auto h-25" type="email" id="email" name="email" required>
                         </div>
                         
-                        <div class="mb-3">
+                        <div class="mb-3 d-flex">
                             <label for="password">Пароль (длиной как минимум 6 символов):</label>
-                            <input type="password" id="password" name="password" required minlength="6">
+                            <input class="ms-auto h-25" type="password" id="password" name="password" required minlength="6">
                         </div>
                         
                         <div class="d-grid gap-2">
