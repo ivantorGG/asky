@@ -6,8 +6,8 @@ import (
 )
 
 func pingHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprintf(w, `{"status": "success", "message": "pong"}`)
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "pong")
 }
 
 func main() {
