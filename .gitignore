@@ -28,8 +28,11 @@ go.work.sum
 .env
 
 # Editor/IDE
-# .idea/
-# .vscode/
+.idea/
+.vscode/
 
-# tests
-tests/*
+# tmp - for tests
+tmp/
+
+# binary
+bin/

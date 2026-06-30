@@ -10,7 +10,7 @@ Asky - это веб-приложение, где лекторы могут со
 
 ## Happy Path
 
-![Схема Happy Path](images/happyPath.jpg)
+![Схема Happy Path](docs/images/happyPath.jpg)
 
 ## Возможности
 
