@@ -14,11 +14,11 @@ import (
 
 func main() {
 	cfg := config.Load()
-	
+
 	db := database.Connect(cfg.DatabaseURL)
 	defer db.Close()
 
-	h := handler.New()
+	h := handler.New(db)
 
 	r := router.New(h)
 
