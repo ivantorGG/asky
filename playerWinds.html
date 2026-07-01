@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="styles/playerWinds.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>asky</title>
+</head>
+<body>
+    <!-- <div class="blok-vopros">
+        <input type="text" placeholder="задайте вопрос анонимно">
+        <button name="vopros" id="vopros">отправить анонимно</button>
+        <button></button>
+    </div> -->
+
+
+<!-- пишу сам
+    <div class="container">
+        <div class="form">
+            <form action="ХХХХ"></form>
+                <div>
+                     <label for="name">Имя (или псевдоним) спикера</label>
+                    <input type="text">
+                </div>
+
+                <div>
+                    <label for=""></label>
+                    <textarea text="" id="" placeholder="напишите вопрос анонимно"></textarea>
+                </div>`
+
+                <div>
+                    <button type="submit">отправить вопрос</button>
+                </div>
+       </div>
+    </div>
+<!--  -->
+   
+
+<!-- <div>
+    <div>
+         <p>вопросы аудитории</p>
+    </div>
+    <div>
+        <div>
+
+        </div>
+
+        <div>
+
+        </div>
+
+        <div>
+
+        </div>
+
+        <div>
+
+        </div>
+
+        <div>
+
+        </div>
+
+        <div>
+
+        </div>
+    </div>
+</div> -->
+<div style=" width: 140px; height: 140px; margin-left: 10%; position: fixed;"  >
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/QR_Code_example.png" alt="" style="display: flex; width: 140px; height: 140px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
+    <a href="https://upload.wikimedia.org/wikipedia/commons/5/5e/QR_Code_example.png" style="display: block; text-decoration: none; margin-left: 5px;">ссылка на лекцию</a>
+</div>
+
+<div class="container mt-4" id="questionsContainer">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <h4 class="mb-3">Вопросы</h4>
+      <!-- Прокручиваемый контейнер -->
+      <div class="" style=" border: 1px solid #ddd; border-radius: 8px; padding: 10px;">
+        <!-- Здесь будут комментарии -->
+        <div class="list-group">
+          <div class="list-group-item">
+            {вопрос}
+            <button class="btn btn-sm btn-outline-primary like-btn" data-id="123" style="display:flex;">
+                👍 <span class="like-count" style="display: block;">0</span>
+            </button>
+          </div>
+          <div class="list-group-item">
+            {вопрос}
+            <button class="btn btn-sm btn-outline-primary like-btn" data-id="123" style="display: flex;">
+                👍 <span class="like-count">0</span>
+            </button>
+        </div>
+          <div class="list-group-item">
+            {вопрос}
+             <button class="btn btn-sm btn-outline-primary like-btn" data-id="123" style="display: flex;">
+                👍 <span class="like-count">0</span>
+            </button>
+        </div>
+          <div class="list-group-item">
+            {вопрос}
+             <button class="btn btn-sm btn-outline-primary like-btn" data-id="123" style="display: flex;">
+                👍 <span class="like-count">0</span>
+            </button>
+        </div>
+          <div class="list-group-item">
+            {вопрос}
+             <button class="btn btn-sm btn-outline-primary like-btn" data-id="123" style="display: flex;">
+                👍 <span class="like-count">0</span>
+            </button>
+        </div>
+          <div class="list-group-item">
+            {вопрос}
+             <button class="btn btn-sm btn-outline-primary like-btn" data-id="123" style="display: flex;">
+                👍 <span class="like-count">0</span>
+            </button>
+        </div>
+          <div class="list-group-item">
+            {вопрос}
+             <button class="btn btn-sm btn-outline-primary like-btn" data-id="123" style="display: flex;">
+                👍 <span class="like-count">0</span>
+            </button>
+        </div>
+          <div class="list-group-item">
+            {вопрос}
+             <button class="btn btn-sm btn-outline-primary like-btn" data-id="123" style="display: flex;">
+                👍 <span class="like-count">0</span>
+            </button>
+        </div>
+          <div class="list-group-item">
+            {вопрос}
+             <button class="btn btn-sm btn-outline-primary like-btn" data-id="123" style="display: flex;">
+                👍 <span class="like-count">0</span>
+            </button>
+        </div>
+          <div class="list-group-item">
+            {вопрос}
+             <button class="btn btn-sm btn-outline-primary like-btn" data-id="123" style="display: flex;">
+                👍 <span class="like-count">0</span>
+            </button>
+        </div>
+          <div class="list-group-item">{вопрос}</div>
+          <div class="list-group-item">{вопрос}</div>
+          <div class="list-group-item">{вопрос}</div>
+          <div class="list-group-item">А можно задать второй?</div>
+          <div class="list-group-item">И третий, и четвёртый...</div>
+          <div>
+            <img src="" alt="">
+            <p></p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+ <div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      
+      <!-- Форма  -->
+       <form style="position: fixed; bottom: 0;">
+        <!-- Первый инпут -->
+
+        <!-- Второй инпут -->
+        <div class="mb-3" style="display: flex;">
+          <textarea class="form-control" id="input2" rows="3" placeholder="Напишите вопрос анонимно..." style="height: 20px; width: 528px; margin-right: 8px; border-radius: 20px;"></textarea>
+          <button type="submit" class="btn btn-primary btn-lg " style="height: 40px; width: 100px; padding-top: 0; font-size: 15px; padding-bottom: 0px; border-radius: 10px;">Отправить</button>
+        </div> 
+
+         <!-- Кнопка -->
+        
+      </form>
+
+    </div>
+  </div>
+</div> 
+
+</body>
+</html>
