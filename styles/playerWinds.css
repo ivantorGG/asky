@@ -1,0 +1,54 @@
+/* .blok-vopros{
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 20%;
+    margin-left: 45%;
+    padding: 10px;
+    border: #000000;
+    border-radius: 1;
+}
+
+input{
+  display: block;
+  width: 200px;
+  padding: 5px 5px;
+  color: black;
+  font-size: 15px;
+  font-family: inherit;
+  border: 2px solid #e0e0e0;
+  border-radius: 16px;
+  resize: vertical; /* можно менять высоту мышкой */
+  /* transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+  background-color: #fafafa;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+input::placeholder,
+input::placeholder{
+    align-content: center;
+}
+
+button{
+    display: block;
+    border-radius: 5px;
+    border: none;
+    background-color: rgba(58, 58, 242, 0.684);
+    color: white;
+    width: 200px;
+    height: 30px;
+    font-size: 16px;
+    margin-left: 8px;
+} */ 
+
+.list-group-item{
+    border-radius: 15px;
+    margin: 5px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+.list-group-item button{
+    border-radius: 100px;
+    width: 50px;
+    border: none;
+}
