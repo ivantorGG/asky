@@ -16,5 +16,9 @@ migrate-up:
 migrate-down:
 	go run ./cmd/migrate down
 
+migrate-reup:
+	go run ./cmd/migrate down
+	go run ./cmd/migrate up
+
 migrate-version:
 	go run ./cmd/migrate version

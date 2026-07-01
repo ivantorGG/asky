@@ -10,13 +10,13 @@ import (
 	"asky/internal/config"
 
 	"github.com/golang-migrate/migrate/v4"
-	_ "github.com/golang-migrate/migrate/v4/database/pgx/v5"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
 func main() {
 	if len(os.Args) < 2 {
-		log.Fatal("usage: go run ./cmd/migrate [up|down|version]")
+		log.Fatal("usage: go run ./cmd/migrate [up|down|reup|version]")
 	}
 
 	cfg := config.Load()
@@ -52,6 +52,6 @@ func main() {
 		fmt.Printf("Version: %d dirty=%v\n", v, dirty)
 
 	default:
-		log.Fatal("unknown command")
+		log.Fatal("unknown command [up|down|reup|version]")
 	}
 }
