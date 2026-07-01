@@ -1,0 +1,35 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+CREATE TABLE users (
+    id BIGSERIAL PRIMARY KEY,
+    email TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    role TEXT NOT NULL CHECK (role IN ('lecturer', 'moderator')),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE events (
+    id BIGSERIAL PRIMARY KEY,
+    title TEXT NOT NULL,
+    code UUID NOT NULL DEFAULT gen_random_uuid() UNIQUE,
+    owner_id BIGINT NOT NULL REFERENCES users(id),
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE questions (
+    id BIGSERIAL PRIMARY KEY,
+    event_id BIGINT NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+    text TEXT NOT NULL,
+    likes INT NOT NULL DEFAULT 0,
+    answered BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE votes (
+    id BIGSERIAL PRIMARY KEY,
+    question_id BIGINT NOT NULL REFERENCES questions(id) ON DELETE CASCADE,
+    client_id TEXT NOT NULL,
+
+    UNIQUE(question_id, client_id)
+);

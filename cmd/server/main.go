@@ -1,23 +1,28 @@
+// cmd/server/main.go
+
 package main
 
 import (
-	"flag"
-	"fmt"
 	"log"
 	"net/http"
 
+	"asky/internal/config"
+	"asky/internal/database"
+	"asky/internal/handler"
 	"asky/internal/router"
 )
 
 func main() {
-	var port int
+	cfg := config.Load()
+	
+	db := database.Connect(cfg.DatabaseURL)
+	defer db.Close()
 
-	flag.IntVar(&port, "port", 8080, "API server port")
-	flag.Parse()
+	h := handler.New()
 
-	r := router.New()
+	r := router.New(h)
 
-	log.Printf("Click: http://127.0.0.1:%d\n", port)
+	log.Printf("Click: http://127.0.0.1:%s\n", cfg.Port)
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), r))
+	log.Fatal(http.ListenAndServe(":"+cfg.Port, r))
 }

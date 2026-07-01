@@ -1,3 +1,5 @@
+// internal/router/router.go
+
 package router
 
 import (
@@ -8,10 +10,10 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func New() http.Handler {
+func New(h *handler.Handler) http.Handler {
 	r := chi.NewRouter()
 
-	r.Get("/ping", handler.Ping)
+	r.Get("/ping", h.Ping)
 
 	return r
 }

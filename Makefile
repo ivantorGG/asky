@@ -9,3 +9,12 @@ test:
 
 fmt:
 	go fmt ./...
+
+migrate-up:
+	go run ./cmd/migrate up
+
+migrate-down:
+	go run ./cmd/migrate down
+
+migrate-version:
+	go run ./cmd/migrate version
