@@ -12,7 +12,6 @@ async function sendLogs(email, password){
     if (response.ok){
         location.href = '/eventList';
     } else {
-        document.getElementById("errorMessage").innerText = data.error;
-        document.getElementById("loginError").classList.remove("d-none");
+        
     }
 }
