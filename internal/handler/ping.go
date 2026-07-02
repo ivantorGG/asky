@@ -3,12 +3,15 @@
 package handler
 
 import (
+	"database/sql"
 	"fmt"
+	"log"
 	"net/http"
 )
 
 type Handler struct {
-	// позже сюда добавим DB
+	DB     *sql.DB
+    Logger *log.Logger
 }
 
 func New() *Handler {
