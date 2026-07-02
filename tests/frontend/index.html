@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Asky API Test Sandbox</title>
+    <style>
+        body { font-family: 'JetBrains Mono', monospace; background: #1e1e1e; color: #d4d4d4; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .card { background: #252526; padding: 20px; border-radius: 6px; margin-bottom: 20px; border: 1px solid #3c3c3c; }
+        input, button { width: 100%; padding: 10px; margin: 8px 0; background: #3c3c3c; border: 1px solid #6b6b6b; color: #fff; border-radius: 4px; box-sizing: border-box; }
+        button { background: #0e639c; cursor: pointer; border: none; font-weight: bold; }
+        button:hover { background: #1177bb; }
+        .btn-get { background: #388a34; }
+        .btn-get:hover { background: #43a047; }
+        pre { background: #000; padding: 15px; overflow-x: auto; border-radius: 4px; color: #4fc1ff; min-height: 50px; }
+        .status { font-size: 12px; color: #858585; margin-top: -5px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Asky Test Client</h2>
+        
+        <div class="card">
+            <h3>Создать новый ивент (POST /events/new)</h3>
+            <input type="text" id="eventTitle" placeholder="Название мероприятия...">
+            <button onclick="createEvent()">Отправить POST запрос</button>
+            <div class="status" id="postStatus"></div>
+            <pre id="postOutput">Результат создания...</pre>
+        </div>
+
+        <div class="card">
+            <h3>Список моих ивентов (GET /events)</h3>
+            <button class="btn-get" onclick="getEvents()">Отправить GET запрос</button>
+            <div class="status" id="getStatus"></div>
+            <pre id="getOutput">Здесь появится список объектов...</pre>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
