@@ -4,12 +4,15 @@ import (
 	"encoding/json"
 	"net/http"
 	"time"
+
+	"github.com/go-chi/chi/v5"
 )
 
 type EventRequest struct {
 	Title   string `json:"title"`
 	OwnerID int64  `json:"owner_id"`
 }
+
 type Event struct {
 	ID        int64     `json:"id"`
 	Title     string    `json:"title"`
@@ -29,12 +32,13 @@ func (h *Handler) CreateEvent(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Название не может быть пустым", http.StatusBadRequest)
 		return
 	}
+	userID := h.GetCurrentUserID(r)
 	_, err := h.DB.Exec(
 		r.Context(),
 		`INSERT INTO events(title, owner_id)
 		 VALUES ($1,$2)`,
 		req.Title,
-		req.OwnerID,
+		userID,
 	)
 
 	if err != nil {
@@ -83,7 +87,39 @@ func (h *Handler) ListEvents(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(events)
 }
 
-// Исправляем Баг 3: Меняем возвращаемый тип с int на int64, чтобы подходил к BIGINT
+func (h *Handler) GetEventByCode(w http.ResponseWriter, r *http.Request) {
+	//TODO: Implement this function to retrieve an event by its code
+}
+func (h *Handler) DeleteEventByCode(w http.ResponseWriter, r *http.Request) {
+	code := chi.URLParam(r, "code")
+	if code == "" {
+		http.Error(w, "Код комнаты не указан", http.StatusBadRequest)
+		return
+	}
+	userID := h.GetCurrentUserID(r)
+
+	cmdTag, err := h.DB.Exec(
+		r.Context(),
+		`UPDATE events 
+     SET is_active = FALSE 
+     WHERE code = $1::uuid AND owner_id = $2 AND is_active = TRUE`,
+		code,
+		userID,
+	)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if cmdTag.RowsAffected() == 0 {
+		http.Error(w, "Комната не найдена или у вас нет прав на её удаление", http.StatusNotFound)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
 func (h *Handler) GetCurrentUserID(r *http.Request) int64 {
 	return 1
 }
