@@ -46,10 +46,13 @@ func (h *Handler) CreateEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "event_created",
+	})
 }
 
 func (h *Handler) ListEvents(w http.ResponseWriter, r *http.Request) {
-	// Пока у нас нет авторизации, зашиваем owner_id = 1, как и в CreateEvent
 	var ownerID int64 = h.GetCurrentUserID(r)
 
 	rows, err := h.DB.Query(
@@ -90,6 +93,7 @@ func (h *Handler) ListEvents(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetEventByCode(w http.ResponseWriter, r *http.Request) {
 	//TODO: Implement this function to retrieve an event by its code
 }
+
 func (h *Handler) DeleteEventByCode(w http.ResponseWriter, r *http.Request) {
 	code := chi.URLParam(r, "code")
 	if code == "" {
@@ -118,6 +122,10 @@ func (h *Handler) DeleteEventByCode(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusNoContent)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "event_deleted",
+	})
 }
 
 func (h *Handler) GetCurrentUserID(r *http.Request) int64 {

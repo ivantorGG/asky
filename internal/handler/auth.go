@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"golang.org/x/crypto/bcrypt"
@@ -41,11 +40,18 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	fmt.Fprint(w, "registration success")
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "registration_success",
+	})
 }
 
-func (h *Handler) OpenRegistration(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) RegistrationPage(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "./web/templates/speakerReg.html")
+}
+
+func (h *Handler) LoginPage(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "./web/templates/speakerLog.html")
 }
 
 type LoginRequest struct {
@@ -85,5 +91,8 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprint(w, "login success")
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "login_success",
+	})
 }
