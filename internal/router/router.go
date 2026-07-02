@@ -1,11 +1,10 @@
-// internal/router/router.go
-
 package router
 
 import (
 	"net/http"
 
 	"asky/internal/handler"
+	"asky/internal/middleware"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -17,5 +16,12 @@ func New(h *handler.Handler) http.Handler {
 	r.Get("/events/new", h.NewEvents)
 	r.Post("/events/new", h.CreateEvent)
 	//r.Post("/events", h.ListEvents)
+
+	r.Post("/register", h.Register)
+	r.Post("/login", h.Login)
+
+	// временно убираем /me (пока нет метода)
+	_ = middleware.Auth
+
 	return r
 }
