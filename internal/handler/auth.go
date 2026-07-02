@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"golang.org/x/crypto/bcrypt"
@@ -16,13 +17,13 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 	var req RegisterRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "bad request", http.StatusBadRequest)
+		writeJSONError(w, http.StatusBadRequest, "bad_request")
 		return
 	}
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
-		http.Error(w, "server error", http.StatusInternalServerError)
+		writeJSONError(w, http.StatusInternalServerError, "server_error")
 		return
 	}
 
@@ -35,11 +36,12 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		writeJSONError(w, http.StatusBadRequest, "db_error")
 		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
+	fmt.Fprint(w, "registration success")
 }
 
 type LoginRequest struct {
@@ -51,7 +53,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	var req LoginRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "bad request", http.StatusBadRequest)
+		writeJSONError(w, http.StatusBadRequest, "bad_request")
 		return
 	}
 
@@ -64,7 +66,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	).Scan(&passwordHash)
 
 	if err != nil {
-		http.Error(w, "invalid email or password", http.StatusUnauthorized)
+		writeJSONError(w, http.StatusUnauthorized, "bad_creditants")
 		return
 	}
 
@@ -74,10 +76,10 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err != nil {
-		http.Error(w, "invalid email or password", http.StatusUnauthorized)
+		writeJSONError(w, http.StatusUnauthorized, "bad_creditants")
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("login success"))
+	fmt.Fprint(w, "login success")
 }
