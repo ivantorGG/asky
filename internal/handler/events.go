@@ -1,12 +1,15 @@
 package handler
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 	"time"
 )
 
+type EventRequest struct {
+	Title   string `json:"title"`
+	OwnerID int64  `json:"owner_id"`
+}
 type Event struct {
 	ID        int64     `json:"id"`
 	Title     string    `json:"title"`
@@ -17,88 +20,62 @@ type Event struct {
 }
 
 func (h *Handler) CreateEvent(w http.ResponseWriter, r *http.Request) {
-	// Исправляем Баг 4: Читаем JSON вместо Формы
-	var input struct {
-		Title string `json:"title"`
-	}
-	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		http.Error(w, "Невалидный JSON", http.StatusBadRequest)
+	var req EventRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "bad request", http.StatusBadRequest)
 		return
 	}
-
-	if input.Title == "" {
+	if req.Title == "" {
 		http.Error(w, "Название не может быть пустым", http.StatusBadRequest)
 		return
 	}
+	_, err := h.DB.Exec(
+		r.Context(),
+		`INSERT INTO events(title, owner_id)
+		 VALUES ($1,$2)`,
+		req.Title,
+		req.OwnerID,
+	)
 
-	ownerID := h.GetCurrentUserID(r)
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-
-	query := `
-        INSERT INTO events (title, owner_id) 
-        VALUES ($1, $2) 
-        RETURNING code
-    `
-	
-	// Исправляем Баг 1: Объявляем переменную eventCode перед сканированием
-	var eventCode string
-	err := h.DB.QueryRow(ctx, query, input.Title, ownerID).Scan(&eventCode)
 	if err != nil {
-		h.Logger.Printf("Ошибка вставки ивента в БД: %v", err)
-		http.Error(w, "Внутренняя ошибка сервера", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
-	// Исправляем Баг 5: Отдаем JSON с кодом вместо редиректа
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(map[string]string{"code": eventCode, "status": "created"})
 }
 
 func (h *Handler) ListEvents(w http.ResponseWriter, r *http.Request) {
-	currentOwnerID := h.GetCurrentUserID(r)
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-	
-	query := `
-        SELECT id, title, code, owner_id, is_active, created_at 
-        FROM events 
-        WHERE owner_id = $1 AND is_active = TRUE
-        ORDER BY created_at DESC 
-    `
-	
-	// Исправляем Баг 2: Передаем реальный query и аргумент currentOwnerID
-	rows, err := h.DB.Query(ctx, query, currentOwnerID)
+	// Пока у нас нет авторизации, зашиваем owner_id = 1, как и в CreateEvent
+	var ownerID int64 = h.GetCurrentUserID(r)
+
+	rows, err := h.DB.Query(
+		r.Context(),
+		`SELECT id, title, code, owner_id, is_active, created_at 
+         FROM events 
+         WHERE owner_id = $1 AND is_active = TRUE
+         ORDER BY created_at DESC`,
+		ownerID,
+	)
 	if err != nil {
-		h.Logger.Printf("Ошибка БД: %v", err)
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Внутренняя ошибка сервера"})
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	defer rows.Close()
-	
-	var events []Event
+
+	events := []Event{} // инициализируем сразу как пустой слайс, чтобы в JSON не было null
 	for rows.Next() {
 		var e Event
 		err := rows.Scan(&e.ID, &e.Title, &e.Code, &e.OwnerID, &e.IsActive, &e.CreatedAt)
 		if err != nil {
-			h.Logger.Printf("Ошибка сканирования строки: %v", err)
-			w.WriteHeader(http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		events = append(events, e)
 	}
 
 	if err = rows.Err(); err != nil {
-		h.Logger.Printf("Ошибка после итерации по rows: %v", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
-	}
-
-	if events == nil {
-		events = []Event{}
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -108,5 +85,5 @@ func (h *Handler) ListEvents(w http.ResponseWriter, r *http.Request) {
 
 // Исправляем Баг 3: Меняем возвращаемый тип с int на int64, чтобы подходил к BIGINT
 func (h *Handler) GetCurrentUserID(r *http.Request) int64 {
-	return 1 
+	return 1
 }

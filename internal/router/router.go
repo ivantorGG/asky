@@ -19,5 +19,10 @@ func New(h *handler.Handler) http.Handler {
 	r.Post("/register", h.Register)
 	r.Post("/login", h.Login)
 
+	fileServer := http.FileServer(http.Dir("./tests/frontend"))
+
+	// /* ловит все остальные запросы (например, /, /app.js) и отдает их как файлы
+	r.Handle("/*", fileServer)
+
 	return r
 }
