@@ -49,8 +49,6 @@ func (h *Handler) CreateEvent(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) ListEvents(w http.ResponseWriter, r *http.Request) {
-	// Пока у нас нет авторизации, зашиваем owner_id = 1, как и в CreateEvent
-	//var ownerID int64 = h.GetCurrentUserID(r)
 	var req EventRequest
 	rows, err := h.DB.Query(
 		r.Context(),
@@ -96,7 +94,7 @@ func (h *Handler) DeleteEventByCode(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Код комнаты не указан", http.StatusBadRequest)
 		return
 	}
-	userID := h.GetCurrentUserID(r)
+	var req EventRequest
 
 	cmdTag, err := h.DB.Exec(
 		r.Context(),
@@ -104,7 +102,7 @@ func (h *Handler) DeleteEventByCode(w http.ResponseWriter, r *http.Request) {
      SET is_active = FALSE 
      WHERE code = $1::uuid AND owner_id = $2 AND is_active = TRUE`,
 		code,
-		userID,
+		req.OwnerID,
 	)
 
 	if err != nil {
@@ -119,7 +117,6 @@ func (h *Handler) DeleteEventByCode(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusNoContent)
 }
-
-func (h *Handler) GetCurrentUserID(r *http.Request) int64 {
-	return 1
+func (h *Handler) EventsPage(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "./web/templates/eventList.html")
 }
