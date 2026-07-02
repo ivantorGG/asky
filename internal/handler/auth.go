@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"golang.org/x/crypto/bcrypt"
@@ -41,7 +40,18 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	fmt.Fprint(w, "registration success")
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "registration_success",
+	})
+}
+
+func (h *Handler) RegistrationPage(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "./web/templates/speakerReg.html")
+}
+
+func (h *Handler) LoginPage(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "./web/templates/speakerLog.html")
 }
 
 type LoginRequest struct {
@@ -66,7 +76,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	).Scan(&passwordHash)
 
 	if err != nil {
-		writeJSONError(w, http.StatusUnauthorized, "bad_creditants")
+		writeJSONError(w, http.StatusUnauthorized, "bad_credentials")
 		return
 	}
 
@@ -76,10 +86,13 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err != nil {
-		writeJSONError(w, http.StatusUnauthorized, "bad_creditants")
+		writeJSONError(w, http.StatusUnauthorized, "bad_credentials")
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprint(w, "login success")
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "login_success",
+	})
 }
