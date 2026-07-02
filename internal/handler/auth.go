@@ -44,6 +44,9 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "registration success")
 }
 
+func (h *Handler) OpenRegistration(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "./internal/web/templates/speakerReg.html")
+}
 type LoginRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
