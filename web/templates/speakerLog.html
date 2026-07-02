@@ -19,18 +19,19 @@
                     <div class="d-grid gap-2">
                         <button type="button" 
                         class="btn btn-primary btn-lg" 
-                        onclick="sendLogs(document.getElementById('email').value, document.getElementById('password').value)">
+                        onclick="tryToSend(document.getElementById('email').value, document.getElementById('password').value)">
                         Войти
                     </button>
                 </div>
             </div>
-            <a class="link-opacity-75 text-center" href="speakerReg.html">Зарегистрироваться</a>
         </div>
+        <a class="link-opacity-75 text-center" href="speakerReg.html">Зарегистрироваться</a>
         <div id="loginError" class="alert alert-danger alert-dismissible fade d-none" role="alert">
             <i class="bi bi-exclamation-triangle-fill me-2"></i>
             <span id="errorMessage">Неверный email или пароль</span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
-    </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть" onclick="hideError()"></button>
+        </div>
+        
     <script src="../static/js/speakerLog.js"></script>
     </body>
 </html>
