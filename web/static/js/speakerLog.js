@@ -1,4 +1,4 @@
-async function sendRegs(email, password){
+async function sendLogs(email, password){
     console.log("Емаил", email);
     console.log("Пароль", password);
 
@@ -7,12 +7,11 @@ async function sendRegs(email, password){
         password: password
     };
 
-    const response = await fetch("http://127.0.0.1:8080/register", {
+    const response = await fetch("http://127.0.0.1:8080/login", {
         method: 'POST',
         headers: {'Content-Type': 'application/json' },
         body: JSON.stringify(data)
     });
-
     if (response.ok){
         location.href = '/eventList'
     }
