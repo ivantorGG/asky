@@ -32,13 +32,13 @@ func (h *Handler) CreateEvent(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Название не может быть пустым", http.StatusBadRequest)
 		return
 	}
-	userID := h.GetCurrentUserID(r)
+	//userID := h.GetCurrentUserID(r)
 	_, err := h.DB.Exec(
 		r.Context(),
 		`INSERT INTO events(title, owner_id)
 		 VALUES ($1,$2)`,
 		req.Title,
-		userID,
+		req.OwnerID,
 	)
 
 	if err != nil {
@@ -53,15 +53,14 @@ func (h *Handler) CreateEvent(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) ListEvents(w http.ResponseWriter, r *http.Request) {
-	var ownerID int64 = h.GetCurrentUserID(r)
-
+	var req EventRequest
 	rows, err := h.DB.Query(
 		r.Context(),
 		`SELECT id, title, code, owner_id, is_active, created_at 
          FROM events 
          WHERE owner_id = $1 AND is_active = TRUE
          ORDER BY created_at DESC`,
-		ownerID,
+		req.OwnerID,
 	)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -69,7 +68,7 @@ func (h *Handler) ListEvents(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rows.Close()
 
-	events := []Event{} // инициализируем сразу как пустой слайс, чтобы в JSON не было null
+	events := []Event{}
 	for rows.Next() {
 		var e Event
 		err := rows.Scan(&e.ID, &e.Title, &e.Code, &e.OwnerID, &e.IsActive, &e.CreatedAt)
@@ -100,7 +99,7 @@ func (h *Handler) DeleteEventByCode(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Код комнаты не указан", http.StatusBadRequest)
 		return
 	}
-	userID := h.GetCurrentUserID(r)
+	var req EventRequest
 
 	cmdTag, err := h.DB.Exec(
 		r.Context(),
@@ -108,7 +107,7 @@ func (h *Handler) DeleteEventByCode(w http.ResponseWriter, r *http.Request) {
      SET is_active = FALSE 
      WHERE code = $1::uuid AND owner_id = $2 AND is_active = TRUE`,
 		code,
-		userID,
+		req.OwnerID,
 	)
 
 	if err != nil {
@@ -127,7 +126,6 @@ func (h *Handler) DeleteEventByCode(w http.ResponseWriter, r *http.Request) {
 		"message": "event_deleted",
 	})
 }
-
-func (h *Handler) GetCurrentUserID(r *http.Request) int64 {
-	return 1
+func (h *Handler) EventsPage(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "./web/templates/eventList.html")
 }
