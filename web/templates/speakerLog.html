@@ -17,8 +17,11 @@
                         <input class="ms-auto h-25" type="password" id="password" name="password" required>
                     </div>
                     <div class="d-grid gap-2">
-                        <button type="button" class="btn btn-primary btn-lg">Войти</button>
-                    </div>
+                        <button type="button" 
+                        class="btn btn-primary btn-lg" 
+                        onclick="sendLogs(document.getElementById('email').value, document.getElementById('password').value)">
+                        Войти
+                    </button>
                 </div>
             </div>
             <a class="link-opacity-75 text-center" href="speakerReg.html">Зарегистрироваться</a>

@@ -7,12 +7,16 @@ async function sendLogs(email, password){
         password: password
     };
 
-    const response = await fetch("http://127.0.0.1:8080/login", {
+    const data = await fetch("http://127.0.0.1:8080/login", {
         method: 'POST',
         headers: {'Content-Type': 'application/json' },
         body: JSON.stringify(data)
-    });
-    if (response.ok){
+    }).json();
+    const err = data.error
+    if (err === ''){
         location.href = '/eventList'
+    }
+    else{
+        
     }
 }
