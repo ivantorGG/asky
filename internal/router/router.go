@@ -26,6 +26,7 @@ func New(h *handler.Handler) http.Handler {
 	r.Get("/events", h.ListEvents)
 	r.Post("/events/new", h.CreateEvent)
 	r.Delete("/events/{code}", h.DeleteEventByCode)
+	r.Get("/events/{code}", h.EventsPage)
 
 	r.Get("/register", h.RegistrationPage)
 	r.Post("/register", h.Register)
