@@ -66,7 +66,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	).Scan(&passwordHash)
 
 	if err != nil {
-		writeJSONError(w, http.StatusUnauthorized, "bad_creditants")
+		writeJSONError(w, http.StatusUnauthorized, "bad_credentials")
 		return
 	}
 
@@ -76,7 +76,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err != nil {
-		writeJSONError(w, http.StatusUnauthorized, "bad_creditants")
+		writeJSONError(w, http.StatusUnauthorized, "bad_credentials")
 		return
 	}
 
