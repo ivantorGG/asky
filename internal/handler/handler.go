@@ -1,18 +1,13 @@
-// internal/handler/handler.go
-
 package handler
 
-import (
-	"github.com/jackc/pgx/v5/pgxpool"
-	"asky/internal/service"
-)
+import "github.com/jackc/pgx/v5/pgxpool"
 
 type Handler struct {
-	Auth *service.AuthService
+	DB *pgxpool.Pool
 }
 
 func New(db *pgxpool.Pool) *Handler {
 	return &Handler{
-		Auth: service.NewAuthService(db),
+		DB: db,
 	}
 }
