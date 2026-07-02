@@ -18,17 +18,9 @@ CREATE TABLE events (
 
 CREATE TABLE questions (
     id BIGSERIAL PRIMARY KEY,
-    event_id BIGINT NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+    event_code UUID NOT NULL REFERENCES events(code) ON DELETE CASCADE,
     text TEXT NOT NULL,
     likes INT NOT NULL DEFAULT 0,
     answered BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-CREATE TABLE votes (
-    id BIGSERIAL PRIMARY KEY,
-    question_id BIGINT NOT NULL REFERENCES questions(id) ON DELETE CASCADE,
-    client_id TEXT NOT NULL,
-
-    UNIQUE(question_id, client_id)
 );

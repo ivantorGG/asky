@@ -10,25 +10,27 @@
             <div class="card shadow-sm">
                 <div class="card-body p-4">
                     <h2 class="card-title text-center mb-4">Регистрация</h2>
-                    <form action="/register" method="POST">
-                        <div class="mb-3 d-flex">
-                            <label for="email">Email:</label>
-                            <input class="ms-auto h-25" type="email" id="email" name="email" required>
-                        </div>
-                        
-                        <div class="mb-3 d-flex">
-                            <label for="password">Пароль (длиной как минимум 6 символов):</label>
-                            <input class="ms-auto h-25" type="password" id="password" name="password" required minlength="6">
-                        </div>
-                        
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">Зарегистрироваться</button>
-                        </div>
-                        
-                    </form>
+                    <div class="mb-3 d-flex">
+                        <label for="email">Email:</label>
+                        <input class="ms-auto h-25" type="email" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="mb-3 d-flex">
+                        <label for="password">Пароль (длиной как минимум 6 символов):</label>
+                        <input class="ms-auto h-25" type="password" id="password" name="password" required minlength="6">
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="button" 
+                        class="btn btn-primary btn-lg" 
+                        onclick="sendRegs(document.getElementById('email').value, document.getElementById('password').value)">
+                        Зарегистрироваться
+                    </button>
+                    </div>
                 </div>
             </div>
-           
+            <a class="link-opacity-75 text-center" href="speakerLog.html">Войти в существующий аккаунт</a>
         </div>
+    <script src="../static/js/speakerReg.js"></script>
     </body>
 </html>
