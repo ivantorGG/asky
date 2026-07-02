@@ -1,5 +1,3 @@
-// cmd/server/main.go
-
 package main
 
 import (
@@ -22,7 +20,7 @@ func main() {
 
 	r := router.New(h)
 
-	log.Printf("Click: http://127.0.0.1:%s\n", cfg.Port)
+	log.Printf("Listening on :%s", cfg.Port)
 
 	log.Fatal(http.ListenAndServe(":"+cfg.Port, r))
 }
