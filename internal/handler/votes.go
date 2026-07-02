@@ -45,13 +45,13 @@ func (h *Handler) UnVote(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err != nil {
-		http.Error(w, "server error", http.StatusInternalServerError)
+		writeJSONError(w, http.StatusInternalServerError, "server_error")
 		return
 	}
 
 	rows := res.RowsAffected()
 	if rows == 0 {
-		http.Error(w, "question not found", http.StatusNotFound)
+		writeJSONError(w, http.StatusNotFound, "question_not_found")
 		return
 	}
 	

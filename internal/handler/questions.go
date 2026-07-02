@@ -16,7 +16,7 @@ func (h *Handler) NewQuestion(w http.ResponseWriter, r *http.Request) {
 	var req NewQuestionRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "bad request", http.StatusBadRequest)
+		writeJSONError(w, http.StatusBadRequest, "bad_request")
 		return
 	}
 
@@ -31,7 +31,7 @@ func (h *Handler) NewQuestion(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		writeJSONError(w, http.StatusBadRequest, "db_error")
 		return
 	}
 
