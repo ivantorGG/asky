@@ -24,9 +24,9 @@ async function sendLogs(email, password){
     });
 
     const response_json = await response.json();
-    const err = response_json.error
-    if (err === ''){
-        location.href = '/eventList'
+    const msg = response_json.message
+    if (msg === 'login_success'){
+        location.href = '/events'
     }
     else if (err === 'bad_creditans'){
         showError('Неправильная почта или пароль!')

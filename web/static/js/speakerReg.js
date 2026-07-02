@@ -30,10 +30,10 @@ async function sendRegs(email, password){
     });
 
     const response_json = await response.json();
-    const err = response_json.error;
+    const msg = response_json.message;
 
-    if (err === ''){
-        location.href = '/eventList'
+    if (msg === 'registration_success'){
+        location.href = '/events'
     }
 }
 
