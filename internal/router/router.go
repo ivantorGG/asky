@@ -13,7 +13,7 @@ func New(h *handler.Handler) http.Handler {
 	r := chi.NewRouter()
 
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"http://127.0.0.1:8080", "http://localhost:5500"},
+		AllowedOrigins:   []string{"http://127.0.0.1:8080", "http://localhost:8080", "http://localhost:5500"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type"},
 		AllowCredentials: true,
@@ -23,11 +23,13 @@ func New(h *handler.Handler) http.Handler {
 	r.Get("/ping", h.Ping)
 	FileServer(r, "/static", http.Dir("./web/static"))
 
-	r.Get("/events", h.ListEvents)
+	r.Get("/events", h.EventsPage)
+	r.Get("/api/events", h.ListEvents)
 	r.Post("/events/new", h.CreateEvent)
 	r.Delete("/events/{code}", h.DeleteEventByCode)
-	r.Get("/events/{code}", h.EventsPage)
 
+	r.Get("/events/{code}/questions", h.GetQuestionsByEventCode)
+	
 	r.Get("/register", h.RegistrationPage)
 	r.Post("/register", h.Register)
 	r.Post("/login", h.Login)
