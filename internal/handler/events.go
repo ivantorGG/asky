@@ -1,7 +1,9 @@
 package handler
 
 import (
+	"asky/internal/middleware"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -30,14 +32,15 @@ type QuestionResponse struct {
 	Answered  bool      `json:"answered"`
 	CreatedAt time.Time `json:"created_at"`
 }
+
 func (h *Handler) CreateEvent(w http.ResponseWriter, r *http.Request) {
 	var req EventRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "bad request", http.StatusBadRequest)
+		writeJSONError(w, http.StatusBadRequest, "bad_request")
 		return
 	}
 	if req.Title == "" {
-		http.Error(w, "Название не может быть пустым", http.StatusBadRequest)
+		writeJSONError(w, http.StatusBadRequest, "bad_request")
 		return
 	}
 	_, err := h.DB.Exec(
@@ -49,7 +52,7 @@ func (h *Handler) CreateEvent(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		writeJSONError(w, http.StatusBadRequest, "db_error")
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
@@ -60,17 +63,19 @@ func (h *Handler) CreateEvent(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) ListEvents(w http.ResponseWriter, r *http.Request) {
-	var req EventRequest
+	userID := r.Context().Value(middleware.UserIDKey).(int64)
 	rows, err := h.DB.Query(
 		r.Context(),
 		`SELECT id, title, code, owner_id, is_active, created_at 
          FROM events 
          WHERE owner_id = $1 AND is_active = TRUE
          ORDER BY created_at DESC`,
-		req.OwnerID,
+		userID,
 	)
+	fmt.Println("Rows:", rows)      // Debugging line
+	fmt.Println("OwnerID:", userID) // Debugging line
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		writeJSONError(w, http.StatusInternalServerError, "server_error")
 		return
 	}
 	defer rows.Close()
@@ -80,14 +85,14 @@ func (h *Handler) ListEvents(w http.ResponseWriter, r *http.Request) {
 		var e Event
 		err := rows.Scan(&e.ID, &e.Title, &e.Code, &e.OwnerID, &e.IsActive, &e.CreatedAt)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			writeJSONError(w, http.StatusInternalServerError, "server_error")
 			return
 		}
 		events = append(events, e)
 	}
 
 	if err = rows.Err(); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		writeJSONError(w, http.StatusInternalServerError, "server_error")
 		return
 	}
 
@@ -98,10 +103,10 @@ func (h *Handler) ListEvents(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) GetQuestionsByEventCode(w http.ResponseWriter, r *http.Request) {
 	eventCode := chi.URLParam(r, "code")
-		if eventCode == "" {
-			http.Error(w, "missing event code", http.StatusBadRequest)
-			return
-		}
+	if eventCode == "" {
+		writeJSONError(w, http.StatusBadRequest, "bad_request")
+		return
+	}
 	rows, err := h.DB.Query(
 		r.Context(),
 		`SELECT id, event_code, text, likes, answered, created_at 
@@ -111,22 +116,22 @@ func (h *Handler) GetQuestionsByEventCode(w http.ResponseWriter, r *http.Request
 		eventCode,
 	)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		writeJSONError(w, http.StatusInternalServerError, "server_error")
 		return
 	}
 	defer rows.Close()
-	questions := make([]QuestionResponse, 0) 
+	questions := make([]QuestionResponse, 0)
 	for rows.Next() {
 		var q QuestionResponse
 		err := rows.Scan(&q.ID, &q.EventCode, &q.Text, &q.Likes, &q.Answered, &q.CreatedAt)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			writeJSONError(w, http.StatusInternalServerError, "server_error")
 			return
 		}
 		questions = append(questions, q)
 	}
 	if err = rows.Err(); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		writeJSONError(w, http.StatusInternalServerError, "server_error")
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -134,10 +139,35 @@ func (h *Handler) GetQuestionsByEventCode(w http.ResponseWriter, r *http.Request
 	json.NewEncoder(w).Encode(questions)
 }
 
+func (h *Handler) DeleteQuestionByID(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	if id == "" {
+		writeJSONError(w, http.StatusBadRequest, "bad_request")
+		return
+	}
+
+	cmdTag, err := h.DB.Exec(
+		r.Context(),
+		`UPDATE questions SET answered = TRUE WHERE id = $1`,
+		id,
+	)
+	if err != nil {
+		writeJSONError(w, http.StatusBadRequest, "db_error")
+		return
+	}
+
+	if cmdTag.RowsAffected() == 0 {
+		writeJSONError(w, http.StatusNotFound, "question_not_found")
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
 func (h *Handler) DeleteEventByCode(w http.ResponseWriter, r *http.Request) {
 	code := chi.URLParam(r, "code")
 	if code == "" {
-		http.Error(w, "Код комнаты не указан", http.StatusBadRequest)
+		writeJSONError(w, http.StatusBadRequest, "bad_request")
 		return
 	}
 	var req EventRequest
@@ -152,12 +182,12 @@ func (h *Handler) DeleteEventByCode(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		writeJSONError(w, http.StatusInternalServerError, "server_error")
 		return
 	}
 
 	if cmdTag.RowsAffected() == 0 {
-		http.Error(w, "Комната не найдена или у вас нет прав на её удаление", http.StatusNotFound)
+		writeJSONError(w, http.StatusNotFound, "event_not_found")
 		return
 	}
 

@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"asky/internal/handler"
+	"asky/internal/middleware"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
@@ -24,8 +25,8 @@ func New(h *handler.Handler) http.Handler {
 	FileServer(r, "/static", http.Dir("./web/static"))
 
 	r.Get("/events", h.EventsPage)
-	r.Get("/api/events", h.ListEvents)
 	r.Post("/events/new", h.CreateEvent)
+	r.With(middleware.Auth).Get("/api/events", h.ListEvents)
 	r.Delete("/events/{code}", h.DeleteEventByCode)
 
 	r.Get("/events/{code}/questions", h.GetQuestionsByEventCode)
@@ -34,11 +35,12 @@ func New(h *handler.Handler) http.Handler {
 	r.Post("/register", h.Register)
 	r.Post("/login", h.Login)
 	r.Get("/login", h.LoginPage)
-
+	
 	r.Post("/events/{code}/question", h.NewQuestion)
-
+	
 	r.Put("/questions/{id}/vote", h.Vote)
 	r.Delete("/questions/{id}/vote", h.UnVote)
+	r.Put("/questions/{id}/answer", h.DeleteQuestionByID)
 
 	return r
 }
