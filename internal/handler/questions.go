@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"asky/internal/utils"
 	"encoding/json"
 	"net/http"
 
@@ -15,7 +16,7 @@ func (h *Handler) NewQuestion(w http.ResponseWriter, r *http.Request) {
 	var req NewQuestionRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeJSONError(w, http.StatusBadRequest, "bad_request")
+		utils.WriteJSONError(w, http.StatusBadRequest, "bad_request")
 		return
 	}
 
@@ -30,14 +31,13 @@ func (h *Handler) NewQuestion(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err != nil {
-		writeJSONError(w, http.StatusBadRequest, "db_error")
+		utils.WriteJSONError(w, http.StatusBadRequest, "db_error")
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(map[string]string{
 		"message": "question_created",
 	})
 }
-

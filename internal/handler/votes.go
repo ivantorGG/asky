@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"asky/internal/utils"
 	"encoding/json"
 	"net/http"
 
@@ -19,18 +20,18 @@ func (h *Handler) Vote(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err != nil {
-		writeJSONError(w, http.StatusInternalServerError, "server_error")
+		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
 		return
 	}
 
 	rows := res.RowsAffected()
 	if rows == 0 {
-		writeJSONError(w, http.StatusNotFound, "question_not_found")
+		utils.WriteJSONError(w, http.StatusNotFound, "question_not_found")
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{
 		"message": "question " + questionID + " liked",
 	})
@@ -48,18 +49,18 @@ func (h *Handler) UnVote(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err != nil {
-		writeJSONError(w, http.StatusInternalServerError, "server_error")
+		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
 		return
 	}
 
 	rows := res.RowsAffected()
 	if rows == 0 {
-		writeJSONError(w, http.StatusNotFound, "question_not_found")
+		utils.WriteJSONError(w, http.StatusNotFound, "question_not_found")
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{
 		"message": "question " + questionID + " disliked",
 	})

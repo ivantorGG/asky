@@ -2,6 +2,7 @@ package handler
 
 import (
 	"asky/internal/middleware"
+	"asky/internal/utils"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -13,7 +14,7 @@ import (
 )
 
 type EventRequest struct {
-	Title   string `json:"title"`
+	Title string `json:"title"`
 }
 type TeacherEvent struct {
 	Title string `json:"title"`
@@ -32,27 +33,27 @@ func (h *Handler) CreateEvent(w http.ResponseWriter, r *http.Request) {
 	var req EventRequest
 	userID := r.Context().Value(middleware.UserIDKey).(int64)
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeJSONError(w, http.StatusBadRequest, "bad_request")
+		utils.WriteJSONError(w, http.StatusBadRequest, "bad_request")
 		return
 	}
 	if req.Title == "" {
-		writeJSONError(w, http.StatusBadRequest, "bad_request")
+		utils.WriteJSONError(w, http.StatusBadRequest, "bad_request")
 		return
 	}
 	_, err := h.DB.Exec(
 		r.Context(),
 		`INSERT INTO events(title, owner_id)
-		 VALUES ($1,$2)`,
+		VALUES ($1,$2)`,
 		req.Title,
 		userID,
 	)
 
 	if err != nil {
-		writeJSONError(w, http.StatusBadRequest, "db_error")
+		utils.WriteJSONError(w, http.StatusBadRequest, "db_error")
 		return
 	}
-	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(map[string]string{
 		"message": "event_created",
 	})
@@ -64,13 +65,13 @@ func (h *Handler) ListTeachersEvents(w http.ResponseWriter, r *http.Request) {
 	rows, err := h.DB.Query(
 		r.Context(),
 		`SELECT title, code
-		 FROM events
-		 WHERE owner_id = $1 AND is_active = TRUE
-		 ORDER BY created_at DESC`,
+		FROM events
+		WHERE owner_id = $1 AND is_active = TRUE
+		ORDER BY created_at DESC`,
 		userID,
 	)
 	if err != nil {
-		writeJSONError(w, http.StatusInternalServerError, "server_error")
+		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
 		return
 	}
 	defer rows.Close()
@@ -81,7 +82,7 @@ func (h *Handler) ListTeachersEvents(w http.ResponseWriter, r *http.Request) {
 		var e TeacherEvent
 
 		if err := rows.Scan(&e.Title, &e.Code); err != nil {
-			writeJSONError(w, http.StatusInternalServerError, "server_error")
+			utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
 			return
 		}
 
@@ -89,7 +90,7 @@ func (h *Handler) ListTeachersEvents(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := rows.Err(); err != nil {
-		writeJSONError(w, http.StatusInternalServerError, "server_error")
+		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
 		return
 	}
 
@@ -107,26 +108,26 @@ func (h *Handler) ListUsersEvents(w http.ResponseWriter, r *http.Request) {
 
 	decoded, err := url.QueryUnescape(cookie.Value)
 	if err != nil {
-		writeJSONError(w, http.StatusBadRequest, "bad_cookie")
+		utils.WriteJSONError(w, http.StatusBadRequest, "bad_cookie")
 		return
 	}
 
 	var codes []string
 	if err := json.Unmarshal([]byte(decoded), &codes); err != nil {
-		writeJSONError(w, http.StatusBadRequest, "bad_cookie")
+		utils.WriteJSONError(w, http.StatusBadRequest, "bad_cookie")
 		return
 	}
 
 	rows, err := h.DB.Query(
 		r.Context(),
 		`SELECT title, code
-		 FROM events
-		 WHERE code = ANY($1::uuid[])
-		 ORDER BY created_at DESC`,
+		FROM events
+		WHERE code = ANY($1::uuid[])
+		ORDER BY created_at DESC`,
 		codes,
 	)
 	if err != nil {
-		writeJSONError(w, http.StatusInternalServerError, "server_error")
+		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
 		return
 	}
 	defer rows.Close()
@@ -135,14 +136,14 @@ func (h *Handler) ListUsersEvents(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		var e TeacherEvent
 		if err := rows.Scan(&e.Title, &e.Code); err != nil {
-			writeJSONError(w, http.StatusInternalServerError, "server_error")
+			utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
 			return
 		}
 		events = append(events, e)
 	}
 
 	if err := rows.Err(); err != nil {
-		writeJSONError(w, http.StatusInternalServerError, "server_error")
+		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
 		return
 	}
 
@@ -153,19 +154,19 @@ func (h *Handler) ListUsersEvents(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetQuestionsByEventCode(w http.ResponseWriter, r *http.Request) {
 	eventCode := chi.URLParam(r, "code")
 	if eventCode == "" {
-		writeJSONError(w, http.StatusBadRequest, "bad_request")
+		utils.WriteJSONError(w, http.StatusBadRequest, "bad_request")
 		return
 	}
 	rows, err := h.DB.Query(
 		r.Context(),
 		`SELECT id, event_code, text, likes, answered, created_at 
-		 FROM questions 
-		 WHERE event_code = $1::uuid 
-		 ORDER BY answered ASC, likes DESC`,
+		FROM questions 
+		WHERE event_code = $1::uuid 
+		ORDER BY answered ASC, likes DESC`,
 		eventCode,
 	)
 	if err != nil {
-		writeJSONError(w, http.StatusInternalServerError, "server_error")
+		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
 		return
 	}
 	defer rows.Close()
@@ -174,13 +175,13 @@ func (h *Handler) GetQuestionsByEventCode(w http.ResponseWriter, r *http.Request
 		var q QuestionResponse
 		err := rows.Scan(&q.ID, &q.EventCode, &q.Text, &q.Likes, &q.Answered, &q.CreatedAt)
 		if err != nil {
-			writeJSONError(w, http.StatusInternalServerError, "server_error")
+			utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
 			return
 		}
 		questions = append(questions, q)
 	}
 	if err = rows.Err(); err != nil {
-		writeJSONError(w, http.StatusInternalServerError, "server_error")
+		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -191,7 +192,7 @@ func (h *Handler) GetQuestionsByEventCode(w http.ResponseWriter, r *http.Request
 func (h *Handler) AnswerQuestion(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	if id == "" {
-		writeJSONError(w, http.StatusBadRequest, "bad_request")
+		utils.WriteJSONError(w, http.StatusBadRequest, "bad_request")
 		return
 	}
 
@@ -201,12 +202,12 @@ func (h *Handler) AnswerQuestion(w http.ResponseWriter, r *http.Request) {
 		id,
 	)
 	if err != nil {
-		writeJSONError(w, http.StatusBadRequest, "db_error")
+		utils.WriteJSONError(w, http.StatusBadRequest, "db_error")
 		return
 	}
 
 	if cmdTag.RowsAffected() == 0 {
-		writeJSONError(w, http.StatusNotFound, "question_not_found")
+		utils.WriteJSONError(w, http.StatusNotFound, "question_not_found")
 		return
 	}
 
@@ -218,31 +219,31 @@ func (h *Handler) DeleteEventByCode(w http.ResponseWriter, r *http.Request) {
 
 	code := chi.URLParam(r, "code")
 	if code == "" {
-		writeJSONError(w, http.StatusBadRequest, "bad_request")
+		utils.WriteJSONError(w, http.StatusBadRequest, "bad_request")
 		return
 	}
 
 	cmdTag, err := h.DB.Exec(
 		r.Context(),
 		`UPDATE events 
-     SET is_active = FALSE 
-     WHERE code = $1::uuid AND owner_id = $2 AND is_active = TRUE`,
+	SET is_active = FALSE 
+	WHERE code = $1::uuid AND owner_id = $2 AND is_active = TRUE`,
 		code,
 		userID,
 	)
 
 	if err != nil {
-		writeJSONError(w, http.StatusInternalServerError, "server_error")
+		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
 		return
 	}
 
 	if cmdTag.RowsAffected() == 0 {
-		writeJSONError(w, http.StatusNotFound, "event_not_found")
+		utils.WriteJSONError(w, http.StatusNotFound, "event_not_found")
 		return
 	}
 
-	w.WriteHeader(http.StatusNoContent)
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusNoContent)
 	json.NewEncoder(w).Encode(map[string]string{
 		"message": "event_deleted",
 	})
@@ -325,7 +326,7 @@ func (h *Handler) TeacherEventPage(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetEventLink(w http.ResponseWriter, r *http.Request) {
 	code := chi.URLParam(r, "code")
 	if code == "" {
-		writeJSONError(w, http.StatusBadRequest, "bad_request")
+		utils.WriteJSONError(w, http.StatusBadRequest, "bad_request")
 		return
 	}
 	link := "http://localhost:8080/events/" + code
@@ -338,14 +339,14 @@ func (h *Handler) GetEventLink(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetEventQRcode(w http.ResponseWriter, r *http.Request) {
 	code := chi.URLParam(r, "code")
 	if code == "" {
-		writeJSONError(w, http.StatusBadRequest, "bad_request")
+		utils.WriteJSONError(w, http.StatusBadRequest, "bad_request")
 		return
 	}
 	link := fmt.Sprintf("http://localhost:8080/events/%s", code)
 
 	png, err := qrcode.Encode(link, qrcode.Medium, 256)
 	if err != nil {
-		writeJSONError(w, http.StatusInternalServerError, "server_error")
+		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
 		return
 	}
 
