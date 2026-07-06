@@ -106,26 +106,23 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 // ================================================================
-//  АДАПТАЦИЯ ПОД БЭКЕНД (Go) – эндпоинты из роутера
+//  ФИНАЛЬНАЯ ВЕРСИЯ – РАБОТА С БЭКЕНДОМ (роутер из твоего проекта)
 // ================================================================
 
-// 1. Получаем код мероприятия из текущего URL
-//    Страница открывается как /events/XXXXX/student
+// 1. Извлекаем код мероприятия из URL: /events/XXXXX/student
 const pathParts = window.location.pathname.split('/');
 const eventCode = pathParts[2]; // например, 'abc123'
 
-// Базовый адрес API (относительный, т.к. фронт и бэк на одном порту)
 const API_BASE = '/api';
-
 let currentQuestionId = null;
 
-// ---------------------- API-ФУНКЦИИ ---------------------------
+// ---------------------- API-ВЫЗОВЫ -------------------------------
 
-// Получить все вопросы для мероприятия (GET /api/events/{code}/questions)
+// ✅ Получить все вопросы (GET /api/events/questionsList/questions?code=...)
 async function getQuestions() {
   try {
-    const resp = await fetch(`${API_BASE}/events/${eventCode}/questions`);
-    if (!resp.ok) throw new Error('Ошибка загрузки вопросов');
+    const resp = await fetch(`${API_BASE}/events/questionsList/questions?code=${eventCode}`);
+    if (!resp.ok) throw new Error(`Ошибка загрузки: ${resp.status}`);
     return await resp.json();
   } catch (e) {
     console.error('getQuestions:', e);
@@ -133,15 +130,15 @@ async function getQuestions() {
   }
 }
 
-// Создать новый вопрос (POST /api/events/{code}/questions)
+// ✅ Создать новый вопрос (POST /api/events/{code}/questions)
 async function addQuestion(text) {
   try {
     const resp = await fetch(`${API_BASE}/events/${eventCode}/questions`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text }) // бэкенд ждёт поле "text"
+      body: JSON.stringify({ text })
     });
-    if (!resp.ok) throw new Error('Ошибка добавления вопроса');
+    if (!resp.ok) throw new Error(`Ошибка добавления: ${resp.status}`);
     return await resp.json();
   } catch (e) {
     console.error('addQuestion:', e);
@@ -149,13 +146,13 @@ async function addQuestion(text) {
   }
 }
 
-// Поставить лайк (PUT /api/questions/{id}/vote)
+// ✅ Поставить лайк (PUT /api/questions/{id}/vote)
 async function likeQuestion(questionId) {
   try {
     const resp = await fetch(`${API_BASE}/questions/${questionId}/vote`, {
       method: 'PUT'
     });
-    if (!resp.ok) throw new Error('Ошибка лайка');
+    if (!resp.ok) throw new Error(`Ошибка лайка: ${resp.status}`);
     return await resp.json();
   } catch (e) {
     console.error('likeQuestion:', e);
@@ -163,13 +160,13 @@ async function likeQuestion(questionId) {
   }
 }
 
-// Снять лайк (DELETE /api/questions/{id}/vote)
+// ✅ Снять лайк (DELETE /api/questions/{id}/vote)
 async function unlikeQuestion(questionId) {
   try {
     const resp = await fetch(`${API_BASE}/questions/${questionId}/vote`, {
       method: 'DELETE'
     });
-    if (!resp.ok) throw new Error('Ошибка снятия лайка');
+    if (!resp.ok) throw new Error(`Ошибка снятия лайка: ${resp.status}`);
     return await resp.json();
   } catch (e) {
     console.error('unlikeQuestion:', e);
@@ -177,11 +174,11 @@ async function unlikeQuestion(questionId) {
   }
 }
 
-// Получить комментарии к вопросу (GET /api/questions/{id}/comments)
+// ✅ Получить комментарии (GET /api/questions/{id}/comments)
 async function getComments(questionId) {
   try {
     const resp = await fetch(`${API_BASE}/questions/${questionId}/comments`);
-    if (!resp.ok) throw new Error('Ошибка загрузки комментариев');
+    if (!resp.ok) throw new Error(`Ошибка загрузки комментариев: ${resp.status}`);
     return await resp.json();
   } catch (e) {
     console.error('getComments:', e);
@@ -189,7 +186,7 @@ async function getComments(questionId) {
   }
 }
 
-// Добавить комментарий (POST /api/questions/{id}/comments)
+// ✅ Добавить комментарий (POST /api/questions/{id}/comments)
 async function addCommentToServer(questionId, text) {
   try {
     const resp = await fetch(`${API_BASE}/questions/${questionId}/comments`, {
@@ -197,15 +194,15 @@ async function addCommentToServer(questionId, text) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text })
     });
-    if (!resp.ok) throw new Error('Ошибка добавления комментария');
+    if (!resp.ok) throw new Error(`Ошибка добавления комментария: ${resp.status}`);
     return await resp.json();
   } catch (e) {
-    console.error('addComment:', e);
+    console.error('addCommentToServer:', e);
     throw e;
   }
 }
 
-// ---------------------- ОТРИСОВКА ВОПРОСОВ --------------------
+// ---------------------- ОТРИСОВКА ВОПРОСОВ -----------------------
 
 async function renderQuestions() {
   const container = document.getElementById('questionsList');
@@ -221,10 +218,18 @@ async function renderQuestions() {
 
     let html = '';
     questions.forEach(q => {
-      // Предполагаем, что бэкенд возвращает поля: id, text, votes, is_voted, comments (или мы загружаем отдельно)
-      const commentCount = q.comments ? q.comments.length : 0;
-      const likeClass = q.is_voted ? 'btn-primary' : 'btn-outline-primary';
+      // Поля, которые приходят от бэкенда: id, text, votes, is_voted, comments_count (или comments)
       const likesCount = q.votes || 0;
+      const likeClass = q.is_voted ? 'btn-primary' : 'btn-outline-primary';
+
+      // Количество комментариев: если есть массив comments, берём его длину,
+      // иначе используем поле comments_count (если есть)
+      let commentCount = 0;
+      if (q.comments && Array.isArray(q.comments)) {
+        commentCount = q.comments.length;
+      } else if (q.comments_count !== undefined) {
+        commentCount = q.comments_count;
+      }
 
       html += `
         <div class="list-group-item" data-id="${q.id}">
@@ -240,11 +245,12 @@ async function renderQuestions() {
     });
     container.innerHTML = html;
   } catch (error) {
+    console.error('renderQuestions error:', error);
     container.innerHTML = '<p class="text-danger">Не удалось загрузить вопросы</p>';
   }
 }
 
-// ---------------------- КОММЕНТАРИИ ---------------------------
+// ---------------------- КОММЕНТАРИИ -----------------------------
 
 async function openComments(questionId) {
   currentQuestionId = questionId;
@@ -269,11 +275,11 @@ async function openComments(questionId) {
     const offcanvas = new bootstrap.Offcanvas(document.getElementById('commentsOffcanvas'));
     offcanvas.show();
   } catch (error) {
-    console.error('openComments:', error);
+    console.error('openComments error:', error);
   }
 }
 
-// ---------------------- ОБРАБОТЧИКИ СОБЫТИЙ -------------------
+// ---------------------- ОБРАБОТЧИКИ СОБЫТИЙ ---------------------
 
 // Лайк (делегирование)
 document.addEventListener('click', async function(e) {
@@ -288,7 +294,7 @@ document.addEventListener('click', async function(e) {
       } else {
         await likeQuestion(id);
       }
-      await renderQuestions(); // перерисовываем список
+      await renderQuestions();
     } catch (error) {
       alert('Ошибка при изменении лайка');
     }
@@ -337,7 +343,7 @@ document.getElementById('commentForm').addEventListener('submit', async function
   }
 });
 
-// ---------------------- ПЕРВИЧНАЯ ЗАГРУЗКА --------------------
+// ---------------------- ПЕРВИЧНАЯ ЗАГРУЗКА ----------------------
 renderQuestions();
 </script>
 </body>
