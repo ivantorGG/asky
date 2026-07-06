@@ -4,6 +4,8 @@ import (
 	"context"
 	"net/http"
 	"strconv"
+
+	"asky/internal/utils"
 )
 
 type ContextKey string
@@ -15,21 +17,17 @@ func Auth(next http.Handler) http.Handler {
 
 		userIDStr := r.Header.Get("X-User-ID")
 		if userIDStr == "" {
-			writeJSONError(w, http.StatusInternalServerError, "server_error")
+			utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
 			return
 		}
 
 		userID, err := strconv.ParseInt(userIDStr, 10, 64)
 		if err != nil {
-			writeJSONError(w, http.StatusInternalServerError, "server_error")
+			utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
 			return
 		}
 
 		ctx := context.WithValue(r.Context(), UserIDKey, userID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
-}
-
-func writeJSONError(w http.ResponseWriter, i int, s string) {
-	panic("unimplemented")
 }

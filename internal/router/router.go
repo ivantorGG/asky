@@ -24,28 +24,54 @@ func New(h *handler.Handler) http.Handler {
 	r.Get("/ping", h.Ping)
 	FileServer(r, "/static", http.Dir("./web/static"))
 
-	r.Get("/events", h.EventsPage) //загрузка страницы с событиями(просто шаблон)
-	r.With(middleware.Auth).Post("/events/new", h.CreateEvent) //создание нового события
-	r.With(middleware.Auth).Get("/api/events/teacher", h.ListTeachersEvents)//получение списка событий учителя
-	r.With(middleware.Auth).Delete("/events/{code}", h.DeleteEventByCode)//удаление события по коду
-	r.Get("/events/{code}/teacher", h.TeacherEventPage)//загрузка страницы события по коду(шаблон) УУЧИТЕЛЬ
-	r.Get("/events/{code}/student", h.StudentEventPage)//загрузка страницы события по коду(шаблон) УЧЕНИК
-	r.Get("/api/events/{code}/link", h.GetEventLink)//получение ссылки на событие
-	r.Get("/api/events/{code}/qrcode", h.GetEventQRcode)//получение QR-кода события
-	r.Get("/api/events/student", h.ListUsersEvents)//получение списка событий студента
+	// =========================================================================
+	// Pages (HTML)
+	// =========================================================================
 
-	r.Get("/events/{code}/questions", h.GetQuestionsByEventCode)//получение вопросов события по коду с ОТСОРТИРОВАННЫМИ вопросами по лайкам
-	
-	r.Get("/register", h.RegistrationPage)
-	r.Post("/register", h.Register)
-	r.Post("/login", h.Login)
-	r.Get("/login", h.LoginPage)
-	
-	r.Post("/events/{code}/question", h.NewQuestion)
-	
-	r.Put("/questions/{id}/vote", h.Vote)
-	r.Delete("/questions/{id}/vote", h.UnVote)
-	r.Put("/questions/{id}/answer", h.AnswerQuestion)
+	r.Get("/login", h.LoginPage)           // Login page
+	r.Get("/register", h.RegistrationPage) // Registration page
+
+	r.Get("/events", h.EventsPage)                      // Events dashboard page
+	r.Get("/events/{code}/teacher", h.TeacherEventPage) // Teacher view of an event
+	r.Get("/events/{code}/student", h.StudentEventPage) // Student view of an event
+
+	// =========================================================================
+	// Authentication API
+	// =========================================================================
+
+	r.Post("/api/register", h.Register) // Register a new user
+	r.Post("/api/login", h.Login)       // Authenticate user
+
+	// =========================================================================
+	// Events API
+	// =========================================================================
+
+	r.With(middleware.Auth).Post("/api/events", h.CreateEvent)                // Create a new event
+	r.With(middleware.Auth).Get("/api/events/teacher", h.ListTeachersEvents)  // Get teacher's events
+	r.Get("/api/events/student", h.ListUsersEvents)                           // Get recently visited events
+	r.With(middleware.Auth).Delete("/api/events/{code}", h.DeleteEventByCode) // Delete (deactivate) an event
+
+	r.Get("/api/events/{code}/link", h.GetEventLink)     // Get event invitation link
+	r.Get("/api/events/{code}/qrcode", h.GetEventQRcode) // Get event QR code
+
+	// =========================================================================
+	// Questions API
+	// =========================================================================
+
+	r.Get("/api/events/{code}/questions", h.GetQuestionsByEventCode) // Get all event questions
+	r.Post("/api/events/{code}/questions", h.NewQuestion)            // Create a new question
+
+	r.With(middleware.Auth).Put("/api/questions/{id}/answer", h.AnswerQuestion) // Mark question as answered
+
+	r.Put("/api/questions/{id}/vote", h.Vote)      // Upvote a question
+	r.Delete("/api/questions/{id}/vote", h.UnVote) // Remove question vote
+
+	// =========================================================================
+	// Comments API
+	// =========================================================================
+
+	r.Get("/api/questions/{id}/comments", h.ListQuestionComments) // Get question comments
+	r.Post("/api/questions/{id}/comments", h.NewComment)          // Add a comment to a question
 
 	return r
 }
