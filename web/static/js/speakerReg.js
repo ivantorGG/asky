@@ -33,7 +33,7 @@ async function sendRegs(email, password){
     const msg = response_json.message;
 
     if (msg === 'registration_success'){
-        location.href = '/events'
+        location.href = '/login'
     }
 }
 

@@ -58,7 +58,7 @@ func New(h *handler.Handler) http.Handler {
 	// Questions API
 	// =========================================================================
 
-	r.Get("/api/events/questionsList/questions", h.GetQuestionsByEventCode) // Get all event questions
+	r.Get("/api/events/{code}/questions", h.GetQuestionsByEventCode) // Get all event questions
 	r.Post("/api/events/{code}/questions", h.NewQuestion)            // Create a new question
 
 	r.With(middleware.Auth(h.DB)).Put("/api/questions/{id}/answer", h.AnswerQuestion) // Mark question as answered
