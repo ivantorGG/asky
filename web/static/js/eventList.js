@@ -8,9 +8,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 async function loadEvents(){
+
     const container = document.getElementById('events');
     const response = await fetch("/api/events/teacher");
-    const events = await response.json();
+    const data = await response.json()
+    const err = data.error
+    if (err === 'unauthorized'){
+        location.href = '/login'
+        return;
+    }
+
+    const events = data;
 
     if (!container) {
         console.error("Контейнер #events не найден на странице!");
@@ -41,15 +49,16 @@ async function loadEvents(){
 
     container.innerHTML = '';
     container.innerHTML = htmlContent;
+
 }
 
 async function deleteEvent(id) {
+
     const response = await fetch(`/api/events/${id}`,
         {method: "DELETE"}
     );
 
     loadEvents();
-
     //const data = await response.json();
 
 }

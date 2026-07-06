@@ -1,3 +1,5 @@
-async function logout(params) {
-    await fetch('/')
+async function logout() {
+    await fetch('/logout')
+
+    location.href = '/login'
 }
