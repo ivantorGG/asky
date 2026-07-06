@@ -49,7 +49,7 @@ func (h *Handler) CreateEvent(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err != nil {
-		utils.WriteJSONError(w, http.StatusBadRequest, "db_error")
+		utils.WriteJSONError(w, http.StatusBadRequest, "db_error: "+err.Error())
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -71,7 +71,7 @@ func (h *Handler) ListTeachersEvents(w http.ResponseWriter, r *http.Request) {
 		userID,
 	)
 	if err != nil {
-		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
+		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error: "+err.Error())
 		return
 	}
 	defer rows.Close()
@@ -82,7 +82,7 @@ func (h *Handler) ListTeachersEvents(w http.ResponseWriter, r *http.Request) {
 		var e TeacherEvent
 
 		if err := rows.Scan(&e.Title, &e.Code); err != nil {
-			utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
+			utils.WriteJSONError(w, http.StatusInternalServerError, "server_error: "+err.Error())
 			return
 		}
 
@@ -90,7 +90,7 @@ func (h *Handler) ListTeachersEvents(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := rows.Err(); err != nil {
-		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
+		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error: "+err.Error())
 		return
 	}
 
@@ -108,13 +108,13 @@ func (h *Handler) ListUsersEvents(w http.ResponseWriter, r *http.Request) {
 
 	decoded, err := url.QueryUnescape(cookie.Value)
 	if err != nil {
-		utils.WriteJSONError(w, http.StatusBadRequest, "bad_cookie")
+		utils.WriteJSONError(w, http.StatusBadRequest, "bad_cookie: "+err.Error())
 		return
 	}
 
 	var codes []string
 	if err := json.Unmarshal([]byte(decoded), &codes); err != nil {
-		utils.WriteJSONError(w, http.StatusBadRequest, "bad_cookie")
+		utils.WriteJSONError(w, http.StatusBadRequest, "bad_cookie: "+err.Error())
 		return
 	}
 
@@ -127,7 +127,7 @@ func (h *Handler) ListUsersEvents(w http.ResponseWriter, r *http.Request) {
 		codes,
 	)
 	if err != nil {
-		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
+		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error: "+err.Error())
 		return
 	}
 	defer rows.Close()
@@ -136,14 +136,14 @@ func (h *Handler) ListUsersEvents(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		var e TeacherEvent
 		if err := rows.Scan(&e.Title, &e.Code); err != nil {
-			utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
+			utils.WriteJSONError(w, http.StatusInternalServerError, "server_error: "+err.Error())
 			return
 		}
 		events = append(events, e)
 	}
 
 	if err := rows.Err(); err != nil {
-		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
+		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error: "+err.Error())
 		return
 	}
 
@@ -166,7 +166,7 @@ func (h *Handler) GetQuestionsByEventCode(w http.ResponseWriter, r *http.Request
 		eventCode,
 	)
 	if err != nil {
-		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
+		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error: "+err.Error())
 		return
 	}
 	defer rows.Close()
@@ -175,13 +175,13 @@ func (h *Handler) GetQuestionsByEventCode(w http.ResponseWriter, r *http.Request
 		var q QuestionResponse
 		err := rows.Scan(&q.ID, &q.EventCode, &q.Text, &q.Likes, &q.Answered, &q.CreatedAt)
 		if err != nil {
-			utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
+			utils.WriteJSONError(w, http.StatusInternalServerError, "server_error: "+err.Error())
 			return
 		}
 		questions = append(questions, q)
 	}
 	if err = rows.Err(); err != nil {
-		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
+		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error: "+err.Error())
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -233,7 +233,7 @@ func (h *Handler) DeleteEventByCode(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err != nil {
-		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
+		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error: "+err.Error())
 		return
 	}
 
@@ -346,7 +346,7 @@ func (h *Handler) GetEventQRcode(w http.ResponseWriter, r *http.Request) {
 
 	png, err := qrcode.Encode(link, qrcode.Medium, 256)
 	if err != nil {
-		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
+		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error: "+err.Error())
 		return
 	}
 
