@@ -1,11 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('saveEvent').addEventListener('click', () => {
+        createEvent(document.getElementById('eventName').value);
+    })
     loadEvents();
 });
 
+
+
 async function loadEvents(){
-    console.log('!!!!')
     const container = document.getElementById('events');
-    console.log(container);
     const response = await fetch("/api/events/teacher");
     const events = await response.json();
 
@@ -16,21 +19,17 @@ async function loadEvents(){
 
     if (events.length === 0){
         console.log('events пустой!')
-        return;
     }
 
-    console.log("Тип данных:", typeof events);
-    console.log("Содержимое:", events);
-
     let htmlContent = '';
-
+    
     events.forEach(event => {
         htmlContent += `
             <div class="card shadow-sm mt-5 card-hover-bg position-relative" style="cursor: pointer;">
                 <a href="/events/${event.code}/teacher" class="stretched-link text-decoration-none"></a>
                 <div class="card-body p-4 d-flex justify-content-between align-items-center">
                     <h2 class="card-title mb-0">${event.title}</h2>
-                    <button type="button" class="btn btn-outline-danger btn-lg ms-5 me-1 position-relative z-1" >
+                    <button type="button" class="btn btn-outline-danger btn-lg ms-5 me-1 position-relative z-1" onclick="deleteEvent('${event.code}')">
                         <div class="d-flex justify-content-between">
                             Удалить<i class="bi bi-trash"></i>
                         </div>
@@ -39,10 +38,20 @@ async function loadEvents(){
             </div>
         `;
     });
-    console.log(htmlContent)
 
     container.innerHTML = '';
     container.innerHTML = htmlContent;
+}
+
+async function deleteEvent(id) {
+    const response = await fetch(`/api/events/${id}`,
+        {method: "DELETE"}
+    );
+
+    loadEvents();
+
+    //const data = await response.json();
+
 }
 
 async function createEvent(name){
@@ -64,6 +73,10 @@ async function createEvent(name){
     }
     if (msg === 'event_created'){
         console.log('try to load events...');
+
+        const closeButton = document.querySelector('#newEventModal [data-bs-dismiss="modal"]');
+        closeButton.click();
+        
         loadEvents();
     }
 }
