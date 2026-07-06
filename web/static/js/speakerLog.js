@@ -16,6 +16,10 @@ function tryToSend(email, password){
 async function sendLogs(email, password){
     console.log("Емаил", email);
     console.log("Пароль", password);
+    const data = {
+        email: email,
+        password: password
+    };
 
     const response = await fetch("/api/login", {
         method: 'POST',
