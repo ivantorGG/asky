@@ -11,6 +11,9 @@ async function loadEvents(){
         return;
     }
 
+    console.log("Тип данных:", typeof events);
+    console.log("Содержимое:", events);
+
     events.forEach(event => {
         htmlContent += `
             <div class="card shadow-sm mt-5 card-hover-bg" style="cursor: pointer;">
