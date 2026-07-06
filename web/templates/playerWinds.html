@@ -6,6 +6,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>asky</title>
+    <style>
+        body { padding-bottom: 100px; }
+        .fixed-bottom-form {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 600px;
+            background: transparent;
+            padding: 10px 0;
+            z-index: 1000;
+        }
+        .fixed-bottom-form .form-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            background: white;
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        .fixed-bottom-form textarea {
+            flex: 1;
+            border-radius: 20px;
+            resize: none;
+            padding: 8px 16px;
+            height: 44px;
+            border: 1px solid #ddd;
+        }
+        .fixed-bottom-form button {
+            height: 44px;
+            padding: 0 24px;
+            border-radius: 20px;
+            background: #6c5ce7;
+            border: none;
+            color: white;
+            font-weight: 600;
+        }
+    </style>
 </head>
 <body>
 
@@ -29,150 +69,25 @@
   <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
       <h4 class="mb-3">Вопросы</h4>
-      <!-- Прокручиваемый контейнер -->
-      <div class="" style=" border: 1px solid #ddd; border-radius: 8px; padding: 10px;">
-        <!-- Здесь будут комментарии -->
-        <div class="list-group">
-          <!-- Вопрос 1 -->
-          <div class="list-group-item" data-id="1">
-            <span class="question-text">{вопрос 1}</span>
-            <button class="btn btn-sm btn-outline-primary like-btn" data-id="1" style="display:flex;">
-                👍 <span class="like-count" style="display: block;">0</span>
-            </button>
-            <button class="btn btn-sm btn-outline-secondary comment-btn" data-id="1">
-              💬 <span class="comment-count">0</span>
-            </button>
-          </div>
-          <!-- Вопрос 2 -->
-          <div class="list-group-item" data-id="2">
-            <span class="question-text">{вопрос 2}</span>
-            <button class="btn btn-sm btn-outline-primary like-btn" data-id="2" style="display:flex;">
-                👍 <span class="like-count" style="display: block;">0</span>
-            </button>
-            <button class="btn btn-sm btn-outline-secondary comment-btn" data-id="2">
-              💬 <span class="comment-count">0</span>
-            </button>
-          </div>
-          <!-- Вопрос 3 -->
-          <div class="list-group-item" data-id="3">
-            <span class="question-text">{вопрос 3}</span>
-            <button class="btn btn-sm btn-outline-primary like-btn" data-id="3" style="display:flex;">
-                👍 <span class="like-count" style="display: block;">0</span>
-            </button>
-            <button class="btn btn-sm btn-outline-secondary comment-btn" data-id="3">
-              💬 <span class="comment-count">0</span>
-            </button>
-          </div>
-          <!-- Вопрос 4 -->
-          <div class="list-group-item" data-id="4">
-            <span class="question-text">{вопрос 4}</span>
-            <button class="btn btn-sm btn-outline-primary like-btn" data-id="4" style="display:flex;">
-                👍 <span class="like-count" style="display: block;">0</span>
-            </button>
-            <button class="btn btn-sm btn-outline-secondary comment-btn" data-id="4">
-              💬 <span class="comment-count">0</span>
-            </button>
-          </div>
-          <!-- Вопрос 5 -->
-          <div class="list-group-item" data-id="5">
-            <span class="question-text">{вопрос 5}</span>
-            <button class="btn btn-sm btn-outline-primary like-btn" data-id="5" style="display:flex;">
-                👍 <span class="like-count" style="display: block;">0</span>
-            </button>
-            <button class="btn btn-sm btn-outline-secondary comment-btn" data-id="5">
-              💬 <span class="comment-count">0</span>
-            </button>
-          </div>
-          <!-- Вопрос 6 -->
-          <div class="list-group-item" data-id="6">
-            <span class="question-text">{вопрос 6}</span>
-            <button class="btn btn-sm btn-outline-primary like-btn" data-id="6" style="display:flex;">
-                👍 <span class="like-count" style="display: block;">0</span>
-            </button>
-            <button class="btn btn-sm btn-outline-secondary comment-btn" data-id="6">
-              💬 <span class="comment-count">0</span>
-            </button>
-          </div>
-          <!-- Вопрос 7 -->
-          <div class="list-group-item" data-id="7">
-            <span class="question-text">{вопрос 7}</span>
-            <button class="btn btn-sm btn-outline-primary like-btn" data-id="7" style="display:flex;">
-                👍 <span class="like-count" style="display: block;">0</span>
-            </button>
-            <button class="btn btn-sm btn-outline-secondary comment-btn" data-id="7">
-              💬 <span class="comment-count">0</span>
-            </button>
-          </div>
-          <!-- Вопрос 8 -->
-          <div class="list-group-item" data-id="8">
-            <span class="question-text">{вопрос 8}</span>
-            <button class="btn btn-sm btn-outline-primary like-btn" data-id="8" style="display:flex;">
-                👍 <span class="like-count" style="display: block;">0</span>
-            </button>
-            <button class="btn btn-sm btn-outline-secondary comment-btn" data-id="8">
-              💬 <span class="comment-count">0</span>
-            </button>
-          </div>
-          <!-- Вопрос 9 -->
-          <div class="list-group-item" data-id="9">
-            <span class="question-text">{вопрос 9}</span>
-            <button class="btn btn-sm btn-outline-primary like-btn" data-id="9" style="display:flex;">
-                👍 <span class="like-count" style="display: block;">0</span>
-            </button>
-            <button class="btn btn-sm btn-outline-secondary comment-btn" data-id="9">
-              💬 <span class="comment-count">0</span>
-            </button>
-          </div>
-          <!-- Вопрос 10 -->
-          <div class="list-group-item" data-id="10">
-            <span class="question-text">{вопрос 10}</span>
-            <button class="btn btn-sm btn-outline-primary like-btn" data-id="10" style="display:flex;">
-                👍 <span class="like-count" style="display: block;">0</span>
-            </button>
-            <button class="btn btn-sm btn-outline-secondary comment-btn" data-id="10">
-              💬 <span class="comment-count">0</span>
-            </button>
-          </div>
-          <!-- Остальные вопросы (если есть) добавь по аналогии -->
-          <div class="list-group-item" data-id="11">
-            <span class="question-text">А можно задать второй?</span>
-            <button class="btn btn-sm btn-outline-primary like-btn" data-id="11">👍 <span class="like-count">0</span></button>
-            <button class="btn btn-sm btn-outline-secondary comment-btn" data-id="11">💬 <span class="comment-count">0</span></button>
-          </div>
-          <div class="list-group-item" data-id="12">
-            <span class="question-text">И третий, и четвёртый...</span>
-            <button class="btn btn-sm btn-outline-primary like-btn" data-id="12">👍 <span class="like-count">0</span></button>
-            <button class="btn btn-sm btn-outline-secondary comment-btn" data-id="12">💬 <span class="comment-count">0</span></button>
-          </div>
+      <div style="border: 1px solid #dddddd00; border-radius: 8px; padding: 10px;">
+        <div class="list-group" id="questionsList">
+          <!-- Сюда динамически будут вставляться вопросы -->
         </div>
       </div>
-
     </div>
   </div>
 </div>
 
- <div class="container">
-  <div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-      
-      <!-- Форма  -->
-       <form style="position: fixed; bottom: 0;" id="questionForm">
-        <!-- Второй инпут -->
-        <div class="mb-3" style="display: flex;">
-          <textarea class="form-control" id="input2" rows="3" placeholder="Напишите вопрос анонимно..." style="height: 20px; width: 528px; margin-right: 8px; border-radius: 20px;"></textarea>
-          <button type="submit" class="btn btn-primary btn-lg " style="height: 40px; width: 100px; padding-top: 0; font-size: 15px; padding-bottom: 0px; border-radius: 10px;">Отправить</button>
-        </div> 
-
-         <!-- Кнопка -->
-        
-      </form>
-
-    </div>
+<!-- Форма внизу -->
+<form class="fixed-bottom-form" id="questionForm">
+  <div class="form-group">
+    <textarea id="input2" rows="1" placeholder="Напишите вопрос анонимно..." required></textarea>
+    <button type="submit">Отправить</button>
   </div>
-</div> 
+</form>
 
-<!-- ===== БОКОВАЯ ПАНЕЛЬ ДЛЯ КОММЕНТАРИЕВ ===== -->
-<div class="offcanvas offcanvas-end" tabindex="-1" id="commentsOffcanvas">
+<!-- Боковая панель комментариев -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="commentsOffcanvas" style="border-radius: 18px;">
   <div class="offcanvas-header">
     <h5 class="offcanvas-title">Комментарии</h5>
     <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
@@ -181,7 +96,7 @@
     <div id="commentsList">
       <p class="text-muted">Комментариев пока нет</p>
     </div>
-    <form id="commentForm" class="mt-3">
+    <form id="commentForm" class="mt-3" style="border-radius: 20px;">
       <input type="text" id="commentInput" class="form-control mb-2" placeholder="Напишите комментарий...">
       <button type="submit" class="btn btn-primary w-100">Отправить</button>
     </form>
@@ -190,126 +105,246 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script>
- // ========== КОД КОММЕНТАРИЕВ (ТВОЙ) ==========
-  function getQuestions() {
-    return JSON.parse(localStorage.getItem('questions')) || [];
+// ================================================================
+//  ФИНАЛЬНАЯ ВЕРСИЯ – РАБОТА С БЭКЕНДОМ (роутер из твоего проекта)
+// ================================================================
+
+// 1. Извлекаем код мероприятия из URL: /events/XXXXX/student
+const pathParts = window.location.pathname.split('/');
+const eventCode = pathParts[2]; // например, 'abc123'
+
+const API_BASE = '/api';
+let currentQuestionId = null;
+
+// ---------------------- API-ВЫЗОВЫ -------------------------------
+
+// ✅ Получить все вопросы (GET /api/events/questionsList/questions?code=...)
+async function getQuestions() {
+  try {
+    const resp = await fetch(`${API_BASE}/events/questionsList/questions?code=${eventCode}`);
+    if (!resp.ok) throw new Error(`Ошибка загрузки: ${resp.status}`);
+    return await resp.json();
+  } catch (e) {
+    console.error('getQuestions:', e);
+    return [];
   }
-  function saveQuestions(qs) {
-    localStorage.setItem('questions', JSON.stringify(qs));
+}
+
+// ✅ Создать новый вопрос (POST /api/events/{code}/questions)
+async function addQuestion(text) {
+  try {
+    const resp = await fetch(`${API_BASE}/events/${eventCode}/questions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    });
+    if (!resp.ok) throw new Error(`Ошибка добавления: ${resp.status}`);
+    return await resp.json();
+  } catch (e) {
+    console.error('addQuestion:', e);
+    throw e;
   }
+}
 
-  let currentQuestionId = null;
+// ✅ Поставить лайк (PUT /api/questions/{id}/vote)
+async function likeQuestion(questionId) {
+  try {
+    const resp = await fetch(`${API_BASE}/questions/${questionId}/vote`, {
+      method: 'PUT'
+    });
+    if (!resp.ok) throw new Error(`Ошибка лайка: ${resp.status}`);
+    return await resp.json();
+  } catch (e) {
+    console.error('likeQuestion:', e);
+    throw e;
+  }
+}
 
-  function openComments(questionId) {
-    currentQuestionId = questionId;
-    const qs = getQuestions();
-    const q = qs.find(item => item.id === questionId);
-    if (!q) return;
+// ✅ Снять лайк (DELETE /api/questions/{id}/vote)
+async function unlikeQuestion(questionId) {
+  try {
+    const resp = await fetch(`${API_BASE}/questions/${questionId}/vote`, {
+      method: 'DELETE'
+    });
+    if (!resp.ok) throw new Error(`Ошибка снятия лайка: ${resp.status}`);
+    return await resp.json();
+  } catch (e) {
+    console.error('unlikeQuestion:', e);
+    throw e;
+  }
+}
 
+// ✅ Получить комментарии (GET /api/questions/{id}/comments)
+async function getComments(questionId) {
+  try {
+    const resp = await fetch(`${API_BASE}/questions/${questionId}/comments`);
+    if (!resp.ok) throw new Error(`Ошибка загрузки комментариев: ${resp.status}`);
+    return await resp.json();
+  } catch (e) {
+    console.error('getComments:', e);
+    return [];
+  }
+}
+
+// ✅ Добавить комментарий (POST /api/questions/{id}/comments)
+async function addCommentToServer(questionId, text) {
+  try {
+    const resp = await fetch(`${API_BASE}/questions/${questionId}/comments`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    });
+    if (!resp.ok) throw new Error(`Ошибка добавления комментария: ${resp.status}`);
+    return await resp.json();
+  } catch (e) {
+    console.error('addCommentToServer:', e);
+    throw e;
+  }
+}
+
+// ---------------------- ОТРИСОВКА ВОПРОСОВ -----------------------
+
+async function renderQuestions() {
+  const container = document.getElementById('questionsList');
+  if (!container) return;
+
+  try {
+    const questions = await getQuestions();
+
+    if (questions.length === 0) {
+      container.innerHTML = '<p class="text-muted text-center">Пока нет вопросов. Будьте первым!</p>';
+      return;
+    }
+
+    let html = '';
+    questions.forEach(q => {
+      // Поля, которые приходят от бэкенда: id, text, votes, is_voted, comments_count (или comments)
+      const likesCount = q.votes || 0;
+      const likeClass = q.is_voted ? 'btn-primary' : 'btn-outline-primary';
+
+      // Количество комментариев: если есть массив comments, берём его длину,
+      // иначе используем поле comments_count (если есть)
+      let commentCount = 0;
+      if (q.comments && Array.isArray(q.comments)) {
+        commentCount = q.comments.length;
+      } else if (q.comments_count !== undefined) {
+        commentCount = q.comments_count;
+      }
+
+      html += `
+        <div class="list-group-item" data-id="${q.id}">
+          <span class="question-text">${q.text}</span>
+          <button class="btn btn-sm ${likeClass} like-btn" data-id="${q.id}">
+            👍 <span class="like-count">${likesCount}</span>
+          </button>
+          <button class="btn btn-sm btn-outline-secondary comment-btn" data-id="${q.id}">
+            💬 <span class="comment-count">${commentCount}</span>
+          </button>
+        </div>
+      `;
+    });
+    container.innerHTML = html;
+  } catch (error) {
+    console.error('renderQuestions error:', error);
+    container.innerHTML = '<p class="text-danger">Не удалось загрузить вопросы</p>';
+  }
+}
+
+// ---------------------- КОММЕНТАРИИ -----------------------------
+
+async function openComments(questionId) {
+  currentQuestionId = questionId;
+  try {
+    const comments = await getComments(questionId);
     const container = document.getElementById('commentsList');
-    if (!q.comments || q.comments.length === 0) {
+
+    if (!comments || comments.length === 0) {
       container.innerHTML = '<p class="text-muted">Комментариев пока нет</p>';
     } else {
-      container.innerHTML = q.comments.map(c => `
+      container.innerHTML = comments.map(c => `
         <div class="border-bottom pb-2 mb-2">
           <div class="d-flex justify-content-between">
             <strong>Аноним</strong>
-            <small class="text-muted">${c.timestamp}</small>
+            <small class="text-muted">${new Date(c.timestamp).toLocaleString()}</small>
           </div>
           <p class="mb-1">${c.text}</p>
         </div>
       `).join('');
     }
+
     const offcanvas = new bootstrap.Offcanvas(document.getElementById('commentsOffcanvas'));
     offcanvas.show();
+  } catch (error) {
+    console.error('openComments error:', error);
   }
+}
 
-  function addCommentToQuestion(questionId, text) {
-    const qs = getQuestions();
-    const q = qs.find(item => item.id === questionId);
-    if (!q) return;
-    if (!q.comments) q.comments = [];
-    q.comments.push({
-      id: Date.now(),
-      text: text.trim(),
-      timestamp: new Date().toLocaleString()
-    });
-    saveQuestions(qs);
-    updateCommentCounts();
-    openComments(questionId);
-  }
+// ---------------------- ОБРАБОТЧИКИ СОБЫТИЙ ---------------------
 
-  function updateCommentCounts() {
-    const qs = getQuestions();
-    document.querySelectorAll('.comment-btn').forEach(btn => {
-      const id = Number(btn.dataset.id);
-      const q = qs.find(item => item.id === id);
-      const count = q && q.comments ? q.comments.length : 0;
-      const span = btn.querySelector('.comment-count');
-      if (span) span.textContent = count;
-    });
-  }
-
-  document.addEventListener('click', function(e) {
-    const btn = e.target.closest('.comment-btn');
-    if (btn) {
-      e.preventDefault();
-      const id = Number(btn.dataset.id);
-      if (id) openComments(id);
-    }
-  });
-
-  document.getElementById('commentForm').addEventListener('submit', function(e) {
+// Лайк (делегирование)
+document.addEventListener('click', async function(e) {
+  const btn = e.target.closest('.like-btn');
+  if (btn) {
     e.preventDefault();
-    const input = document.getElementById('commentInput');
-    const text = input.value.trim();
-    if (!text || currentQuestionId === null) return;
-    addCommentToQuestion(currentQuestionId, text);
-    input.value = '';
-  });
-
-  // ===== НОВАЯ ИНИЦИАЛИЗАЦИЯ (создаём вопросы из разметки) =====
-  function initQuestionsFromDOM() {
-    const existing = getQuestions();
-    if (existing.length > 0) return; // уже есть – не трогаем
-
-    const items = document.querySelectorAll('.list-group-item');
-    const questions = [];
-    items.forEach(el => {
-      const id = Number(el.dataset.id);
-      const textEl = el.querySelector('.question-text');
-      const text = textEl ? textEl.textContent.trim() : 'Вопрос без текста';
-      if (id) {
-        questions.push({ id, text, likes: 0, liked: false, comments: [] });
+    const id = Number(btn.dataset.id);
+    const isLiked = btn.classList.contains('btn-primary');
+    try {
+      if (isLiked) {
+        await unlikeQuestion(id);
+      } else {
+        await likeQuestion(id);
       }
-    });
-    saveQuestions(questions);
+      await renderQuestions();
+    } catch (error) {
+      alert('Ошибка при изменении лайка');
+    }
   }
-  initQuestionsFromDOM();
+});
 
-  // Обновляем счётчики при загрузке
-  updateCommentCounts();
-
-  // ===== ДОБАВЛЯЕМ ОБРАБОТЧИК ДЛЯ НОВЫХ ВОПРОСОВ (опционально) =====
-  document.getElementById('questionForm').addEventListener('submit', function(e) {
+// Открыть комментарии
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest('.comment-btn');
+  if (btn) {
     e.preventDefault();
-    const textarea = document.getElementById('input2');
-    const text = textarea.value.trim();
-    if (!text) return;
-    const questions = getQuestions();
-    const newId = questions.length ? Math.max(...questions.map(q => q.id)) + 1 : 1;
-    questions.push({
-      id: newId,
-      text: text,
-      likes: 0,
-      liked: false,
-      comments: []
-    });
-    saveQuestions(questions);
+    const id = Number(btn.dataset.id);
+    if (id) openComments(id);
+  }
+});
+
+// Отправка нового вопроса
+document.getElementById('questionForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const textarea = document.getElementById('input2');
+  const text = textarea.value.trim();
+  if (!text) return;
+  try {
+    await addQuestion(text);
+    await renderQuestions();
     textarea.value = '';
-    // Перезагружаем страницу, чтобы увидеть новый вопрос (или можно добавить динамически)
-    location.reload();
-  });
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  } catch (error) {
+    alert('Не удалось добавить вопрос');
+  }
+});
+
+// Отправка комментария
+document.getElementById('commentForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const input = document.getElementById('commentInput');
+  const text = input.value.trim();
+  if (!text || currentQuestionId === null) return;
+  try {
+    await addCommentToServer(currentQuestionId, text);
+    await openComments(currentQuestionId); // обновить панель
+    await renderQuestions(); // обновить счётчики
+    input.value = '';
+  } catch (error) {
+    alert('Ошибка при добавлении комментария');
+  }
+});
+
+// ---------------------- ПЕРВИЧНАЯ ЗАГРУЗКА ----------------------
+renderQuestions();
 </script>
 </body>
 </html>
