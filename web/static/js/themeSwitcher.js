@@ -26,8 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
 function updateButtonText(button, theme) {
     if (!button) return;
     if (theme === 'dark') {
-        button.innerHTML = '☀️ Светлая тема';
+        button.innerHTML = '☀️';
     } else {
-        button.innerHTML = '🌙 Темная тема';
+        button.innerHTML = '🌙';
     }
 }
