@@ -49,7 +49,7 @@ func (h *Handler) UnVote(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err != nil {
-		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
+		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error: "+err.Error())
 		return
 	}
 
