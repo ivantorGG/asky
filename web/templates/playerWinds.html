@@ -106,20 +106,26 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 // ================================================================
-//  РАБОТА С БЭКЕНДОМ (Go) через REST API
+//  АДАПТАЦИЯ ПОД БЭКЕНД (Go) – эндпоинты из роутера
 // ================================================================
 
-const API_BASE = '/api';  // если сервер отдаёт статику на том же порту
-// const API_BASE = 'http://localhost:8080/api'; // если фронт и бэк на разных портах
+// 1. Получаем код мероприятия из текущего URL
+//    Страница открывается как /events/XXXXX/student
+const pathParts = window.location.pathname.split('/');
+const eventCode = pathParts[2]; // например, 'abc123'
+
+// Базовый адрес API (относительный, т.к. фронт и бэк на одном порту)
+const API_BASE = '/api';
 
 let currentQuestionId = null;
 
 // ---------------------- API-ФУНКЦИИ ---------------------------
 
+// Получить все вопросы для мероприятия (GET /api/events/{code}/questions)
 async function getQuestions() {
   try {
-    const resp = await fetch(`${API_BASE}/questions`);
-    if (!resp.ok) throw new Error('Ошибка загрузки');
+    const resp = await fetch(`${API_BASE}/events/${eventCode}/questions`);
+    if (!resp.ok) throw new Error('Ошибка загрузки вопросов');
     return await resp.json();
   } catch (e) {
     console.error('getQuestions:', e);
@@ -127,14 +133,15 @@ async function getQuestions() {
   }
 }
 
+// Создать новый вопрос (POST /api/events/{code}/questions)
 async function addQuestion(text) {
   try {
-    const resp = await fetch(`${API_BASE}/questions`, {
+    const resp = await fetch(`${API_BASE}/events/${eventCode}/questions`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text })
+      body: JSON.stringify({ text }) // бэкенд ждёт поле "text"
     });
-    if (!resp.ok) throw new Error('Ошибка добавления');
+    if (!resp.ok) throw new Error('Ошибка добавления вопроса');
     return await resp.json();
   } catch (e) {
     console.error('addQuestion:', e);
@@ -142,20 +149,35 @@ async function addQuestion(text) {
   }
 }
 
-async function toggleLikeOnServer(questionId, currentLiked) {
-  const action = currentLiked ? 'unlike' : 'like';
+// Поставить лайк (PUT /api/questions/{id}/vote)
+async function likeQuestion(questionId) {
   try {
-    const resp = await fetch(`${API_BASE}/questions/${questionId}/${action}`, {
-      method: 'POST'
+    const resp = await fetch(`${API_BASE}/questions/${questionId}/vote`, {
+      method: 'PUT'
     });
     if (!resp.ok) throw new Error('Ошибка лайка');
     return await resp.json();
   } catch (e) {
-    console.error('toggleLike:', e);
+    console.error('likeQuestion:', e);
     throw e;
   }
 }
 
+// Снять лайк (DELETE /api/questions/{id}/vote)
+async function unlikeQuestion(questionId) {
+  try {
+    const resp = await fetch(`${API_BASE}/questions/${questionId}/vote`, {
+      method: 'DELETE'
+    });
+    if (!resp.ok) throw new Error('Ошибка снятия лайка');
+    return await resp.json();
+  } catch (e) {
+    console.error('unlikeQuestion:', e);
+    throw e;
+  }
+}
+
+// Получить комментарии к вопросу (GET /api/questions/{id}/comments)
 async function getComments(questionId) {
   try {
     const resp = await fetch(`${API_BASE}/questions/${questionId}/comments`);
@@ -167,6 +189,7 @@ async function getComments(questionId) {
   }
 }
 
+// Добавить комментарий (POST /api/questions/{id}/comments)
 async function addCommentToServer(questionId, text) {
   try {
     const resp = await fetch(`${API_BASE}/questions/${questionId}/comments`, {
@@ -182,7 +205,7 @@ async function addCommentToServer(questionId, text) {
   }
 }
 
-// ---------------------- ОТРИСОВКА -------------------------------
+// ---------------------- ОТРИСОВКА ВОПРОСОВ --------------------
 
 async function renderQuestions() {
   const container = document.getElementById('questionsList');
@@ -198,13 +221,16 @@ async function renderQuestions() {
 
     let html = '';
     questions.forEach(q => {
+      // Предполагаем, что бэкенд возвращает поля: id, text, votes, is_voted, comments (или мы загружаем отдельно)
       const commentCount = q.comments ? q.comments.length : 0;
-      const likeClass = q.liked ? 'btn-primary' : 'btn-outline-primary';
+      const likeClass = q.is_voted ? 'btn-primary' : 'btn-outline-primary';
+      const likesCount = q.votes || 0;
+
       html += `
         <div class="list-group-item" data-id="${q.id}">
           <span class="question-text">${q.text}</span>
           <button class="btn btn-sm ${likeClass} like-btn" data-id="${q.id}">
-            👍 <span class="like-count">${q.likes}</span>
+            👍 <span class="like-count">${likesCount}</span>
           </button>
           <button class="btn btn-sm btn-outline-secondary comment-btn" data-id="${q.id}">
             💬 <span class="comment-count">${commentCount}</span>
@@ -218,7 +244,7 @@ async function renderQuestions() {
   }
 }
 
-// ---------------------- КОММЕНТАРИИ -----------------------------
+// ---------------------- КОММЕНТАРИИ ---------------------------
 
 async function openComments(questionId) {
   currentQuestionId = questionId;
@@ -247,9 +273,9 @@ async function openComments(questionId) {
   }
 }
 
-// ---------------------- ОБРАБОТЧИКИ -----------------------------
+// ---------------------- ОБРАБОТЧИКИ СОБЫТИЙ -------------------
 
-// Лайки
+// Лайк (делегирование)
 document.addEventListener('click', async function(e) {
   const btn = e.target.closest('.like-btn');
   if (btn) {
@@ -257,15 +283,19 @@ document.addEventListener('click', async function(e) {
     const id = Number(btn.dataset.id);
     const isLiked = btn.classList.contains('btn-primary');
     try {
-      await toggleLikeOnServer(id, isLiked);
-      await renderQuestions();
+      if (isLiked) {
+        await unlikeQuestion(id);
+      } else {
+        await likeQuestion(id);
+      }
+      await renderQuestions(); // перерисовываем список
     } catch (error) {
-      alert('Ошибка при лайке');
+      alert('Ошибка при изменении лайка');
     }
   }
 });
 
-// Комментарии (открыть панель)
+// Открыть комментарии
 document.addEventListener('click', function(e) {
   const btn = e.target.closest('.comment-btn');
   if (btn) {
@@ -307,7 +337,7 @@ document.getElementById('commentForm').addEventListener('submit', async function
   }
 });
 
-// ---------------------- ЗАПУСК -----------------------------
+// ---------------------- ПЕРВИЧНАЯ ЗАГРУЗКА --------------------
 renderQuestions();
 </script>
 </body>
