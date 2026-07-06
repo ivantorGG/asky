@@ -4,9 +4,11 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
+	"html/template"
 	"net/http"
 	"time"
 
+	"asky"
 	"asky/internal/utils"
 
 	"golang.org/x/crypto/bcrypt"
@@ -58,7 +60,13 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) RegistrationPage(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "./web/templates/speakerReg.html")
+	tmpl, err := template.ParseFS(asky.TemplateFS, "web/templates/base.html", "web/templates/speakerReg.html")
+	if err != nil {
+		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error: "+err.Error())
+		return
+	}
+
+	tmpl.ExecuteTemplate(w, "base", nil)
 }
 
 func (h *Handler) LoginPage(w http.ResponseWriter, r *http.Request) {
@@ -111,7 +119,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 	sessionToken := hex.EncodeToString(b)
 
-	// 2. Сохраняем сессию в базу данных. 
+	// 2. Сохраняем сессию в базу данных.
 	// Предполагается, что в вашей таблице sessions есть колонки token и user_id.
 	// Если у вас есть колонка expires_at, вы можете добавить время жизни сессии в запрос.
 	_, err = h.DB.Exec(
@@ -131,8 +139,8 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		Value:    sessionToken,
 		Path:     "/",
 		Expires:  time.Now().Add(24 * time.Hour * 30), // Время жизни куки на 30 дней
-		HttpOnly: true,                               // Защита от кражи токена через JS (XSS)
-		Secure:   false,                              // Поставьте true, если тестируете локально через HTTPS или в продакшене
+		HttpOnly: true,                                // Защита от кражи токена через JS (XSS)
+		Secure:   false,                               // Поставьте true, если тестируете локально через HTTPS или в продакшене
 		SameSite: http.SameSiteLaxMode,
 	})
 
@@ -172,4 +180,3 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 		"message": "logout_success",
 	})
 }
-
