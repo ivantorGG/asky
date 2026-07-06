@@ -28,12 +28,12 @@ async function sendLogs(email, password){
     });
 
     const response_json = await response.json();
-    const msg = response_json.message
-    if (msg === 'login_success'){
-        location.href = '/events'
-    }
-    else if (err === 'bad_creditans'){
+    const err = response_json.error
+    if (err === 'bad_credentials'){
         showError('Неправильная почта или пароль!')
+    }
+    else {
+        location.href = '/events'
     }
 }
 
