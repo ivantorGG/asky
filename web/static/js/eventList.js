@@ -33,7 +33,9 @@ async function loadEvents(){
 async function createEvent(name){
     const response = await fetch("/api/events",
         {
-            Title: name,
+            method: "POST",
+            headers: {'Content-Type': 'application/json' },
+            body: JSON.stringify({title: name})
         }
     )
 
