@@ -25,10 +25,10 @@ func Auth(db *pgxpool.Pool) func(http.Handler) http.Handler {
 
 			// 2. Ищем userID по токену в базе данных
 			var userID int64
-			err = db.QueryRow(r.Context(), 
-				"SELECT user_id FROM sessions WHERE token = $1", 
+			err = db.QueryRow(r.Context(),
+				"SELECT user_id FROM sessions WHERE token = $1",
 				cookie.Value).Scan(&userID)
-				
+
 			if err != nil {
 				// Сессия не найдена или истекла
 				utils.WriteJSONError(w, http.StatusUnauthorized, "unauthorized")
@@ -41,4 +41,3 @@ func Auth(db *pgxpool.Pool) func(http.Handler) http.Handler {
 		})
 	}
 }
-

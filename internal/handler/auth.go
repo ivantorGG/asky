@@ -111,7 +111,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 	sessionToken := hex.EncodeToString(b)
 
-	// 2. Сохраняем сессию в базу данных. 
+	// 2. Сохраняем сессию в базу данных.
 	// Предполагается, что в вашей таблице sessions есть колонки token и user_id.
 	// Если у вас есть колонка expires_at, вы можете добавить время жизни сессии в запрос.
 	_, err = h.DB.Exec(
@@ -131,8 +131,8 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		Value:    sessionToken,
 		Path:     "/",
 		Expires:  time.Now().Add(24 * time.Hour * 30), // Время жизни куки на 30 дней
-		HttpOnly: true,                               // Защита от кражи токена через JS (XSS)
-		Secure:   false,                              // Поставьте true, если тестируете локально через HTTPS или в продакшене
+		HttpOnly: true,                                // Защита от кражи токена через JS (XSS)
+		Secure:   false,                               // Поставьте true, если тестируете локально через HTTPS или в продакшене
 		SameSite: http.SameSiteLaxMode,
 	})
 
@@ -172,4 +172,3 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 		"message": "logout_success",
 	})
 }
-
