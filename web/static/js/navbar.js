@@ -6,7 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
 async function showEmail(){
     const response = await fetch('/api/email', {
         method: "GET",
-        headers: {'Content-Type': 'application/json' }
+        headers: {'Content-Type': 'application/json' },
+        credentials: 'include'
     })
     if (response.ok){
         const data = await response.json()

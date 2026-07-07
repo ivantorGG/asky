@@ -40,17 +40,23 @@
     <div class="container"> 
         <a class="navbar-brand" href="#" style="font-weight: bold;">Asky</a>
         <span class="navbar-text" id="email"></span>
-        <button class="btn btn-outline-light" onclick="logout()">
-            <i class="bi bi-box-arrow-right"></i>
-        </button>
+        <div>
+            <button class="btn btn-outline-light" onclick="location.href = '/events'">
+                <i class="bi bi-list"></i>
+            </button>
+            <button class="btn btn-outline-light" onclick="logout()">
+                <i class="bi bi-box-arrow-right"></i>
+            </button>
+        </div>
+        
     </div>
         <script src="/static/js/logout.js"></script>
         <script src="/static/js/navbar.js"></script>
     </nav>
 
 <div style=" width: 140px; height: 140px; margin-left: 10%; position: fixed; margin-top: 100px;"  >
-    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/QR_Code_example.png" alt="" style="display: flex; width: 140px; height: 140px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
-    <a href="https://upload.wikimedia.org/wikipedia/commons/5/5e/QR_Code_example.png" style="display: block; text-decoration: none; margin-left: 5px;">ссылка на лекцию</a>
+    <img id="eventQR" src="https://upload.wikimedia.org/wikipedia/commons/5/5e/QR_Code_example.png" alt="" style="display: flex; width: 140px; height: 140px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
+    <a href="" style="display: block; text-decoration: none; margin-left: 5px;" id="eventLink">ссылка на мероприятие</a>
 </div>
 
 <div class="container mt-4" id="questionsContainer">
@@ -85,6 +91,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+
 // ================================================================
 //  ВЕРСИЯ ДЛЯ ПРЕПОДАВАТЕЛЯ – УПРАВЛЕНИЕ ВОПРОСАМИ
 // ================================================================
@@ -140,30 +147,12 @@ async function unlikeQuestion(questionId) {
 
 // ✅ Отметить вопрос как отвеченный (PUT /api/questions/{id}/answer)
 async function markAsAnswered(questionId) {
-  try {
-    const resp = await fetch(`${API_BASE}/questions/${questionId}/answer`, {
-      method: 'PUT'
+    const resp = await fetch(`/api/questions/${questionId}/answer`, {
+      method: 'PUT',
+      credentials: 'include'
     });
-    if (!resp.ok) throw new Error(`Ошибка отметки: ${resp.status}`);
-    return await resp.json();
-  } catch (e) {
-    console.error('markAsAnswered:', e);
-    throw e;
-  }
-}
 
-// ✅ Удалить вопрос (DELETE /api/questions/{id})
-async function deleteQuestion(questionId) {
-  try {
-    const resp = await fetch(`${API_BASE}/questions/${questionId}`, {
-      method: 'DELETE'
-    });
-    if (!resp.ok) throw new Error(`Ошибка удаления: ${resp.status}`);
-    return await resp.json();
-  } catch (e) {
-    console.error('deleteQuestion:', e);
-    throw e;
-  }
+    console.log(resp)
 }
 
 // ✅ Получить комментарии (GET /api/questions/{id}/comments)
@@ -222,6 +211,7 @@ async function renderQuestions() {
       }
 
       const answeredClass = isAnswered ? 'question-answered' : '';
+      console.log(isAnswered)
       const answerBtnText = isAnswered ? '✓ Отвечено' : 'Отметить отвеченным';
       const answerBtnClass = isAnswered ? 'btn-success' : 'btn-outline-success';
 
@@ -234,18 +224,12 @@ async function renderQuestions() {
             </div>
           </div>
           
-          <div class="d-flex gap-2 flex-wrap">
-            <button class="btn btn-sm ${likeClass} like-btn" data-id="${q.id}">
-              👍 <span class="like-count">${likesCount}</span>
-            </button>
+          <div class="d-flex gap-2 flex-wrap justify-content-evenly">
             <button class="btn btn-sm btn-outline-secondary comment-btn" data-id="${q.id}">
-              💬 <span class="comment-count">${commentCount}</span>
+              <i class="bi bi-chat fs-2"></i><span class="comment-count fs-2">${commentCount}</span>
             </button>
             <button class="btn btn-sm ${answerBtnClass} answer-btn" data-id="${q.id}">
-              ${answerBtnText}
-            </button>
-            <button class="btn btn-sm btn-outline-danger delete-btn" data-id="${q.id}">
-              🗑️ Удалить
+              <i class="bi bi-check-circle fs-2"></i>
             </button>
           </div>
         </div>
@@ -287,8 +271,18 @@ async function openComments(questionId) {
   }
 }
 
+async function showQR() {
+    const imgElement = document.getElementById('eventQR');
+    imgElement.src = `/api/events/${eventCode}/qrcode`;
+}
+
 // ---------------------- ОБРАБОТЧИКИ СОБЫТИЙ ---------------------
 
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('eventLink').href = `/events/${eventCode}/student`
+
+    showQR();
+});
 // Лайк (делегирование)
 document.addEventListener('click', async function(e) {
   const btn = e.target.closest('.like-btn');
