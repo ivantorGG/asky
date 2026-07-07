@@ -1,82 +1,237 @@
+// ================================
+// THEME
+// ================================
 
+const themeButton = document.getElementById("themeToggle");
+const html = document.documentElement;
 
-function tryToSend(email, password){
-    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+const moonIcon = `
+<svg viewBox="0 0 24 24" width="22" height="22">
+<path fill="currentColor"
+d="M21 12.79A9 9 0 0 1 11.21 3
+a7 7 0 1 0 9.79 9.79z"/>
+</svg>
+`;
 
-    if (password.length < 6){
-        showError('Пароль слишком короткий')
+const sunIcon = `
+<svg viewBox="0 0 24 24" width="22" height="22">
+<path fill="currentColor"
+d="M12 18a6 6 0 1 1 0-12
+6 6 0 0 1 0 12zm0-16h1v3h-1zm0 17h1v3h-1zM2
+11h3v1H2zm17 0h3v1h-3zM4.22
+5.64l.71-.71 2.12 2.12-.71.71zm12.73
+12.73.71-.71 2.12 2.12-.71.71zM4.22
+18.36l2.12-2.12.71.71-2.12
+2.12zm12.73-12.73 2.12-2.12.71.71-2.12 2.12z"/>
+</svg>
+`;
+
+function updateThemeButton(){
+
+    if(html.dataset.theme === "light"){
+        themeButton.innerHTML = moonIcon;
+    }else{
+        themeButton.innerHTML = sunIcon;
     }
-    else if (email === '' || !regex.test(email)){
-        showError('Почта неверно введена')
-    }
-    else{
-        sendRegs(email, password);
-    }
+
 }
 
-async function sendRegs(email, password){
-    console.log("Емаил", email);
-    console.log("Пароль", password);
+updateThemeButton();
 
-    const data = {
-        email: email,
-        password: password
-    };
+themeButton.addEventListener("click",()=>{
 
-    const response = await fetch("/api/register", {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+    html.dataset.theme =
+        html.dataset.theme === "dark"
+        ? "light"
+        : "dark";
+
+    localStorage.setItem("theme",html.dataset.theme);
+
+    updateThemeButton();
+
+});
+
+const savedTheme = localStorage.getItem("theme");
+
+if(savedTheme){
+
+    html.dataset.theme = savedTheme;
+
+    updateThemeButton();
+
+}
+
+// ================================
+// INPUT EFFECT
+// ================================
+
+document.querySelectorAll("input").forEach(input=>{
+
+    input.addEventListener("focus",()=>{
+
+        input.parentElement.classList.add("focused");
+
     });
 
-    const response_json = await response.json();
-    const msg = response_json.message;
-    const err = response_json.error;
+    input.addEventListener("blur",()=>{
 
-    if (msg === 'registration_success'){
-        location.href = '/login'
+        if(input.value===""){
+
+            input.parentElement.classList.remove("focused");
+
+        }
+
+    });
+
+});
+
+// ================================
+// VALIDATION
+// ================================
+
+function tryToSend(email,password){
+
+    const regex =
+    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    hideError();
+
+    if(password.length<6){
+
+        showError("Password must contain at least 6 characters");
+
         return;
+
     }
 
-    switch (err){
-        case 'server_error':
-            showError('Сервер не отвечает...')
-            break;
-        case 'bad_request':
-            showError('Ошибка на сайте')
-            break;
-        case 'invalid_input':
-            showError('Почта и пароль не могут быть пустыми!')
-            break;
-        case 'email_already_exists':
-            showError('Такой email уже зарегистрирован!')
-            break;
+    if(email==="" || !regex.test(email)){
+
+        showError("Incorrect email");
+
+        return;
+
     }
+
+    sendRegs(email,password);
+
 }
 
-function showError(message) {
-    const alert = document.getElementById('loginError');
-    document.getElementById('errorMessage').textContent = message;
-    
-    // 1. Убираем d-none (элемент становится видимым, но opacity: 0 из-за fade)
-    alert.classList.remove('d-none');
-    
-    // 2. Небольшая задержка, чтобы браузер успел применить display: block
-    setTimeout(() => {
-        // 3. Добавляем show - запускается transition к opacity: 1
-        alert.classList.add('show');
-    }, 10);
+// ================================
+// REQUEST
+// ================================
+
+async function sendRegs(email,password){
+
+    const response = await fetch("/api/register",{
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+
+            email,
+            password
+
+        })
+
+    });
+
+    const json = await response.json();
+
+    if(json.message==="registration_success"){
+
+        location.href="/login";
+
+        return;
+
+    }
+
+    switch(json.error){
+
+        case "server_error":
+
+            showError("Server unavailable");
+
+            break;
+
+        case "bad_request":
+
+            showError("Bad request");
+
+            break;
+
+        case "invalid_input":
+
+            showError("Invalid input");
+
+            break;
+
+        case "email_already_exists":
+
+            showError("Email already exists");
+
+            break;
+
+        default:
+
+            showError("Unknown error");
+
+    }
+
 }
 
-function hideError() {
-    const alert = document.getElementById('loginError');
-    
-    // 1. Убираем show - запускается transition к opacity: 0
-    alert.classList.remove('show');
-    
-    // 2. Ждем окончания анимации (обычно 150ms в Bootstrap)
-    setTimeout(() => {
-        // 3. Скрываем полностью
-        alert.classList.add('d-none');
-    }, 150);
+// ================================
+// ERROR
+// ================================
+
+const errorBox = document.getElementById("loginError");
+
+function showError(message){
+
+    document.getElementById("errorMessage").textContent = message;
+
+    errorBox.classList.add("show");
+
 }
+
+function hideError(){
+
+    errorBox.classList.remove("show");
+
+}
+
+// ================================
+// CARD INTRO
+// ================================
+
+window.addEventListener("load",()=>{
+
+    document.querySelector(".registerCard")
+        .classList.add("loaded");
+
+});
+
+// ================================
+// BUTTON RIPPLE
+// ================================
+
+const btn = document.querySelector(".registerButton");
+
+btn.addEventListener("mousemove",(e)=>{
+
+    const rect = btn.getBoundingClientRect();
+
+    btn.style.setProperty(
+        "--x",
+        `${e.clientX-rect.left}px`
+    );
+
+    btn.style.setProperty(
+        "--y",
+        `${e.clientY-rect.top}px`
+    );
+
+});
