@@ -9,6 +9,7 @@ import (
 
 type Config struct {
 	Port        string
+	Domain      string
 	DatabaseURL string
 }
 
@@ -18,6 +19,7 @@ func Load() *Config {
 	cfg := &Config{
 		Port:        os.Getenv("PORT"),
 		DatabaseURL: os.Getenv("DATABASE_URL"),
+		Domain:      os.Getenv("DOMAIN"),
 	}
 
 	if cfg.Port == "" {
