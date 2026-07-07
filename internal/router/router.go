@@ -28,8 +28,10 @@ func New(h *handler.Handler) http.Handler {
 	// Pages (HTML)
 	// =========================================================================
 
+	r.Get("/", h.Index) // home page
+
 	r.Get("/login", h.LoginPage)           // Login page
-	r.Get("/logout", h.Logout)           // Logout
+	r.Get("/logout", h.Logout)             // Logout
 	r.Get("/register", h.RegistrationPage) // Registration page
 
 	r.Get("/events", h.EventsPage)                      // Events dashboard page
@@ -49,7 +51,7 @@ func New(h *handler.Handler) http.Handler {
 
 	r.With(middleware.Auth(h.DB)).Post("/api/events", h.CreateEvent)                // Create a new event
 	r.With(middleware.Auth(h.DB)).Get("/api/events/teacher", h.ListTeachersEvents)  // Get teacher's events
-	r.Get("/api/events/student", h.ListUsersEvents)                           // Get recently visited events
+	r.Get("/api/events/student", h.ListUsersEvents)                                 // Get recently visited events
 	r.With(middleware.Auth(h.DB)).Delete("/api/events/{code}", h.DeleteEventByCode) // Delete (deactivate) an event
 
 	r.Get("/api/events/{code}/link", h.GetEventLink)     // Get event invitation link
@@ -73,6 +75,8 @@ func New(h *handler.Handler) http.Handler {
 
 	r.Get("/api/questions/{id}/comments", h.ListQuestionComments) // Get question comments
 	r.Post("/api/questions/{id}/comments", h.NewComment)          // Add a comment to a question
+	r.Delete("/api/comments/{id}", h.DeleteComment)               // Delete a comment
+	r.Put("/api/comments/{id}", h.EditComment)                    // Edit a comment
 
 	return r
 }
