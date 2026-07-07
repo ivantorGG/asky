@@ -201,7 +201,7 @@ async function renderQuestions() {
     questions.forEach(q => {
       const likesCount = q.votes || 0;
       const likeClass = q.is_voted ? 'btn-primary' : 'btn-outline-primary';
-      const isAnswered = q.is_answered || false;
+      const isAnswered = q.answered || false;
       
       let commentCount = 0;
       if (q.comments && Array.isArray(q.comments)) {
