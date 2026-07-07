@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="/static/css/Winds.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>asky - Преподаватель</title>
+    <style>
+        body { padding-bottom: 50px; }
+        
+        /* Стили для отвеченных вопросов */
+        .question-answered {
+            opacity: 0.6;
+            background-color: #f8f9fa !important;
+        }
+        .question-answered .question-text {
+            text-decoration: line-through;
+            color: #6c757d;
+        }
+        .question-answered .answered-badge {
+            display: inline-block;
+        }
+        
+        .answered-badge {
+            display: none;
+            background-color: #28a745;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            margin-left: 8px;
+        }
+
+                /* Круглые кнопки */
+        .btn-circle {
+            width: 48px;
+            height: 48px;
+            padding: 0;
+            border-radius: 50% !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0; /* Запрещаем сжатие */
+        }
+
+        /* Контейнер с кнопками не должен растягиваться */
+        .buttons-container {
+            align-self: center; /* Центрируем по вертикали */
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        
+    <div class="container"> 
+        <a class="navbar-brand" href="#" style="font-weight: bold;">Asky</a>
+        <span class="navbar-text" id="email"></span>
+        <div>
+            <button class="btn btn-outline-light" onclick="location.href = '/events'">
+                <i class="bi bi-list"></i>
+            </button>
+            <button class="btn btn-outline-light" onclick="logout()">
+                <i class="bi bi-box-arrow-right"></i>
+            </button>
+        </div>
+        
+    </div>
+        <script src="/static/js/logout.js"></script>
+        <script src="/static/js/navbar.js"></script>
+    </nav>
+
+<div style=" width: 140px; height: 140px; margin-left: 10%; position: fixed; margin-top: 100px;"  >
+    <img id="eventQR" src="https://upload.wikimedia.org/wikipedia/commons/5/5e/QR_Code_example.png" alt="" style="display: flex; width: 140px; height: 140px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
+    <a href="" style="display: block; text-decoration: none; margin-left: 5px;" id="eventLink">ссылка на мероприятие</a>
+</div>
+
+<div class="container mt-4" id="questionsContainer">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <h4 class="mb-3">Вопросы студентов</h4>
+      <div style="border: 1px solid #dddddd00; border-radius: 8px; padding: 10px;">
+        <div class="list-group" id="questionsList">
+          <!-- Сюда динамически будут вставляться вопросы -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Боковая панель комментариев -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="commentsOffcanvas" style="border-radius: 18px;">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">Комментарии</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div id="commentsList">
+      <p class="text-muted">Комментариев пока нет</p>
+    </div>
+    <form id="commentForm" class="mt-3" style="border-radius: 20px;">
+      <input type="text" id="commentInput" class="form-control mb-2" placeholder="Напишите комментарий...">
+      <button type="submit" class="btn btn-primary w-100">Отправить</button>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+// ================================================================
+//  ВЕРСИЯ ДЛЯ ПРЕПОДАВАТЕЛЯ – УПРАВЛЕНИЕ ВОПРОСАМИ
+// ================================================================
+
+// 1. Извлекаем код мероприятия из URL: /events/XXXXX/teacher
+const pathParts = window.location.pathname.split('/');
+const eventCode = pathParts[2]; // например, 'abc123'
+
+const API_BASE = '/api';
+let currentQuestionId = null;
+
+// ---------------------- API-ВЫЗОВЫ -------------------------------
+
+// ✅ Получить все вопросы (GET /api/events/{code}/questions)
+async function getQuestions() {
+  try {
+    const resp = await fetch(`${API_BASE}/events/${eventCode}/questions`);
+    if (!resp.ok) throw new Error(`Ошибка загрузки: ${resp.status}`);
+    return await resp.json();
+  } catch (e) {
+    console.error('getQuestions:', e);
+    return [];
+  }
+}
+
+// ✅ Поставить лайк (PUT /api/questions/{id}/vote)
+async function likeQuestion(questionId) {
+  try {
+    const resp = await fetch(`${API_BASE}/questions/${questionId}/vote`, {
+      method: 'PUT'
+    });
+    if (!resp.ok) throw new Error(`Ошибка лайка: ${resp.status}`);
+    return await resp.json();
+  } catch (e) {
+    console.error('likeQuestion:', e);
+    throw e;
+  }
+}
+
+// ✅ Снять лайк (DELETE /api/questions/{id}/vote)
+async function unlikeQuestion(questionId) {
+  try {
+    const resp = await fetch(`${API_BASE}/questions/${questionId}/vote`, {
+      method: 'DELETE'
+    });
+    if (!resp.ok) throw new Error(`Ошибка снятия лайка: ${resp.status}`);
+    return await resp.json();
+  } catch (e) {
+    console.error('unlikeQuestion:', e);
+    throw e;
+  }
+}
+
+// ✅ Отметить вопрос как отвеченный (PUT /api/questions/{id}/answer)
+async function markAsAnswered(questionId) {
+    const resp = await fetch(`/api/questions/${questionId}/answer`, {
+      method: 'PUT',
+      credentials: 'include'
+    });
+
+    console.log(resp)
+}
+
+// ✅ Получить комментарии (GET /api/questions/{id}/comments)
+async function getComments(questionId) {
+  try {
+    const resp = await fetch(`${API_BASE}/questions/${questionId}/comments`);
+    if (!resp.ok) throw new Error(`Ошибка загрузки комментариев: ${resp.status}`);
+    return await resp.json();
+  } catch (e) {
+    console.error('getComments:', e);
+    return [];
+  }
+}
+
+// ✅ Добавить комментарий (POST /api/questions/{id}/comments)
+async function addCommentToServer(questionId, text) {
+  try {
+    const resp = await fetch(`/api/questions/${questionId}/comments`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text:text }),
+      credentials: "include"
+    });
+    console.log(resp)
+    if (!resp.ok) throw new Error(`Ошибка добавления комментария: ${resp.status}`);
+    return await resp.json();
+  } catch (e) {
+    console.error('addCommentToServer:', e);
+    throw e;
+  }
+}
+
+// ---------------------- ОТРИСОВКА ВОПРОСОВ -----------------------
+
+async function renderQuestions() {
+  const container = document.getElementById('questionsList');
+  if (!container) return;
+
+  try {
+    const questions = await getQuestions();
+
+    if (questions.length === 0) {
+      container.innerHTML = '<p class="text-muted text-center">Пока нет вопросов от студентов</p>';
+      return;
+    }
+
+    let html = '';
+    questions.forEach(q => {
+      const likesCount = q.votes || 0;
+      const likeClass = q.is_voted ? 'btn-primary' : 'btn-outline-primary';
+      const isAnswered = q.answered || false;
+      
+      let commentCount = 0;
+      if (q.comments && Array.isArray(q.comments)) {
+        commentCount = q.comments.length;
+      } else if (q.comments_count !== undefined) {
+        commentCount = q.comments_count;
+      }
+
+      const answeredClass = isAnswered ? 'question-answered' : '';
+      const answerBtnText = isAnswered ? '✓ Отвечено' : 'Отметить отвеченным';
+      const answerBtnClass = isAnswered ? 'btn-success' : 'btn-outline-success';
+
+      html += `
+        <div class="list-group-item ${answeredClass}" data-id="${q.id}">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <div class="flex-grow-1">
+                    <span class="question-text">${q.text}</span>
+                    <span class="answered-badge">Отвечено</span>
+                </div>
+            </div>
+            
+            <!-- Добавили buttons-container -->
+            <div class="d-flex gap-2 flex-wrap justify-content-evenly buttons-container">
+                <button class="btn btn-sm btn-outline-secondary comment-btn btn-circle" data-id="${q.id}">
+                    <i class="bi bi-chat fs-4"></i>
+                </button>
+                <button class="btn btn-sm ${answerBtnClass} answer-btn btn-circle" data-id="${q.id}">
+                    <i class="bi bi-check-circle fs-4"></i>
+                </button>
+            </div>
+        </div>
+      `;
+    });
+    container.innerHTML = html;
+  } catch (error) {
+    console.error('renderQuestions error:', error);
+    container.innerHTML = '<p class="text-danger">Не удалось загрузить вопросы</p>';
+  }
+}
+
+// ---------------------- КОММЕНТАРИИ -----------------------------
+
+async function openComments(questionId) {
+  currentQuestionId = questionId;
+  try {
+    const comments = await getComments(questionId);
+    const container = document.getElementById('commentsList');
+
+    if (!comments || comments.length === 0) {
+      container.innerHTML = '<p class="text-muted">Комментариев пока нет</p>';
+    } else {
+      container.innerHTML = comments.map(c => `
+        <div class="border-bottom pb-2 mb-2">
+          <div class="d-flex justify-content-between">
+            <strong>Аноним</strong>
+            <small class="text-muted">${new Date(c.timestamp).toLocaleString()}</small>
+          </div>
+          <p class="mb-1">${c.text}</p>
+        </div>
+      `).join('');
+    }
+
+    const offcanvas = new bootstrap.Offcanvas(document.getElementById('commentsOffcanvas'));
+    offcanvas.show();
+  } catch (error) {
+    console.error('openComments error:', error);
+  }
+}
+
+async function showQR() {
+    const imgElement = document.getElementById('eventQR');
+    imgElement.src = `/api/events/${eventCode}/qrcode`;
+}
+
+// ---------------------- ОБРАБОТЧИКИ СОБЫТИЙ ---------------------
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('eventLink').href = `/events/${eventCode}/student`
+
+    showQR();
+});
+// Лайк (делегирование)
+document.addEventListener('click', async function(e) {
+  const btn = e.target.closest('.like-btn');
+  if (btn) {
+    e.preventDefault();
+    const id = Number(btn.dataset.id);
+    const isLiked = btn.classList.contains('btn-primary');
+    try {
+      if (isLiked) {
+        await unlikeQuestion(id);
+      } else {
+        await likeQuestion(id);
+      }
+      await renderQuestions();
+    } catch (error) {
+      alert('Ошибка при изменении лайка');
+    }
+  }
+});
+
+// Открыть комментарии
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest('.comment-btn');
+  if (btn) {
+    e.preventDefault();
+    const id = Number(btn.dataset.id);
+    if (id) openComments(id);
+  }
+});
+
+// ✅ Отметить как отвеченный
+document.addEventListener('click', async function(e) {
+  const btn = e.target.closest('.answer-btn');
+  if (btn) {
+    e.preventDefault();
+    const id = Number(btn.dataset.id);
+    try {
+      await markAsAnswered(id);
+      await renderQuestions();
+    } catch (error) {
+      alert('Не удалось отметить вопрос как отвеченный');
+    }
+  }
+});
+
+// ✅ Удалить вопрос
+document.addEventListener('click', async function(e) {
+  const btn = e.target.closest('.delete-btn');
+  if (btn) {
+    e.preventDefault();
+    const id = Number(btn.dataset.id);
+    
+    if (confirm('Вы уверены, что хотите удалить этот вопрос?')) {
+      try {
+        await deleteQuestion(id);
+        await renderQuestions();
+      } catch (error) {
+        alert('Не удалось удалить вопрос');
+      }
+    }
+  }
+});
+
+// Отправка комментария
+document.getElementById('commentForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const input = document.getElementById('commentInput');
+  const text = input.value.trim();
+  if (!text || currentQuestionId === null) return;
+  try {
+    await addCommentToServer(currentQuestionId, text);
+    await openComments(currentQuestionId);
+    await renderQuestions();
+    input.value = '';
+  } catch (error) {
+    alert('Ошибка при добавлении комментария');
+  }
+});
+
+// ---------------------- ПЕРВИЧНАЯ ЗАГРУЗКА ----------------------
+renderQuestions();
+
+// Автообновление каждые 5 секунд (чтобы видеть новые вопросы студентов)
+setInterval(renderQuestions, 5000);
+</script>
+</body>
+</html>

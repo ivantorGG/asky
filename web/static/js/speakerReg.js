@@ -13,25 +13,14 @@ a7 7 0 1 0 9.79 9.79z"/>
 </svg>
 `;
 
-const sunIcon = `
-<svg viewBox="0 0 24 24" width="22" height="22">
-<path fill="currentColor"
-d="M12 18a6 6 0 1 1 0-12
-6 6 0 0 1 0 12zm0-16h1v3h-1zm0 17h1v3h-1zM2
-11h3v1H2zm17 0h3v1h-3zM4.22
-5.64l.71-.71 2.12 2.12-.71.71zm12.73
-12.73.71-.71 2.12 2.12-.71.71zM4.22
-18.36l2.12-2.12.71.71-2.12
-2.12zm12.73-12.73 2.12-2.12.71.71-2.12 2.12z"/>
-</svg>
-`;
-
-function updateThemeButton(){
-
-    if(html.dataset.theme === "light"){
-        themeButton.innerHTML = moonIcon;
-    }else{
-        themeButton.innerHTML = sunIcon;
+    if (password.length < 6){
+        showError('Пароль слишком короткий (минимальная длина - 6 символов)')
+    }
+    else if (email === '' || !regex.test(email)){
+        showError('Почта неверно введена')
+    }
+    else{
+        sendRegs(email, password);
     }
 
 }

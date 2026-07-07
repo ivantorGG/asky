@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -18,18 +19,44 @@ type NewCommentRequest struct {
 func (h *Handler) NewComment(w http.ResponseWriter, r *http.Request) {
 	var req NewCommentRequest
 
+	// 1. Декодируем JSON
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		utils.WriteJSONError(w, http.StatusBadRequest, "bad_request")
 		return
 	}
 
-	id := chi.URLParam(r, "id")
 
+	// 2. Проверка на пустой текст
+	if req.Text == "" {
+		utils.WriteJSONError(w, http.StatusBadRequest, "empty_text")
+		return
+	}
+
+	// 3. Получаем ID вопроса из URL
+	idStr := chi.URLParam(r, "id")
+
+	// 4. Конвертируем ID в нужный тип (выберите подходящий вариант)
+
+	// ВАРИАНТ A: Если question_id в БД — это INT
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		utils.WriteJSONError(w, http.StatusBadRequest, "invalid_question_id")
+		return
+	}
+
+	// ВАРИАНТ B: Если question_id в БД — это UUID (раскомментируйте, если нужно)
+	// id, err := uuid.Parse(idStr)
+	// if err != nil {
+	//     log.Printf("❌ Не удалось конвертировать ID в UUID: %v", err)
+	//     utils.WriteJSONError(w, http.StatusBadRequest, "invalid_question_id")
+	//     return
+	// }
+
+	// 5. Получаем или создаём visitor_id
 	cookie, err := r.Cookie("visitor_id")
 	var visitorID string
 
 	if err != nil {
-		// Куки нет — создаем новую
 		b := make([]byte, 32)
 		if _, err := rand.Read(b); err != nil {
 			utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
@@ -49,9 +76,11 @@ func (h *Handler) NewComment(w http.ResponseWriter, r *http.Request) {
 		visitorID = cookie.Value
 	}
 
+	// 6. Вставляем комментарий в БД
+
 	_, err = h.DB.Exec(
 		r.Context(),
-		`INSERT INTO comments(question_id, text, user_id)
+		`INSERT INTO comments(question_id, text, visitor_id)
 		 VALUES ($1, $2, $3)`,
 		id,
 		req.Text,
@@ -59,9 +88,10 @@ func (h *Handler) NewComment(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err != nil {
-		utils.WriteJSONError(w, http.StatusBadRequest, "db_error")
+		utils.WriteJSONError(w, http.StatusInternalServerError, "db_error: "+err.Error())
 		return
 	}
+
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
@@ -124,7 +154,7 @@ func (h *Handler) DeleteComment(w http.ResponseWriter, r *http.Request) {
 
 	_, err = h.DB.Exec(
 		r.Context(),
-		`DELETE FROM comments WHERE id = $1 AND user_id = $2`,
+		`DELETE FROM comments WHERE id = $1 AND visitor_id = $2`,
 		id,
 		cookie.Value,
 	)
@@ -151,7 +181,7 @@ func (h *Handler) EditComment(w http.ResponseWriter, r *http.Request) {
 	}
 	_, err = h.DB.Exec(
 		r.Context(),
-		`UPDATE comments SET text = $1 WHERE id = $2 AND user_id = $3`,
+		`UPDATE comments SET text = $1 WHERE id = $2 AND visitor_id = $3`,
 		req.Text,
 		chi.URLParam(r, "id"),
 		cookie.Value,

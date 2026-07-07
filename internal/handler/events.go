@@ -8,10 +8,13 @@ import (
 	"net/http"
 	"net/url"
 	"time"
+	"asky/internal/config"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/skip2/go-qrcode"
 )
+
+var cfg *config.Config = config.Load()
 
 type EventRequest struct {
 	Title string `json:"title"`
@@ -331,7 +334,7 @@ func (h *Handler) GetEventLink(w http.ResponseWriter, r *http.Request) {
 		utils.WriteJSONError(w, http.StatusBadRequest, "bad_request")
 		return
 	}
-	link := "http://localhost:8080/events/" + code
+	link := cfg.Domain + "/events/" + code
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{
@@ -344,7 +347,7 @@ func (h *Handler) GetEventQRcode(w http.ResponseWriter, r *http.Request) {
 		utils.WriteJSONError(w, http.StatusBadRequest, "bad_request")
 		return
 	}
-	link := fmt.Sprintf("http://localhost:8080/events/%s", code)
+	link := fmt.Sprintf("%s/events/%s", cfg.Domain, code)
 
 	png, err := qrcode.Encode(link, qrcode.Medium, 256)
 	if err != nil {
