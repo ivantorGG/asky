@@ -31,9 +31,26 @@ async function sendRegs(email, password){
 
     const response_json = await response.json();
     const msg = response_json.message;
+    const err = response_json.error;
 
     if (msg === 'registration_success'){
-        location.href = '/events'
+        location.href = '/login'
+        return;
+    }
+
+    switch (err){
+        case 'server_error':
+            showError('Сервер не отвечает...')
+            break;
+        case 'bad_request':
+            showError('Ошибка на сайте')
+            break;
+        case 'invalid_input':
+            showError('Почта и пароль не могут быть пустыми!')
+            break;
+        case 'email_already_exists':
+            showError('Такой email уже зарегистрирован!')
+            break;
     }
 }
 

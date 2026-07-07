@@ -28,12 +28,21 @@ async function sendLogs(email, password){
     });
 
     const response_json = await response.json();
+    const err = response_json.error
     const msg = response_json.message
+    console.log(msg)
+
     if (msg === 'login_success'){
         location.href = '/events'
+        return;
     }
-    else if (err === 'bad_creditans'){
-        showError('Неправильная почта или пароль!')
+    switch (err){
+        case 'bad_credentials':
+            showError('Неправильная почта или пароль!')
+            break;
+        case 'server_error':
+            showError('Сервер не отвечает...')
+            break;
     }
 }
 

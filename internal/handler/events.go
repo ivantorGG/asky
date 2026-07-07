@@ -288,7 +288,7 @@ func (h *Handler) StudentEventPage(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	http.ServeFile(w, r, "./web/templates/playerWinds.html")
+	http.ServeFile(w, r, "./web/templates/studentWinds.html")
 }
 func (h *Handler) TeacherEventPage(w http.ResponseWriter, r *http.Request) {
 	code := chi.URLParam(r, "code")

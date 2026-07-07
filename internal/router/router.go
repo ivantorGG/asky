@@ -29,6 +29,7 @@ func New(h *handler.Handler) http.Handler {
 	// =========================================================================
 
 	r.Get("/login", h.LoginPage)           // Login page
+	r.Get("/logout", h.Logout)           // Logout
 	r.Get("/register", h.RegistrationPage) // Registration page
 
 	r.Get("/events", h.EventsPage)                      // Events dashboard page
