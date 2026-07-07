@@ -4,7 +4,7 @@ function tryToSend(email, password){
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
     if (password.length < 6){
-        showError('Пароль слишком короткий')
+        showError('Пароль слишком короткий (минимальная длина - 6 символов)')
     }
     else if (email === '' || !regex.test(email)){
         showError('Почта неверно введена')
