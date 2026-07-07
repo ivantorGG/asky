@@ -5,7 +5,6 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -22,30 +21,25 @@ func (h *Handler) NewComment(w http.ResponseWriter, r *http.Request) {
 
 	// 1. Декодируем JSON
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		log.Printf("❌ JSON decode error: %v", err)
 		utils.WriteJSONError(w, http.StatusBadRequest, "bad_request")
 		return
 	}
 
-	log.Printf("✅ Получен комментарий: %+v", req)
 
 	// 2. Проверка на пустой текст
 	if req.Text == "" {
-		log.Printf("❌ Пустой текст комментария")
 		utils.WriteJSONError(w, http.StatusBadRequest, "empty_text")
 		return
 	}
 
 	// 3. Получаем ID вопроса из URL
 	idStr := chi.URLParam(r, "id")
-	log.Printf("📝 Question ID (string): %s", idStr)
 
 	// 4. Конвертируем ID в нужный тип (выберите подходящий вариант)
 
 	// ВАРИАНТ A: Если question_id в БД — это INT
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
-		log.Printf("❌ Не удалось конвертировать ID в int: %v", err)
 		utils.WriteJSONError(w, http.StatusBadRequest, "invalid_question_id")
 		return
 	}
@@ -65,7 +59,6 @@ func (h *Handler) NewComment(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		b := make([]byte, 32)
 		if _, err := rand.Read(b); err != nil {
-			log.Printf("❌ Ошибка генерации visitor_id: %v", err)
 			utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
 			return
 		}
@@ -79,31 +72,26 @@ func (h *Handler) NewComment(w http.ResponseWriter, r *http.Request) {
 			HttpOnly: true,
 			SameSite: http.SameSiteLaxMode,
 		})
-		log.Printf("🆕 Создан новый visitor_id: %s", visitorID)
 	} else {
 		visitorID = cookie.Value
-		log.Printf("🔑 Используется существующий visitor_id: %s", visitorID)
 	}
 
 	// 6. Вставляем комментарий в БД
-	log.Printf("📊 Выполняем INSERT: question_id=%v, text=%s, user_id=%s", id, req.Text, visitorID)
 
 	_, err = h.DB.Exec(
 		r.Context(),
-		`INSERT INTO comments(question_id, text, user_id)
-         VALUES ($1, $2, $3)`,
+		`INSERT INTO comments(question_id, text, visitor_id)
+		 VALUES ($1, $2, $3)`,
 		id,
 		req.Text,
 		visitorID,
 	)
 
 	if err != nil {
-		log.Printf("❌ Database error: %v", err) // ← ЭТО ПОКАЖЕТ ТОЧНУЮ ПРИЧИНУ!
 		utils.WriteJSONError(w, http.StatusInternalServerError, "db_error: "+err.Error())
 		return
 	}
 
-	log.Printf("✅ Комментарий успешно добавлен")
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
@@ -166,7 +154,7 @@ func (h *Handler) DeleteComment(w http.ResponseWriter, r *http.Request) {
 
 	_, err = h.DB.Exec(
 		r.Context(),
-		`DELETE FROM comments WHERE id = $1 AND user_id = $2`,
+		`DELETE FROM comments WHERE id = $1 AND visitor_id = $2`,
 		id,
 		cookie.Value,
 	)
@@ -193,7 +181,7 @@ func (h *Handler) EditComment(w http.ResponseWriter, r *http.Request) {
 	}
 	_, err = h.DB.Exec(
 		r.Context(),
-		`UPDATE comments SET text = $1 WHERE id = $2 AND user_id = $3`,
+		`UPDATE comments SET text = $1 WHERE id = $2 AND visitor_id = $3`,
 		req.Text,
 		chi.URLParam(r, "id"),
 		cookie.Value,
