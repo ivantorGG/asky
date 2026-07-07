@@ -4,11 +4,9 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
-	"html/template"
 	"net/http"
 	"time"
 
-	"asky"
 	"asky/internal/utils"
 
 	"golang.org/x/crypto/bcrypt"
@@ -60,13 +58,7 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) RegistrationPage(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := template.ParseFS(asky.TemplateFS, "web/templates/base.html", "web/templates/speakerReg.html")
-	if err != nil {
-		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error: "+err.Error())
-		return
-	}
-
-	tmpl.ExecuteTemplate(w, "base", nil)
+	http.ServeFile(w, r, "./web/templates/speakerReg.html")
 }
 
 func (h *Handler) LoginPage(w http.ResponseWriter, r *http.Request) {
