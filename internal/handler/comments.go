@@ -2,6 +2,8 @@ package handler
 
 import (
 	"asky/internal/utils"
+	"crypto/rand"
+	"encoding/hex"
 	"encoding/json"
 	"net/http"
 	"time"
@@ -23,12 +25,37 @@ func (h *Handler) NewComment(w http.ResponseWriter, r *http.Request) {
 
 	id := chi.URLParam(r, "id")
 
-	_, err := h.DB.Exec(
+	cookie, err := r.Cookie("visitor_id")
+	var visitorID string
+
+	if err != nil {
+		// Куки нет — создаем новую
+		b := make([]byte, 32)
+		if _, err := rand.Read(b); err != nil {
+			utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
+			return
+		}
+		visitorID = hex.EncodeToString(b)
+
+		http.SetCookie(w, &http.Cookie{
+			Name:     "visitor_id",
+			Value:    visitorID,
+			Path:     "/",
+			Expires:  time.Now().AddDate(1, 0, 0),
+			HttpOnly: true,
+			SameSite: http.SameSiteLaxMode,
+		})
+	} else {
+		visitorID = cookie.Value
+	}
+
+	_, err = h.DB.Exec(
 		r.Context(),
-		`INSERT INTO comments(question_id, text)
-		 VALUES ($1, $2)`,
+		`INSERT INTO comments(question_id, text, user_id)
+		 VALUES ($1, $2, $3)`,
 		id,
 		req.Text,
+		visitorID,
 	)
 
 	if err != nil {
@@ -86,4 +113,55 @@ func (h *Handler) ListQuestionComments(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(comments)
+}
+func (h *Handler) DeleteComment(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	cookie, err := r.Cookie("visitor_id")
+	if err != nil {
+		utils.WriteJSONError(w, http.StatusUnauthorized, "unauthorized")
+		return
+	}
+
+	_, err = h.DB.Exec(
+		r.Context(),
+		`DELETE FROM comments WHERE id = $1 AND user_id = $2`,
+		id,
+		cookie.Value,
+	)
+	if err != nil {
+		utils.WriteJSONError(w, http.StatusInternalServerError, "db_error")
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "comment_deleted",
+	})
+}
+func (h *Handler) EditComment(w http.ResponseWriter, r *http.Request) {
+	var req NewCommentRequest
+	cookie, err := r.Cookie("visitor_id")
+	if err != nil {
+		utils.WriteJSONError(w, http.StatusUnauthorized, "unauthorized")
+		return
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		utils.WriteJSONError(w, http.StatusBadRequest, "bad_request")
+		return
+	}
+	_, err = h.DB.Exec(
+		r.Context(),
+		`UPDATE comments SET text = $1 WHERE id = $2 AND user_id = $3`,
+		req.Text,
+		chi.URLParam(r, "id"),
+		cookie.Value,
+	)
+	if err != nil {
+		utils.WriteJSONError(w, http.StatusInternalServerError, "db_error")
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "comment_updated",
+	})
 }

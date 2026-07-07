@@ -75,6 +75,8 @@ func New(h *handler.Handler) http.Handler {
 
 	r.Get("/api/questions/{id}/comments", h.ListQuestionComments) // Get question comments
 	r.Post("/api/questions/{id}/comments", h.NewComment)          // Add a comment to a question
+	r.Delete("/api/comments/{id}", h.DeleteComment)               // Delete a comment
+	r.Put("/api/comments/{id}", h.EditComment)                    // Edit a comment
 
 	return r
 }
