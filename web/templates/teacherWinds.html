@@ -170,11 +170,13 @@ async function getComments(questionId) {
 // ✅ Добавить комментарий (POST /api/questions/{id}/comments)
 async function addCommentToServer(questionId, text) {
   try {
-    const resp = await fetch(`${API_BASE}/questions/${questionId}/comments`, {
+    const resp = await fetch(`/api/questions/${questionId}/comments`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text })
+      body: JSON.stringify({ text:text }),
+      credentials: "include"
     });
+    console.log(resp)
     if (!resp.ok) throw new Error(`Ошибка добавления комментария: ${resp.status}`);
     return await resp.json();
   } catch (e) {
@@ -211,7 +213,6 @@ async function renderQuestions() {
       }
 
       const answeredClass = isAnswered ? 'question-answered' : '';
-      console.log(isAnswered)
       const answerBtnText = isAnswered ? '✓ Отвечено' : 'Отметить отвеченным';
       const answerBtnClass = isAnswered ? 'btn-success' : 'btn-outline-success';
 
