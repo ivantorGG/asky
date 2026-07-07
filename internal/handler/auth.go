@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"asky/internal/middleware"
 	"asky/internal/utils"
 
 	"golang.org/x/crypto/bcrypt"
@@ -140,6 +141,29 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{
 		"message": "login_success",
+	})
+}
+
+func (h *Handler) GetEmail(w http.ResponseWriter, r *http.Request) {
+	userID := r.Context().Value(middleware.UserIDKey).(int64)
+
+	var email string
+
+	err := h.DB.QueryRow(
+		r.Context(),
+		`SELECT email FROM users WHERE id = $1`,
+		userID,
+	).Scan(&email)
+
+	if err != nil {
+		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{
+		"email": email,
 	})
 }
 
