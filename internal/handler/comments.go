@@ -51,7 +51,7 @@ func (h *Handler) NewComment(w http.ResponseWriter, r *http.Request) {
 
 	_, err = h.DB.Exec(
 		r.Context(),
-		`INSERT INTO comments(question_id, text, user_id)
+		`INSERT INTO comments(question_id, text, visitor_id)
 		 VALUES ($1, $2, $3)`,
 		id,
 		req.Text,
@@ -124,7 +124,7 @@ func (h *Handler) DeleteComment(w http.ResponseWriter, r *http.Request) {
 
 	_, err = h.DB.Exec(
 		r.Context(),
-		`DELETE FROM comments WHERE id = $1 AND user_id = $2`,
+		`DELETE FROM comments WHERE id = $1 AND visitor_id = $2`,
 		id,
 		cookie.Value,
 	)
@@ -151,7 +151,7 @@ func (h *Handler) EditComment(w http.ResponseWriter, r *http.Request) {
 	}
 	_, err = h.DB.Exec(
 		r.Context(),
-		`UPDATE comments SET text = $1 WHERE id = $2 AND user_id = $3`,
+		`UPDATE comments SET text = $1 WHERE id = $2 AND visitor_id = $3`,
 		req.Text,
 		chi.URLParam(r, "id"),
 		cookie.Value,
