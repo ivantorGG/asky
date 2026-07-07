@@ -153,7 +153,6 @@ func (h *Handler) ListUsersEvents(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(events)
 }
 
-
 func (h *Handler) GetQuestionsByEventCode(w http.ResponseWriter, r *http.Request) {
 	eventCode := chi.URLParam(r, "code")
 	if eventCode == "" {
