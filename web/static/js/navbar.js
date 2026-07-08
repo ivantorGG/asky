@@ -16,6 +16,4 @@ async function showEmail(){
 
         document.getElementById('email').textContent = email
     }
-
-    console.error('server error', response)
 }
