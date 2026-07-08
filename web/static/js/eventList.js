@@ -4,54 +4,67 @@ document.addEventListener("DOMContentLoaded", () => {
     const input = document.getElementById("eventName");
 
     saveButton.addEventListener("click", () => {
-
         createEvent(input.value);
-
     });
 
     input.addEventListener("keydown", e => {
-
         if (e.key === "Enter") {
-
             e.preventDefault();
-
             createEvent(input.value);
-
         }
+    });
+
+    // Переключение вкладок
+    document.querySelectorAll(".eventsTab").forEach(tab => {
+
+        tab.addEventListener("click", () => {
+
+            document
+                .querySelectorAll(".eventsTab")
+                .forEach(t => t.classList.remove("active"));
+
+            tab.classList.add("active");
+
+            loadEvents(tab.dataset.type);
+
+        });
 
     });
 
-    loadEvents();
+    loadEvents("teacher");
 
 });
 
 // =========================================
 
-async function loadEvents(){
+async function loadEvents(type = "teacher") {
 
     const container = document.getElementById("events");
 
-    const response = await fetch("/api/events/teacher");
+    const response = await fetch(`/api/events/${type}`);
 
     const data = await response.json();
 
-    if(data.error === "unauthorized"){
-
-        location.href="/login";
-
+    if (data.error === "unauthorized") {
+        location.href = "/login";
         return;
-
     }
-
-    const events = data;
 
     container.innerHTML = "";
 
-    // ----------------------------
+    if (data.length === 0) {
 
-    if(events.length===0){
+        const empty = type === "teacher"
+            ? {
+                title: "Пока нет мероприятий",
+                text: "Создайте своё первое мероприятие, чтобы студенты могли подключиться."
+            }
+            : {
+                title: "Вы ещё нигде не участвовали",
+                text: "После подключения к мероприятию оно появится здесь."
+            };
 
-        container.innerHTML=`
+        container.innerHTML = `
 
         <div class="col-lg-9">
 
@@ -59,18 +72,9 @@ async function loadEvents(){
 
                 <i class="bi bi-calendar2-plus"></i>
 
-                <h2>
+                <h2>${empty.title}</h2>
 
-                    Пока нет мероприятий
-
-                </h2>
-
-                <p>
-
-                    Создайте своё первое мероприятие,
-                    чтобы студенты могли подключиться.
-
-                </p>
+                <p>${empty.text}</p>
 
             </div>
 
@@ -79,64 +83,59 @@ async function loadEvents(){
         `;
 
         return;
-
     }
-
-    // ----------------------------
 
     const cardsHtml = await Promise.all(
 
-        events.map(async event => {
+        data.map(async event => {
 
             const questionCount = await getQuestionsCount(event.code);
+
+            const deleteButton = type === "teacher"
+                ? `
+                <button
+                    class="deleteButton"
+                    onclick="event.preventDefault();event.stopPropagation();deleteEvent('${event.code}')">
+                    <i class="bi bi-trash"></i>
+                    Удалить
+                </button>
+                `
+                : "";
 
             return `
 
 <div class="col-lg-10 reveal active">
 
-<div class="eventCard">
+    <div class="eventCard">
 
-<a
+        <a
+            href="/events/${event.code}/${type}"
+            class="stretched-link">
 
-href="/events/${event.code}/teacher"
+        <div class="eventBody">
 
-class="stretched-link">
+            <div class="eventInfo">
 
-</a>
+                <h2 class="eventTitle">
 
-<div class="eventBody">
+                    ${event.title}
 
-<div class="eventInfo">
+                </h2>
 
-<h2 class="eventTitle">
+                <div class="eventSubtitle">
 
-${event.title}
+                    Вопросов: ${questionCount}
 
-</h2>
+                </div>
 
-<div class="eventSubtitle">
+            </div>
 
-Вопросов: ${questionCount}
+            ${deleteButton}
 
-</div>
+        </div>
+        </a>
 
-</div>
-
-<button
-
-class="deleteButton"
-
-onclick="event.preventDefault();event.stopPropagation();deleteEvent('${event.code}')">
-
-<i class="bi bi-trash"></i>
-
-Удалить
-
-</button>
-
-</div>
-
-</div>
+    </div>
 
 </div>
 
@@ -154,25 +153,20 @@ onclick="event.preventDefault();event.stopPropagation();deleteEvent('${event.cod
 
 // =========================================
 
-async function getQuestionsCount(code){
-
-    try{
+async function getQuestionsCount(code) {
+        try {
 
         const response = await fetch(`/api/events/${code}/questions/count`);
 
-        if(!response.ok){
-
+        if (!response.ok) {
             return 0;
-
         }
 
         const data = await response.json();
 
         return data.question_count || 0;
 
-    }
-
-    catch(error){
+    } catch (error) {
 
         console.error("Failed to load questions count", error);
 
@@ -184,17 +178,16 @@ async function getQuestionsCount(code){
 
 // =========================================
 
-function enableGlow(){
+function enableGlow() {
 
-    document.querySelectorAll(".eventCard").forEach(card=>{
+    document.querySelectorAll(".eventCard").forEach(card => {
 
-        card.addEventListener("mousemove",e=>{
+        card.addEventListener("mousemove", e => {
 
-            const rect=card.getBoundingClientRect();
+            const rect = card.getBoundingClientRect();
 
-            card.style.setProperty("--x",(e.clientX-rect.left)+"px");
-
-            card.style.setProperty("--y",(e.clientY-rect.top)+"px");
+            card.style.setProperty("--x", (e.clientX - rect.left) + "px");
+            card.style.setProperty("--y", (e.clientY - rect.top) + "px");
 
         });
 
@@ -204,23 +197,17 @@ function enableGlow(){
 
 // =========================================
 
-async function deleteEvent(id){
+async function deleteEvent(id) {
 
-    const card=document.activeElement;
+    try {
 
-    try{
-
-        await fetch(`/api/events/${id}`,{
-
-            method:"DELETE"
-
+        await fetch(`/api/events/${id}`, {
+            method: "DELETE"
         });
 
-    }
+    } finally {
 
-    finally{
-
-        loadEvents();
+        loadEvents("teacher");
 
     }
 
@@ -228,11 +215,11 @@ async function deleteEvent(id){
 
 // =========================================
 
-async function createEvent(name){
+async function createEvent(name) {
 
-    name=name.trim();
+    name = name.trim();
 
-    if(name===""){
+    if (name === "") {
 
         document.getElementById("eventName").focus();
 
@@ -240,37 +227,34 @@ async function createEvent(name){
 
     }
 
-    const response=await fetch("/api/events",{
+    const response = await fetch("/api/events", {
 
-        method:"POST",
+        method: "POST",
 
-        headers:{
-
-            "Content-Type":"application/json"
-
+        headers: {
+            "Content-Type": "application/json"
         },
 
-        body:JSON.stringify({
-
-            title:name
-
+        body: JSON.stringify({
+            title: name
         })
 
     });
 
-    const data=await response.json();
+    const data = await response.json();
 
-    if(data.message==="event_created"){
+    if (data.message === "event_created") {
 
-        document.querySelector(
+        document
+            .querySelector('#newEventModal [data-bs-dismiss="modal"]')
+            .click();
 
-            '#newEventModal [data-bs-dismiss="modal"]'
+        document.getElementById("eventName").value = "";
 
-        ).click();
+        // Обновляем текущую открытую вкладку
+        const activeTab = document.querySelector(".eventsTab.active");
 
-        document.getElementById("eventName").value="";
-
-        loadEvents();
+        loadEvents(activeTab ? activeTab.dataset.type : "teacher");
 
     }
 

@@ -1,3 +1,42 @@
+function getVotedQuestions(){
+  try{
+    const raw = localStorage.getItem('voted_questions');
+    return raw? JSON.parse(raw) : [];
+  }catch(e){return []}
+}
+
+function isQuestionVoted(id){
+  const arr = getVotedQuestions();
+  return arr.indexOf(id) !== -1;
+}
+
+function addVotedQuestion(id){
+  const arr = getVotedQuestions();
+  if(arr.indexOf(id) === -1){ arr.push(id); localStorage.setItem('voted_questions', JSON.stringify(arr)); }
+}
+
+function removeVotedQuestion(id){
+  let arr = getVotedQuestions();
+  arr = arr.filter(x => x !== id);
+  localStorage.setItem('voted_questions', JSON.stringify(arr));
+}
+  if (like) {
+
+    const id = Number(like.dataset.id);
+
+    const voted = isQuestionVoted(id);
+
+    if (voted) {
+      await unlikeQuestion(id);
+      removeVotedQuestion(id);
+    } else {
+      await likeQuestion(id);
+      addVotedQuestion(id);
+    }
+
+    renderQuestions();
+
+  }
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -219,7 +258,7 @@ async function renderQuestions() {
     let html = '';
     questions.forEach(q => {
       const likesCount = q.votes || 0;
-      const likeClass = q.is_voted ? 'btn-primary' : 'btn-outline-primary';
+      const likeClass = (q.is_voted || isQuestionVoted(q.id)) ? 'btn-primary' : 'btn-outline-primary';
       const isAnswered = q.answered || false;
       
       let commentCount = 0;
@@ -244,12 +283,17 @@ async function renderQuestions() {
             
             <!-- Добавили buttons-container -->
             <div class="d-flex gap-2 flex-wrap justify-content-evenly buttons-container">
-                <button class="btn btn-sm btn-outline-secondary comment-btn btn-circle" data-id="${q.id}">
-                    <i class="bi bi-chat fs-4"></i>
-                </button>
-                <button class="btn btn-sm ${answerBtnClass} answer-btn btn-circle" data-id="${q.id}">
-                    <i class="bi bi-check-circle fs-4"></i>
-                </button>
+              <button class="btn btn-sm ${likeClass} like-btn btn-circle" data-id="${q.id}">
+                <i class="bi bi-heart fs-4"></i>
+                <span class="ms-1 likeCount">${likesCount}</span>
+              </button>
+              <button class="btn btn-sm btn-outline-secondary comment-btn btn-circle" data-id="${q.id}">
+                <i class="bi bi-chat fs-4"></i>
+                <span class="ms-1 commentCount">${commentCount}</span>
+              </button>
+              <button class="btn btn-sm ${answerBtnClass} answer-btn btn-circle" data-id="${q.id}">
+                <i class="bi bi-check-circle fs-4"></i>
+              </button>
             </div>
         </div>
       `;
@@ -312,8 +356,10 @@ document.addEventListener('click', async function(e) {
     try {
       if (isLiked) {
         await unlikeQuestion(id);
+        removeVotedQuestion(id);
       } else {
         await likeQuestion(id);
+        addVotedQuestion(id);
       }
       await renderQuestions();
     } catch (error) {

@@ -1,6 +1,6 @@
-// ======================================
+// =====================================
 // PARTICLES
-// ======================================
+// =====================================
 
 const canvas = document.getElementById("particles");
 
@@ -15,13 +15,6 @@ if (canvas) {
         y: null,
         radius: 170
     };
-
-    function isLightTheme() {
-        return (
-            document.documentElement.dataset.theme === "light" ||
-            document.documentElement.dataset.bsTheme === "light"
-        );
-    }
 
     function resizeCanvas() {
         canvas.width = window.innerWidth;
@@ -90,9 +83,13 @@ if (canvas) {
 
         draw() {
 
+            const light =
+                document.documentElement.dataset.theme === "light" ||
+                document.documentElement.dataset.bsTheme === "light";
+
             ctx.beginPath();
 
-            ctx.fillStyle = isLightTheme()
+            ctx.fillStyle = light
                 ? `rgba(15,23,42,${this.opacity * .8})`
                 : `rgba(255,255,255,${this.opacity})`;
 
@@ -110,6 +107,10 @@ if (canvas) {
 
     function connectParticles() {
 
+        const light =
+            document.documentElement.dataset.theme === "light" ||
+            document.documentElement.dataset.bsTheme === "light";
+
         for (let a = 0; a < particles.length; a++) {
 
             for (let b = a + 1; b < particles.length; b++) {
@@ -121,13 +122,13 @@ if (canvas) {
 
                 if (dist < 130) {
 
-                    ctx.beginPath();
-
-                    ctx.strokeStyle = isLightTheme()
+                    ctx.strokeStyle = light
                         ? `rgba(15,23,42,${0.16 - dist / 1100})`
                         : `rgba(255,255,255,${0.12 - dist / 1300})`;
 
                     ctx.lineWidth = 1;
+
+                    ctx.beginPath();
 
                     ctx.moveTo(particles[a].x, particles[a].y);
                     ctx.lineTo(particles[b].x, particles[b].y);
@@ -147,8 +148,10 @@ if (canvas) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         particles.forEach(p => {
+
             p.update();
             p.draw();
+
         });
 
         connectParticles();
@@ -161,60 +164,9 @@ if (canvas) {
 
 }
 
-// ======================================
-// QUESTION CARD GLOW
-// ======================================
-
-document.addEventListener("mousemove", e => {
-
-    document.querySelectorAll(".questionCard").forEach(card => {
-
-        const rect = card.getBoundingClientRect();
-
-        card.style.setProperty("--x", `${e.clientX - rect.left}px`);
-        card.style.setProperty("--y", `${e.clientY - rect.top}px`);
-
-    });
-
-});
-
-// ======================================
-// GLASS CARD GLOW
-// ======================================
-
-document.addEventListener("mousemove", e => {
-
-    document.querySelectorAll(".glassCard").forEach(card => {
-
-        const rect = card.getBoundingClientRect();
-
-        card.style.setProperty("--x", `${e.clientX - rect.left}px`);
-        card.style.setProperty("--y", `${e.clientY - rect.top}px`);
-
-    });
-
-});
-
-// ======================================
-// AUTO RESIZE TEXTAREA
-// ======================================
-
-const textarea = document.getElementById("input2");
-
-if (textarea) {
-
-    textarea.addEventListener("input", () => {
-
-        textarea.style.height = "0px";
-        textarea.style.height = Math.min(textarea.scrollHeight, 180) + "px";
-
-    });
-
-}
-
-// ======================================
+// =====================================
 // REVEAL
-// ======================================
+// =====================================
 
 const observer = new IntersectionObserver(entries => {
 
@@ -232,27 +184,19 @@ const observer = new IntersectionObserver(entries => {
     threshold: 0.15
 });
 
-function observeCards() {
+document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
 
-    document.querySelectorAll(".questionCard,.glassCard").forEach(el => {
+// =====================================
+// HEADER
+// =====================================
 
-        if (!el.dataset.observed) {
+const header = document.querySelector("header");
 
-            observer.observe(el);
-            el.dataset.observed = "1";
+if (header) {
 
-        }
-
-    });
+    header.style.background = "var(--surface)";
+    header.style.backdropFilter = "blur(18px)";
+    header.style.borderColor = "var(--border)";
+    header.style.boxShadow = "0 12px 44px var(--shadow)";
 
 }
-
-observeCards();
-
-// ======================================
-// AFTER QUESTIONS RENDER
-// ======================================
-
-document.addEventListener("questionsRendered", () => {
-    observeCards();
-});

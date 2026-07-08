@@ -1,299 +1,594 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
+
 <head>
-    <link rel="stylesheet" href="/web/static/css/playerWinds.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>asky</title>
-    <style>
-        body { padding-bottom: 100px; }
-        .fixed-bottom-form {
-            position: fixed;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 600px;
-            background: transparent;
-            padding: 10px 0;
-            z-index: 1000;
-        }
-        .fixed-bottom-form .form-group {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            background: white;
-            padding: 8px 16px;
-            border-radius: 30px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-        }
-        .fixed-bottom-form textarea {
-            flex: 1;
-            border-radius: 20px;
-            resize: none;
-            padding: 8px 16px;
-            height: 44px;
-            border: 1px solid #ddd;
-        }
-        .fixed-bottom-form button {
-            height: 44px;
-            padding: 0 24px;
-            border-radius: 20px;
-            background: #6c5ce7;
-            border: none;
-            color: white;
-            font-weight: 600;
-        }
-    </style>
+
+    <title>ASKY</title>
+
+    <link rel="stylesheet" href="/web/static/css/playerWinds.css">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
 </head>
+
 <body>
 
+<canvas id="particles"></canvas>
 
-   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        
-        <div class="container"> 
-            <a class="navbar-brand" href="#" style="font-weight: bold;">Asky</a>
-            <span class="navbar-text">{имя фамилия}</span>
-            <button class="btn btn-outline-light" onclick="logout()">
-                <i class="bi bi-box-arrow-right"></i>
-            </button>
+<div class="gradient gradient1"></div>
+<div class="gradient gradient2"></div>
+<div class="gradient gradient3"></div>
+
+<header>
+
+    <div class="logo">
+
+        <div class="logoText">
+
+            <div class="logoTitle">
+                ASKY
+            </div>
+
+            <div class="logoSubtitle">
+                Student View
+            </div>
+
         </div>
-            <script src="/static/js/logout.js"></script>
-    </nav>
 
-
-<div style=" width: 140px; height: 140px; margin-left: 10%; position: fixed; margin-top: 100px;"  >
-    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/QR_Code_example.png" alt="" style="display: flex; width: 140px; height: 140px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
-    <a href="https://upload.wikimedia.org/wikipedia/commons/5/5e/QR_Code_example.png" style="display: block; text-decoration: none; margin-left: 5px;">ссылка на лекцию</a>
-</div>
-
-<div class="container mt-4" id="questionsContainer">
-  <div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-      <h4 class="mb-3">Вопросы</h4>
-      <div style="border: 1px solid #dddddd00; border-radius: 8px; padding: 10px;">
-        <div class="list-group" id="questionsList">
-          <!-- Сюда динамически будут вставляться вопросы -->
-        </div>
-      </div>
     </div>
-  </div>
+
+    <div class="headerRight">
+
+        <div class="eventTitle">
+            Анонимные вопросы
+        </div>
+
+        <div class="studentName">
+            {имя фамилия}
+        </div>
+
+        <button class="themeToggle" id="themeToggle">
+
+            <i class="bi bi-moon-stars"></i>
+
+        </button>
+
+        <button class="logoutButton" onclick="logout()">
+
+            <i class="bi bi-box-arrow-right"></i>
+
+        </button>
+
+    </div>
+
+</header>
+
+<script src="/static/js/logout.js"></script>
+
+<main class="page">
+
+<div class="pageGrid">
+
+<!-- =======================================================
+LEFT
+======================================================= -->
+
+<aside class="leftColumn">
+
+<div class="glassCard qrCard">
+
+<h5>
+
+<i class="bi bi-qr-code"></i>
+
+QR мероприятия
+
+</h5>
+
+<img
+class="qrImage"
+src="https://upload.wikimedia.org/wikipedia/commons/5/5e/QR_Code_example.png">
+
+<a
+class="lectureLink"
+href="https://upload.wikimedia.org/wikipedia/commons/5/5e/QR_Code_example.png">
+
+<i class="bi bi-link-45deg"></i>
+
+Открыть лекцию
+
+</a>
+
 </div>
 
-<!-- Форма внизу -->
-<form class="fixed-bottom-form" id="questionForm">
-  <div class="form-group">
-    <textarea id="input2" rows="1" placeholder="Напишите вопрос анонимно..." required></textarea>
-    <button type="submit">Отправить</button>
-  </div>
+</aside>
+
+<!-- =======================================================
+RIGHT
+======================================================= -->
+
+<section class="questionsColumn">
+
+<div class="questionsHeader">
+
+<div>
+
+<h2>
+
+Вопросы
+
+</h2>
+
+<div class="questionCounter">
+
+Все вопросы мероприятия
+
+</div>
+
+</div>
+
+</div>
+
+<div
+class="questionsList"
+id="questionsList">
+
+</div>
+
+</section>
+
+</div>
+
+</main>
+
+<form
+class="questionForm"
+id="questionForm">
+
+<div class="questionInput">
+
+<textarea
+id="input2"
+rows="1"
+placeholder="Напишите вопрос анонимно..."
+required></textarea>
+
+<button
+class="sendButton"
+type="submit">
+
+<i class="bi bi-send-fill"></i>
+
+</button>
+
+</div>
+
 </form>
 
-<!-- Боковая панель комментариев -->
-<div class="offcanvas offcanvas-end" tabindex="-1" id="commentsOffcanvas" style="border-radius: 18px;">
-  <div class="offcanvas-header">
-    <h5 class="offcanvas-title">Комментарии</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
-  </div>
-  <div class="offcanvas-body">
-    <div id="commentsList">
-      <p class="text-muted">Комментариев пока нет</p>
-    </div>
-    <form id="commentForm" class="mt-3" style="border-radius: 20px;">
-      <input type="text" id="commentInput" class="form-control mb-2" placeholder="Напишите комментарий...">
-      <button type="submit" class="btn btn-primary w-100">Отправить</button>
-    </form>
-  </div>
+<div
+class="offcanvas offcanvas-end"
+tabindex="-1"
+id="commentsOffcanvas">
+
+<div class="offcanvas-header">
+
+<h5>
+
+<i class="bi bi-chat-dots"></i>
+
+Комментарии
+
+</h5>
+
+<button
+type="button"
+class="btn-close"
+data-bs-dismiss="offcanvas">
+
+</button>
+
+</div>
+
+<div class="offcanvas-body">
+
+<div id="commentsList">
+
+<p class="text-muted">
+
+Комментариев пока нет
+
+</p>
+
+</div>
+
+<form
+id="commentForm"
+class="commentForm">
+
+<input
+type="text"
+id="commentInput"
+placeholder="Напишите комментарий...">
+
+<button
+type="submit">
+
+Отправить
+
+</button>
+
+</form>
+
+</div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
-// ================================================================
-//  ФРОНТЕНД С ПЕРЕДАЧЕЙ {code} В ПУТИ
-// ================================================================
 
 const pathParts = window.location.pathname.split('/');
-const eventCode = pathParts[2]; // /events/XXXXX/student
+const eventCode = pathParts[2];
 const API_BASE = '/api';
+
 let currentQuestionId = null;
 
-// ---------------------- API-ВЫЗОВЫ -------------------------------
+// дальше код без изменений...
+// ---------------------- API -------------------------------
 
-// Получить вопросы (GET /api/events/{code}/questions)
 async function getQuestions() {
   try {
     const resp = await fetch(`${API_BASE}/events/${eventCode}/questions`);
     if (!resp.ok) throw new Error(`Ошибка загрузки: ${resp.status}`);
     return await resp.json();
   } catch (e) {
-    console.error('getQuestions:', e);
+    console.error(e);
     return [];
   }
 }
 
-// Создать вопрос (POST /api/events/{code}/questions)
 async function addQuestion(text) {
-  try {
-    const resp = await fetch(`${API_BASE}/events/${eventCode}/questions`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text })
-    });
-    if (!resp.ok) throw new Error(`Ошибка добавления: ${resp.status}`);
-    return await resp.json();
-  } catch (e) {
-    console.error('addQuestion:', e);
-    throw e;
-  }
-}
-
-// Лайк (PUT /api/questions/{id}/vote)
-async function likeQuestion(id) {
-  const resp = await fetch(`${API_BASE}/questions/${id}/vote`, { method: 'PUT' });
-  if (!resp.ok) throw new Error('Ошибка лайка');
-  return resp.json();
-}
-
-// Снять лайк (DELETE /api/questions/{id}/vote)
-async function unlikeQuestion(id) {
-  const resp = await fetch(`${API_BASE}/questions/${id}/vote`, { method: 'DELETE' });
-  if (!resp.ok) throw new Error('Ошибка снятия лайка');
-  return resp.json();
-}
-
-// Получить комментарии (GET /api/questions/{id}/comments)
-async function getComments(id) {
-  const resp = await fetch(`${API_BASE}/questions/${id}/comments`);
-  if (!resp.ok) throw new Error('Ошибка загрузки комментариев');
-  return resp.json();
-}
-
-// Добавить комментарий (POST /api/questions/{id}/comments)
-async function addComment(id, text) {
-  const data = {
-        text: text,
-    };
-  const resp = await fetch(`${API_BASE}/questions/${id}/comments`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
+  const resp = await fetch(`${API_BASE}/events/${eventCode}/questions`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      text
+    })
   });
-  if (!resp.ok) throw new Error('Ошибка добавления комментария' + resp);
-  return resp.json();
+
+  if (!resp.ok)
+    throw new Error("Ошибка добавления");
+
+  return await resp.json();
 }
 
-// ---------------------- ОТРИСОВКА -------------------------------
+async function likeQuestion(id) {
+
+  const resp = await fetch(`${API_BASE}/questions/${id}/vote`, {
+    method: "PUT"
+  });
+
+  if (!resp.ok)
+    throw new Error("Ошибка лайка");
+
+  return await resp.json();
+}
+
+async function unlikeQuestion(id) {
+
+  const resp = await fetch(`${API_BASE}/questions/${id}/vote`, {
+    method: "DELETE"
+  });
+
+  if (!resp.ok)
+    throw new Error("Ошибка");
+
+  return await resp.json();
+}
+
+function getVotedQuestions(){
+  try{
+    const raw = localStorage.getItem('voted_questions');
+    return raw? JSON.parse(raw) : [];
+  }catch(e){return []}
+}
+
+function isQuestionVoted(id){
+  const arr = getVotedQuestions();
+  return arr.indexOf(id) !== -1;
+}
+
+function addVotedQuestion(id){
+  const arr = getVotedQuestions();
+  if(arr.indexOf(id) === -1){ arr.push(id); localStorage.setItem('voted_questions', JSON.stringify(arr)); }
+}
+
+function removeVotedQuestion(id){
+  let arr = getVotedQuestions();
+  arr = arr.filter(x => x !== id);
+  localStorage.setItem('voted_questions', JSON.stringify(arr));
+}
+
+async function getComments(id) {
+
+  const resp = await fetch(`${API_BASE}/questions/${id}/comments`);
+
+  if (!resp.ok)
+    throw new Error("Ошибка");
+
+  return await resp.json();
+}
+
+async function addComment(id, text) {
+
+  const resp = await fetch(`${API_BASE}/questions/${id}/comments`, {
+
+    method: "POST",
+
+    headers: {
+      "Content-Type": "application/json"
+    },
+
+    body: JSON.stringify({
+      text
+    })
+
+  });
+
+  if (!resp.ok)
+    throw new Error("Ошибка");
+
+  return await resp.json();
+
+}
+
+// ---------------------- РЕНДЕР -------------------------------
 
 async function renderQuestions() {
-  const container = document.getElementById('questionsList');
-  if (!container) return;
-  try {
-    const questions = await getQuestions();
-    if (questions.length === 0) {
-      container.innerHTML = '<p class="text-muted text-center">Пока нет вопросов. Будьте первым!</p>';
-      return;
-    }
-    let html = '';
-    questions.forEach(q => {
-      const likes = q.votes || 0;
-      const liked = q.is_voted || false;
-      const commentsCount = q.comments ? q.comments.length : (q.comments_count || 0);
-      html += `
-        <div class="list-group-item" data-id="${q.id}">
-          <span class="question-text">${q.text}</span>
-          <button class="btn btn-sm ${liked ? 'btn-primary' : 'btn-outline-primary'} like-btn" data-id="${q.id}">
-            👍 <span class="like-count">${likes}</span>
-          </button>
-          <button class="btn btn-sm btn-outline-secondary comment-btn" data-id="${q.id}">
-            💬 <span class="comment-count">${commentsCount}</span>
-          </button>
-        </div>
-      `;
-    });
-    container.innerHTML = html;
-  } catch (e) {
-    container.innerHTML = '<p class="text-danger">Не удалось загрузить вопросы</p>';
+
+  const container = document.getElementById("questionsList");
+
+  const questions = await getQuestions();
+
+  if (!questions.length) {
+
+    container.innerHTML = `
+
+<div class="emptyQuestions">
+
+<i class="bi bi-chat-left-dots"></i>
+
+<h3>
+
+Пока нет вопросов
+
+</h3>
+
+<p>
+
+Будьте первым!
+
+</p>
+
+</div>
+
+`;
+
+    return;
+
   }
+
+  container.innerHTML = "";
+
+  questions.forEach(q => {
+
+    const liked = q.is_voted || isQuestionVoted(q.id);
+
+    const likes = q.votes || 0;
+
+    const comments = q.comments
+      ? q.comments.length
+      : (q.comments_count || 0);
+
+    container.insertAdjacentHTML("beforeend", `
+
+<div class="questionCard" data-id="${q.id}">
+
+<div class="questionText">
+
+${q.text}
+
+</div>
+
+<div class="questionActions">
+
+<div class="actionGroup">
+
+<button
+class="iconButton likeButton ${liked ? "active" : ""}"
+data-id="${q.id}">
+
+<i class="bi bi-heart-fill"></i>
+
+<span class="likeCount">
+
+${likes}
+
+</span>
+
+</button>
+
+<button
+class="iconButton commentButton"
+data-id="${q.id}">
+
+<i class="bi bi-chat-dots-fill"></i>
+
+<span class="commentCount">
+
+${comments}
+
+</span>
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+`);
+
+  });
+
 }
 
-// ---------------------- КОММЕНТАРИИ ---------------------------
+// ---------------------- КОММЕНТАРИИ ----------------------------
 
-async function openComments(questionId) {
-  currentQuestionId = questionId;
-  try {
-    const comments = await getComments(questionId);
-    const container = document.getElementById('commentsList');
-    if (!comments || comments.length === 0) {
-      container.innerHTML = '<p class="text-muted">Комментариев пока нет</p>';
+async function openComments(id) {
+
+  currentQuestionId = id;
+
+  const comments = await getComments(id);
+
+  const list = document.getElementById("commentsList");
+
+  if (!comments.length) {
+
+    list.innerHTML =
+      "<p class='text-muted'>Комментариев пока нет</p>";
+
+  } else {
+
+    list.innerHTML = comments.map(c => `
+
+<div class="comment">
+
+<div class="commentAuthor">
+
+Аноним
+
+</div>
+
+<div class="commentText">
+
+${c.text}
+
+</div>
+
+</div>
+
+`).join("");
+
+  }
+
+  new bootstrap.Offcanvas(
+    document.getElementById("commentsOffcanvas")
+  ).show();
+
+}
+
+// ---------------------- СОБЫТИЯ ----------------------------
+
+document.addEventListener("click", async e => {
+
+  const like = e.target.closest(".likeButton");
+
+  if (like) {
+
+    const id = Number(like.dataset.id);
+
+    const voted = isQuestionVoted(id);
+
+    if (voted) {
+      await unlikeQuestion(id);
+      removeVotedQuestion(id);
     } else {
-      container.innerHTML = comments.map(c => `
-        <div class="border-bottom pb-2 mb-2">
-          <div class="d-flex justify-content-between">
-            <strong>Аноним</strong>
-            <small class="text-muted">${new Date(c.timestamp).toLocaleString()}</small>
-          </div>
-          <p class="mb-1">${c.text}</p>
-        </div>
-      `).join('');
+      await likeQuestion(id);
+      addVotedQuestion(id);
     }
-    new bootstrap.Offcanvas(document.getElementById('commentsOffcanvas')).show();
-  } catch (e) {
-    console.error('openComments:', e);
-  }
-}
 
-// ---------------------- ОБРАБОТЧИКИ ---------------------------
+    renderQuestions();
 
-document.addEventListener('click', async function(e) {
-  const btn = e.target.closest('.like-btn');
-  if (btn) {
-    e.preventDefault();
-    const id = Number(btn.dataset.id);
-    const isLiked = btn.classList.contains('btn-primary');
-    try {
-      if (isLiked) await unlikeQuestion(id);
-      else await likeQuestion(id);
-      await renderQuestions();
-    } catch (e) { alert('Ошибка лайка'); }
   }
+
 });
 
-document.addEventListener('click', function(e) {
-  const btn = e.target.closest('.comment-btn');
-  if (btn) {
-    e.preventDefault();
-    const id = Number(btn.dataset.id);
-    if (id) openComments(id);
-  }
+document.addEventListener("click", e => {
+
+  const btn = e.target.closest(".commentButton");
+
+  if (!btn)
+    return;
+
+  openComments(Number(btn.dataset.id));
+
 });
 
-document.getElementById('questionForm').addEventListener('submit', async function(e) {
+document.getElementById("questionForm")
+.addEventListener("submit", async e => {
+
   e.preventDefault();
-  const text = document.getElementById('input2').value.trim();
-  if (!text) return;
-  try {
-    await addQuestion(text);
-    await renderQuestions();
-    document.getElementById('input2').value = '';
-    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-  } catch (e) { alert('Ошибка добавления вопроса'); }
-});
 
-document.getElementById('commentForm').addEventListener('submit', async function(e) {
-  e.preventDefault();
-  const input = document.getElementById('commentInput');
+  const input = document.getElementById("input2");
+
   const text = input.value.trim();
-  if (!text || currentQuestionId === null) return;
-  try {
-    await addComment(currentQuestionId, text);
-    await openComments(currentQuestionId);
-    await renderQuestions();
-    input.value = '';
-  } catch (e) { alert('Ошибка добавления комментария'); }
+
+  if (!text)
+    return;
+
+  await addQuestion(text);
+
+  input.value = "";
+
+  renderQuestions();
+
+});
+
+document.getElementById("commentForm")
+.addEventListener("submit", async e => {
+
+  e.preventDefault();
+
+  const input = document.getElementById("commentInput");
+
+  const text = input.value.trim();
+
+  if (!text)
+    return;
+
+  await addComment(currentQuestionId, text);
+
+  input.value = "";
+
+  openComments(currentQuestionId);
+
+  renderQuestions();
+
 });
 
 renderQuestions();
+
 </script>
+
+<script src="/static/js/playerWinds.js"></script>
+<script src="/static/js/themeSwitcher.js"></script>
+
 </body>
+
 </html>

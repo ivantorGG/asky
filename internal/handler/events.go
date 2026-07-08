@@ -23,12 +23,14 @@ type TeacherEvent struct {
 	Code  string `json:"code"`
 }
 type QuestionResponse struct {
-	ID        int64     `json:"id"`
-	EventCode string    `json:"event_code"`
-	Text      string    `json:"text"`
-	Likes     int       `json:"likes"`
-	Answered  bool      `json:"answered"`
-	CreatedAt time.Time `json:"created_at"`
+	ID            int64     `json:"id"`
+	EventCode     string    `json:"event_code"`
+	Text          string    `json:"text"`
+	Votes         int       `json:"votes"`
+	IsVoted       bool      `json:"is_voted"`
+	CommentsCount int       `json:"comments_count"`
+	Answered      bool      `json:"answered"`
+	CreatedAt     time.Time `json:"created_at"`
 }
 
 func (h *Handler) CreateEvent(w http.ResponseWriter, r *http.Request) {
@@ -188,10 +190,11 @@ func (h *Handler) GetQuestionsByEventCode(w http.ResponseWriter, r *http.Request
 	}
 	rows, err := h.DB.Query(
 		r.Context(),
-		`SELECT id, event_code, text, likes, answered, created_at 
-		FROM questions 
-		WHERE event_code = $1::uuid 
-		ORDER BY answered ASC, likes DESC`,
+		`SELECT q.id, q.event_code, q.text, q.likes AS votes, q.answered, q.created_at,
+			(SELECT COUNT(*) FROM comments c WHERE c.question_id = q.id) AS comments_count
+		FROM questions q
+		WHERE q.event_code = $1::uuid
+		ORDER BY q.answered ASC, q.likes DESC`,
 		eventCode,
 	)
 	if err != nil {
@@ -202,11 +205,13 @@ func (h *Handler) GetQuestionsByEventCode(w http.ResponseWriter, r *http.Request
 	questions := make([]QuestionResponse, 0)
 	for rows.Next() {
 		var q QuestionResponse
-		err := rows.Scan(&q.ID, &q.EventCode, &q.Text, &q.Likes, &q.Answered, &q.CreatedAt)
+		err := rows.Scan(&q.ID, &q.EventCode, &q.Text, &q.Votes, &q.Answered, &q.CreatedAt, &q.CommentsCount)
 		if err != nil {
 			utils.WriteJSONError(w, http.StatusInternalServerError, "server_error: "+err.Error())
 			return
 		}
+		// server doesn't track per-user votes yet; frontend keeps voted IDs in localStorage
+		q.IsVoted = false
 		questions = append(questions, q)
 	}
 	if err = rows.Err(); err != nil {

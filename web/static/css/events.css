@@ -1,6 +1,6 @@
-/* =====================================
-   RESET
-===================================== */
+/* =====================================================
+                        RESET
+===================================================== */
 
 *,
 *::before,
@@ -14,89 +14,65 @@ html{
     scroll-behavior:smooth;
 }
 
+body{
+    font-family:'Inter',sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
+    overflow-x:hidden;
+    transition:.35s;
+}
+
+button{
+    border:none;
+    background:none;
+    font-family:inherit;
+}
+
+a{
+    color:inherit;
+    text-decoration:none;
+}
+
+/* =====================================================
+                        THEME
+===================================================== */
+
 :root{
 
     --bg:#050505;
     --text:#ffffff;
-    --muted:#cfcfcf;
+    --muted:#bdbdbd;
 
     --surface:rgba(255,255,255,.05);
     --surfaceStrong:rgba(255,255,255,.08);
 
     --border:rgba(255,255,255,.08);
-
     --shadow:rgba(0,0,0,.35);
 
     --card:rgba(255,255,255,.045);
 
-    --cardHover:rgba(255,255,255,.08);
-
-    --buttonText:#050505;
-
 }
 
-html[data-theme="light"],
 html[data-bs-theme="light"]{
 
     --bg:#f4f7ff;
-
     --text:#0f172a;
+    --muted:#64748b;
 
-    --muted:#475569;
-
-    --surface:rgba(255,255,255,.82);
-
+    --surface:rgba(255,255,255,.75);
     --surfaceStrong:rgba(255,255,255,.95);
 
-    --border:rgba(15,23,42,.12);
+    --border:rgba(15,23,42,.1);
+    --shadow:rgba(15,23,42,.12);
 
-    --shadow:rgba(15,23,42,.15);
-
-    --card:rgba(255,255,255,.82);
-
-    --cardHover:rgba(255,255,255,.98);
-
-    --buttonText:#0f172a;
+    --card:rgba(255,255,255,.72);
 
 }
 
-body{
-
-    font-family:'Inter',sans-serif;
-
-    background:var(--bg);
-
-    color:var(--text);
-
-    min-height:100vh;
-
-    overflow-x:hidden;
-
-    transition:.5s;
-
-}
-
-a{
-
-    text-decoration:none;
-
-    color:inherit;
-
-}
-
-button{
-
-    border:none;
-
-    background:none;
-
-    font-family:inherit;
-
-}
-
-/* =====================================
-        PARTICLES
-===================================== */
+/* =====================================================
+                    PARTICLES
+===================================================== */
 
 #particles{
 
@@ -105,16 +81,15 @@ button{
     inset:0;
 
     width:100%;
-
     height:100%;
 
     z-index:-5;
 
 }
 
-/* =====================================
-       BACKGROUND
-===================================== */
+/* =====================================================
+                    BACKGROUND
+===================================================== */
 
 .gradient{
 
@@ -122,57 +97,51 @@ button{
 
     border-radius:50%;
 
-    filter:blur(150px);
-
-    pointer-events:none;
+    filter:blur(140px);
 
     opacity:.45;
 
+    pointer-events:none;
+
     z-index:-4;
 
-    animation:float 18s infinite alternate ease-in-out;
+    animation:float 18s ease-in-out infinite alternate;
 
 }
 
 .gradient1{
 
     width:650px;
-
     height:650px;
 
-    background:white;
+    background:#ffffff;
 
     left:-220px;
-
-    top:-180px;
+    top:-200px;
 
 }
 
 .gradient2{
 
     width:700px;
-
     height:700px;
 
     background:#6f6fff;
 
     right:-250px;
-
-    top:20%;
+    top:18%;
 
 }
 
 .gradient3{
 
     width:600px;
-
     height:600px;
 
     background:#8a3dff;
 
-    bottom:-250px;
-
-    left:40%;
+    left:35%;
+    bottom:-240px;
 
 }
 
@@ -180,27 +149,21 @@ button{
 
     0%{
 
-        transform:translate(0,0) scale(1);
-
-    }
-
-    50%{
-
-        transform:translate(80px,-60px) scale(1.1);
+        transform:translate(0,0);
 
     }
 
     100%{
 
-        transform:translate(-60px,80px) scale(.95);
+        transform:translate(60px,-50px);
 
     }
 
 }
 
-/* =====================================
-            HEADER
-===================================== */
+/* =====================================================
+                    HEADER
+===================================================== */
 
 header{
 
@@ -226,21 +189,13 @@ header{
 
     background:var(--surface);
 
-    backdrop-filter:blur(20px);
+    backdrop-filter:blur(18px);
 
     border:1px solid var(--border);
 
+    box-shadow:0 15px 40px var(--shadow);
+
     z-index:100;
-
-    transition:.4s;
-
-    box-shadow:0 12px 44px var(--shadow);
-
-}
-
-header:hover{
-
-    background:var(--surfaceStrong);
 
 }
 
@@ -274,17 +229,19 @@ nav{
 
 .themeToggle{
 
-    width:48px;
+    width:46px;
 
-    height:48px;
-
-    border-radius:50%;
+    height:46px;
 
     display:flex;
 
+    align-items:center;
+
     justify-content:center;
 
-    align-items:center;
+    border-radius:50%;
+
+    cursor:pointer;
 
     background:var(--surfaceStrong);
 
@@ -292,47 +249,107 @@ nav{
 
     color:var(--text);
 
-    cursor:pointer;
+    transition:.3s;
 
-    transition:.35s;
+}
 
-    font-size:18px;
+.themeToggle:hover{
+
+    transform:translateY(-2px);
 
 }
 
 .themeToggle svg{
 
     width:20px;
-
     height:20px;
-
-    fill:none;
 
     stroke:currentColor;
 
+    fill:none;
+
     stroke-width:1.8;
-
     stroke-linecap:round;
-
     stroke-linejoin:round;
 
 }
 
+
 .logoutButton{
 
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-
-    padding:14px 24px;
+    padding:12px 22px;
 
     border-radius:999px;
 
-    background:var(--surfaceStrong);
+    background:white;
+
+    color:black;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.logoutButton:hover{
+
+    transform:translateY(-2px);
+
+}
+
+/* =====================================================
+                    PAGE
+===================================================== */
+
+.eventsPage{
+
+    padding-top:140px;
+
+    padding-bottom:90px;
+
+    position:relative;
+
+}
+
+.container{
+
+    max-width:1200px;
+
+}
+
+/* =====================================================
+                    TABS
+===================================================== */
+
+.eventsTabs{
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:14px;
+
+    margin-bottom:50px;
+
+}
+
+.eventsTab{
+
+    padding:15px 28px;
+
+    border-radius:999px;
+
+    background:var(--surface);
 
     border:1px solid var(--border);
+
+    color:var(--text);
+
+    font-size:15px;
+
+    font-weight:600;
 
     cursor:pointer;
 
@@ -340,127 +357,36 @@ nav{
 
 }
 
-.themeToggle:hover,
-.logoutButton:hover{
+.eventsTab:hover{
 
     transform:translateY(-2px);
+
+    background:var(--surfaceStrong);
+
+}
+
+.eventsTab.active{
 
     background:white;
 
     color:black;
 
-}
+    border-color:white;
 
-/* =====================================
-             HERO
-===================================== */
-
-.eventsPage{
-
-    position:relative;
-
-    padding-top:170px;
-
-    padding-bottom:120px;
+    box-shadow:0 10px 35px rgba(255,255,255,.18);
 
 }
 
-.heroBackgroundText{
+html[data-bs-theme="light"] .eventsTab.active{
 
-    position:absolute;
+    background:#0f172a;
 
-    top:150px;
-
-    left:50%;
-
-    transform:translateX(-50%);
-
-    font-size:14vw;
-
-    font-weight:900;
-
-    letter-spacing:12px;
-
-    color:transparent;
-
-    -webkit-text-stroke:2px rgba(255,255,255,.08);
-
-    user-select:none;
-
-    pointer-events:none;
-
-    opacity:.7;
+    color:white;
 
 }
-
-.pageTitle{
-
-    text-align:center;
-
-    margin-bottom:80px;
-
-    position:relative;
-
-    z-index:5;
-
-}
-
-.badge{
-
-    display:inline-flex;
-
-    padding:12px 22px;
-
-    border-radius:999px;
-
-    border:1px solid var(--border);
-
-    background:var(--surface);
-
-    backdrop-filter:blur(20px);
-
-    font-weight:600;
-
-    margin-bottom:25px;
-
-}
-
-.pageTitle h1{
-
-    font-size:72px;
-
-    font-weight:900;
-
-    margin-bottom:22px;
-
-}
-
-.pageTitle p{
-
-    max-width:760px;
-
-    margin:auto;
-
-    color:var(--muted);
-
-    font-size:21px;
-
-    line-height:1.8;
-
-}
-/* =====================================
-            EVENTS GRID
-===================================== */
-
-#events{
-
-    row-gap:34px;
-
-    position:relative;
-
-    z-index:5;
-
-}
+/* =========================================
+   EVENT CARD
+========================================= */
 
 .eventCard{
 
@@ -468,24 +394,23 @@ nav{
 
     overflow:hidden;
 
-    border-radius:24px;
+    border-radius:30px;
 
-    background:var(--card);
+    background:var(--card-bg);
 
-    border:1px solid var(--border);
+    border:1px solid var(--card-border);
 
-    backdrop-filter:blur(18px);
+    backdrop-filter:blur(22px);
 
     transition:
-        .45s transform,
-        .45s box-shadow,
-        .45s border-color,
-        .45s background;
+        transform .35s,
+        border-color .35s,
+        box-shadow .35s,
+        background .35s;
 
     cursor:pointer;
 
-    box-shadow:
-        0 18px 50px rgba(0,0,0,.22);
+    min-height:170px;
 
 }
 
@@ -495,62 +420,18 @@ nav{
 
     position:absolute;
 
-    inset:-2px;
+    inset:0;
 
-    border-radius:inherit;
-
-    padding:1px;
-
-    background:linear-gradient(
-        140deg,
-        rgba(255,255,255,.22),
-        transparent,
-        rgba(255,255,255,.08)
-    );
-
-    -webkit-mask:
-        linear-gradient(#000 0 0) content-box,
-        linear-gradient(#000 0 0);
-
-    -webkit-mask-composite:xor;
-
-    mask-composite:exclude;
+    background:
+        radial-gradient(
+            circle at var(--x,-200px) var(--y,-200px),
+            rgba(255,255,255,.18),
+            transparent 42%
+        );
 
     opacity:0;
 
-    transition:.45s;
-
-}
-
-.eventCard::after{
-
-    content:"";
-
-    position:absolute;
-
-    width:320px;
-
-    height:320px;
-
-    border-radius:50%;
-
-    background:radial-gradient(
-
-        rgba(255,255,255,.16),
-
-        transparent 70%
-
-    );
-
-    top:var(--y,-300px);
-
-    left:var(--x,-300px);
-
-    transform:translate(-50%,-50%);
-
-    opacity:0;
-
-    transition:.08s;
+    transition:.15s;
 
     pointer-events:none;
 
@@ -558,16 +439,14 @@ nav{
 
 .eventCard:hover{
 
-    transform:translateY(-12px);
+    transform:translateY(-8px);
 
-    background:var(--cardHover);
+    border-color:rgba(255,255,255,.16);
 
-    border-color:rgba(255,255,255,.22);
+    background:rgba(255,255,255,.07);
 
     box-shadow:
-
-        0 24px 70px rgba(0,0,0,.35),
-
+        0 25px 60px rgba(0,0,0,.35),
         0 0 40px rgba(255,255,255,.06);
 
 }
@@ -578,17 +457,13 @@ nav{
 
 }
 
-.eventCard:hover::after{
-
-    opacity:1;
-
-}
-
-/* =====================================
-            CARD BODY
-===================================== */
-
 .eventBody{
+
+    position:relative;
+
+    z-index:2;
+
+    padding:32px;
 
     display:flex;
 
@@ -596,31 +471,25 @@ nav{
 
     align-items:center;
 
-    padding:22px 24px;
-
-    gap:18px;
+    gap:30px;
 
 }
 
 .eventInfo{
 
-    display:flex;
-
-    flex-direction:column;
-
-    gap:8px;
+    flex:1;
 
 }
 
 .eventTitle{
 
-    font-size:24px;
+    font-size:32px;
 
     font-weight:800;
 
-    color:var(--text);
+    margin-bottom:14px;
 
-    margin:0;
+    color:var(--text);
 
 }
 
@@ -628,39 +497,49 @@ nav{
 
     color:var(--muted);
 
-    font-size:14px;
+    font-size:16px;
 
 }
 
-/* =====================================
-            DELETE BUTTON
-===================================== */
+.stretched-link{
+
+    position:absolute;
+
+    inset:0;
+
+    z-index:1;
+
+}
+
+/* =========================================
+   DELETE BUTTON
+========================================= */
 
 .deleteButton{
 
     position:relative;
 
-    z-index:3;
+    z-index:5;
+
+    padding:14px 24px;
+
+    border-radius:14px;
+
+    background:rgba(255,70,70,.12);
+
+    border:1px solid rgba(255,70,70,.25);
+
+    color:#ff7b7b;
 
     display:flex;
 
     align-items:center;
 
-    gap:8px;
+    gap:10px;
 
-    padding:11px 16px;
+    cursor:pointer;
 
-    border-radius:999px;
-
-    border:1px solid rgba(255,80,80,.25);
-
-    background:rgba(255,80,80,.08);
-
-    color:#ff6f6f;
-
-    font-weight:700;
-
-    transition:.35s;
+    transition:.3s;
 
 }
 
@@ -670,31 +549,31 @@ nav{
 
     color:white;
 
-    transform:translateY(-3px);
-
-    box-shadow:
-
-        0 12px 40px rgba(255,80,80,.35);
+    transform:translateY(-2px);
 
 }
 
-/* =====================================
-        CREATE BUTTON
-===================================== */
+/* =========================================
+   CREATE BUTTON
+========================================= */
 
 .createEventButton{
 
     position:fixed;
 
-    right:35px;
+    right:38px;
 
-    bottom:35px;
+    bottom:38px;
 
-    width:76px;
+    width:72px;
 
-    height:76px;
+    height:72px;
 
     border-radius:50%;
+
+    background:white;
+
+    color:black;
 
     display:flex;
 
@@ -702,55 +581,87 @@ nav{
 
     align-items:center;
 
-    font-size:30px;
-
-    color:white;
-
-    background:white;
-
-    color:black;
+    font-size:28px;
 
     cursor:pointer;
 
-    z-index:300;
-
     box-shadow:
-
-        0 0 40px rgba(255,255,255,.25);
+        0 20px 40px rgba(0,0,0,.35),
+        0 0 30px rgba(255,255,255,.2);
 
     transition:.35s;
+
+    z-index:150;
 
 }
 
 .createEventButton:hover{
 
-    transform:
-
-        translateY(-6px)
-
-        rotate(90deg)
-
-        scale(1.05);
-
-    box-shadow:
-
-        0 0 70px rgba(255,255,255,.45);
+    transform:scale(1.08) rotate(90deg);
 
 }
 
-/* =====================================
-            MODAL
-===================================== */
+/* =========================================
+   EMPTY STATE
+========================================= */
+
+.emptyState{
+
+    text-align:center;
+
+    padding:90px 40px;
+
+    border-radius:30px;
+
+    background:var(--card-bg);
+
+    border:1px solid var(--card-border);
+
+    backdrop-filter:blur(20px);
+
+}
+
+.emptyState i{
+
+    font-size:70px;
+
+    color:var(--muted);
+
+    margin-bottom:24px;
+
+}
+
+.emptyState h2{
+
+    font-size:34px;
+
+    margin-bottom:16px;
+
+    color:var(--text);
+
+}
+
+.emptyState p{
+
+    font-size:18px;
+
+    color:var(--muted);
+
+}
+
+/* =========================================
+   MODAL
+========================================= */
 
 .glassModal{
 
-    border-radius:28px;
-
-    background:var(--surfaceStrong);
-
-    backdrop-filter:blur(24px);
+    background:var(--surface);
 
     border:1px solid var(--border);
+
+    backdrop-filter:blur(30px);
+
+    border-radius:26px;
 
     color:var(--text);
 
@@ -760,41 +671,15 @@ nav{
 
     border-bottom:1px solid var(--border);
 
-    padding:26px;
-
-}
-
-.modal-title{
-
-    font-weight:800;
-
-    font-size:28px;
-
-}
-
-.modal-body{
-
-    padding:28px;
-
 }
 
 .modal-footer{
 
     border-top:1px solid var(--border);
 
-    padding:24px;
-
 }
 
-/* =====================================
-            INPUT
-===================================== */
-
 .form-control{
-
-    border-radius:18px;
-
-    padding:16px 20px;
 
     background:rgba(255,255,255,.05);
 
@@ -802,7 +687,9 @@ nav{
 
     color:var(--text);
 
-    transition:.3s;
+    padding:14px 18px;
+
+    border-radius:14px;
 
 }
 
@@ -810,13 +697,11 @@ nav{
 
     background:rgba(255,255,255,.08);
 
-    color:var(--text);
-
     border-color:white;
 
-    box-shadow:
+    color:var(--text);
 
-        0 0 20px rgba(255,255,255,.18);
+    box-shadow:none;
 
 }
 
@@ -826,128 +711,56 @@ nav{
 
 }
 
-/* =====================================
-        MODAL BUTTONS
-===================================== */
+.btnCreate,
+.btnCancel{
+
+    padding:12px 26px;
+
+    border-radius:14px;
+
+    transition:.3s;
+
+}
 
 .btnCreate{
-
-    padding:14px 28px;
-
-    border-radius:999px;
 
     background:white;
 
     color:black;
 
-    font-weight:700;
-
-    transition:.35s;
-
 }
 
 .btnCreate:hover{
 
-    transform:translateY(-3px);
-
-    box-shadow:
-
-        0 0 35px rgba(255,255,255,.35);
+    transform:translateY(-2px);
 
 }
 
 .btnCancel{
 
-    padding:14px 24px;
+    background:transparent;
 
-    border-radius:999px;
-
-    background:rgba(255,255,255,.06);
-
-    color:var(--text);
-
-    border:1px solid var(--border);
-
-    transition:.35s;
+    color:var(--muted);
 
 }
 
 .btnCancel:hover{
 
-    background:rgba(255,255,255,.12);
-
-}
-/* =====================================
-        EMPTY STATE
-===================================== */
-
-.emptyState{
-
-    width:100%;
-
-    padding:90px 40px;
-
-    text-align:center;
-
-    border-radius:30px;
-
-    background:var(--card);
-
-    border:1px solid var(--border);
-
-    backdrop-filter:blur(18px);
-
-    animation:fadeUp .8s ease;
+    color:var(--text);
 
 }
 
-.emptyState i{
-
-    font-size:72px;
-
-    opacity:.7;
-
-    margin-bottom:25px;
-
-    display:block;
-
-}
-
-.emptyState h2{
-
-    font-size:38px;
-
-    font-weight:800;
-
-    margin-bottom:16px;
-
-}
-
-.emptyState p{
-
-    color:var(--muted);
-
-    font-size:18px;
-
-    line-height:1.8;
-
-}
-
-/* =====================================
-        REVEAL
-===================================== */
+/* =========================================
+   REVEAL
+========================================= */
 
 .reveal{
 
     opacity:0;
 
-    transform:translateY(60px);
+    transform:translateY(40px);
 
-    transition:
-
-        opacity .9s,
-
-        transform .9s;
+    transition:.7s;
 
 }
 
@@ -959,138 +772,11 @@ nav{
 
 }
 
-/* =====================================
-        CARD ANIMATION
-===================================== */
-
-@keyframes fadeUp{
-
-    from{
-
-        opacity:0;
-
-        transform:translateY(40px);
-
-    }
-
-    to{
-
-        opacity:1;
-
-        transform:translateY(0);
-
-    }
-
-}
-
-.eventCard{
-
-    animation:fadeUp .6s ease both;
-
-}
-
-.eventCard:nth-child(1){
-
-    animation-delay:.05s;
-
-}
-
-.eventCard:nth-child(2){
-
-    animation-delay:.12s;
-
-}
-
-.eventCard:nth-child(3){
-
-    animation-delay:.19s;
-
-}
-
-.eventCard:nth-child(4){
-
-    animation-delay:.26s;
-
-}
-
-.eventCard:nth-child(5){
-
-    animation-delay:.33s;
-
-}
-
-.eventCard:nth-child(6){
-
-    animation-delay:.40s;
-
-}
-
-.eventCard:nth-child(7){
-
-    animation-delay:.47s;
-
-}
-
-.eventCard:nth-child(8){
-
-    animation-delay:.54s;
-
-}
-
-/* =====================================
-        LIGHT THEME
-===================================== */
-
-html[data-bs-theme="light"] .themeToggle:hover,
-html[data-bs-theme="light"] .logoutButton:hover,
-html[data-bs-theme="light"] .btnCreate:hover,
-html[data-bs-theme="light"] .createEventButton{
-
-    background:#0f172a;
-
-    color:white;
-
-}
-
-html[data-bs-theme="light"] .deleteButton{
-
-    background:rgba(255,80,80,.12);
-
-}
-
-html[data-bs-theme="light"] .glassModal{
-
-    box-shadow:
-
-        0 30px 70px rgba(15,23,42,.12);
-
-}
-
-html[data-bs-theme="light"] .eventCard{
-
-    box-shadow:
-
-        0 18px 40px rgba(15,23,42,.08);
-
-}
-
-/* =====================================
-        RESPONSIVE
-===================================== */
+/* =========================================
+   RESPONSIVE
+========================================= */
 
 @media(max-width:992px){
-
-    .pageTitle h1{
-
-        font-size:58px;
-
-    }
-
-    .heroBackgroundText{
-
-        font-size:22vw;
-
-    }
 
     .eventBody{
 
@@ -1116,7 +802,7 @@ html[data-bs-theme="light"] .eventCard{
 
         width:95%;
 
-        padding:16px;
+        padding:14px 18px;
 
     }
 
@@ -1126,21 +812,21 @@ html[data-bs-theme="light"] .eventCard{
 
     }
 
-    .userEmail{
+    .eventsPage{
 
-        display:none;
-
-    }
-
-    .pageTitle h1{
-
-        font-size:46px;
+        padding-top:120px;
 
     }
 
-    .pageTitle p{
+    .eventsTabs{
 
-        font-size:18px;
+        flex-direction:column;
+
+    }
+
+    .eventsTab{
+
+        width:100%;
 
     }
 
@@ -1150,57 +836,37 @@ html[data-bs-theme="light"] .eventCard{
 
     }
 
-    .heroBackgroundText{
-
-        font-size:28vw;
-
-    }
-
     .createEventButton{
-
-        width:66px;
-
-        height:66px;
 
         right:20px;
 
         bottom:20px;
 
-        font-size:26px;
+        width:64px;
+
+        height:64px;
 
     }
 
 }
 
-@media(max-width:500px){
-
-    .pageTitle{
-
-        margin-bottom:60px;
-
-    }
-
-    .pageTitle h1{
-
-        font-size:38px;
-
-    }
-
-    .badge{
-
-        font-size:14px;
-
-    }
+@media(max-width:576px){
 
     .eventBody{
 
-        padding:26px;
+        padding:24px;
 
     }
 
-    .modal-title{
+    .eventTitle{
 
         font-size:22px;
+
+    }
+
+    .emptyState{
+
+        padding:60px 24px;
 
     }
 
