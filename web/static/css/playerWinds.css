@@ -2030,3 +2030,46 @@ body.comments-open .questionForm{
 .afff:hover{
     opacity:.7;
 }
+
+/* Стиль для кнопки Обновить */
+.refreshButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    padding: 10px 16px;
+    margin-top: 10px; /* Небольшой отступ от верхней кнопки */
+    background: transparent; /* Полностью прозрачный фон по умолчанию */
+    border: 1px solid gray;
+    border-radius: 12px;
+    color: gray; /* Приглушенный цвет текста */
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+/* Эффект при наведении */
+.refreshButton:hover {
+    background: rgba(255, 255, 255, 0.05); /* Легкое проявление фона */
+    border-color: rgba(255, 255, 255, 0.15);
+    color: #ffffff; /* Яркий белый текст при наведении */
+}
+
+/* Анимация вращения иконки стрелочки */
+.refreshButton:hover i {
+    transform: rotate(180deg);
+}
+
+/* Эффект при клике */
+.refreshButton:active {
+    transform: scale(0.98); /* Легкое уменьшение при нажатии */
+}
+
+/* Стилизация иконки внутри кнопки */
+.refreshButton i {
+    font-size: 14px;
+    transition: transform 0.4s ease; /* Плавное вращение */
+}

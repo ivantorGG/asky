@@ -85,13 +85,19 @@ LEFT
 
         <img id="eventQr" class="qrImage" src="" alt="QR Code">
 
-        <!-- Кнопка-ссылка стала полноценной стильной кнопкой -->
         <button id="copyLinkBtn" class="lectureBtn">
             <i id="btnIcon" class="bi bi-link-45deg"></i>
             <span id="btnText">Скопировать ссылку</span>
         </button>
+
+        <!-- Обновленная кнопка с иконкой -->
+        <button class="refreshButton" type="button" onclick="window.location.reload();">
+            <i class="bi bi-arrow-clockwise"></i>
+            <span>Обновить</span>
+        </button>
     </div>
 </aside>
+
 
 
 
@@ -100,15 +106,6 @@ RIGHT
 ======================================================= -->
 
 <section class="questionsColumn">
-
-<div class="questionsHeader">
-
-<div>
-
-
-</div>
-
-</div>
 
 <div
 class="questionsList"
@@ -240,7 +237,9 @@ function closeComments(){
 <script>
 
 const pathParts = window.location.pathname.split('/');
-const eventCode = pathParts[2];
+// Try to find UUID in the path first, fallback to segment 2
+const uuidMatch = window.location.pathname.match(/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/);
+const eventCode = uuidMatch ? uuidMatch[0] : (pathParts[2] || '');
 const API_BASE = '/api';
 
 let currentQuestionId = null;
@@ -250,7 +249,9 @@ let currentQuestionId = null;
 
 async function getQuestions() {
   try {
-    const resp = await fetch(`${API_BASE}/events/${eventCode}/questions`);
+    const url = `${API_BASE}/events/${eventCode}/questions`;
+    console.debug('Fetching questions from', url);
+    const resp = await fetch(url);
     if (!resp.ok) throw new Error(`Ошибка загрузки: ${resp.status}`);
     return await resp.json();
   } catch (e) {
