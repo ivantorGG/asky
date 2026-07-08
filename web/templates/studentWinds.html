@@ -93,7 +93,7 @@ LEFT
         </button>
 
         <!-- Обновленная кнопка с иконкой -->
-        <button class="refreshButton" type="button" onclick="window.location.reload();">
+        <button id="refreshPageBtn" class="refreshButton" type="button" aria-label="Обновить страницу" onclick="event.preventDefault(); event.stopPropagation(); window.location.reload();">
             <i class="bi bi-arrow-clockwise"></i>
             <span>Обновить</span>
         </button>
@@ -245,6 +245,16 @@ const eventCode = uuidMatch ? uuidMatch[0] : (pathParts[2] || '');
 const API_BASE = '/api';
 
 let currentQuestionId = null;
+
+const refreshPageBtn = document.getElementById("refreshPageBtn");
+
+if (refreshPageBtn) {
+  refreshPageBtn.addEventListener("click", e => {
+    e.preventDefault();
+    e.stopPropagation();
+    window.location.reload();
+  });
+}
 
 // дальше код без изменений...
 // ---------------------- API -------------------------------

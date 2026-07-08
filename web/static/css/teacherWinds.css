@@ -1151,6 +1151,11 @@ header{
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
+    position: relative;
+    z-index: 2;
+    pointer-events: auto;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
     transition: all 0.25s ease;
 }
 
