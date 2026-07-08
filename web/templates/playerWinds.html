@@ -97,6 +97,9 @@
     <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
   </div>
   <div class="offcanvas-body">
+      <div id="questionStatsInPanel" class="d-flex gap-2 mb-3 align-items-center">
+          <!-- динамически заполним -->
+      </div>
     <div id="commentsList">
       <p class="text-muted">Комментариев пока нет</p>
     </div>
@@ -185,35 +188,42 @@ async function addComment(id, text) {
 
 // ---------------------- ОТРИСОВКА -------------------------------
 
-async function renderQuestions() {
-  const container = document.getElementById('questionsList');
-  if (!container) return;
-  try {
-    const questions = await getQuestions();
-    if (questions.length === 0) {
-      container.innerHTML = '<p class="text-muted text-center">Пока нет вопросов. Будьте первым!</p>';
-      return;
-    }
-    let html = '';
-    questions.forEach(q => {
+async function updateSingleQuestionUI(questionId) {
+  // Запрашиваем свежие данные вопроса
+  const resp = await fetch(`${API_BASE}/questions/${questionId}`);
+  if (!resp.ok) return;
+  const q = await resp.json();
+  
+  // Обновляем кнопку в общем списке
+  const listItem = document.querySelector(`.list-group-item[data-id="${questionId}"]`);
+  if (listItem) {
+    const likeBtn = listItem.querySelector('.like-btn');
+    if (likeBtn) {
       const likes = q.votes || 0;
       const liked = q.is_voted || false;
-      const commentsCount = q.comments ? q.comments.length : (q.comments_count || 0);
-      html += `
-        <div class="list-group-item" data-id="${q.id}">
-          <span class="question-text">${q.text}</span>
-          <button class="btn btn-sm ${liked ? 'btn-primary' : 'btn-outline-primary'} like-btn" data-id="${q.id}">
-            👍 <span class="like-count">${likes}</span>
-          </button>
-          <button class="btn btn-sm btn-outline-secondary comment-btn" data-id="${q.id}">
-            💬 <span class="comment-count">${commentsCount}</span>
-          </button>
-        </div>
+      likeBtn.className = `btn btn-sm ${liked ? 'btn-primary' : 'btn-outline-primary'} like-btn`;
+      likeBtn.querySelector('.like-count').textContent = likes;
+    }
+    const commentBtn = listItem.querySelector('.comment-btn .comment-count');
+    if (commentBtn) {
+      commentBtn.textContent = q.comments_count ?? 0;
+    }
+  }
+
+  // Обновляем статистику в боковой панели, если она открыта и относится к этому вопросу
+  if (currentQuestionId === questionId) {
+    const statsDiv = document.getElementById('questionStatsInPanel');
+    if (statsDiv) {
+      const likes = q.votes || 0;
+      const liked = q.is_voted || false;
+      const commCount = q.comments_count ?? 0;
+      statsDiv.innerHTML = `
+        <button class="btn btn-sm ${liked ? 'btn-primary' : 'btn-outline-primary'} like-btn" data-id="${questionId}">
+          👍 <span class="like-count">${likes}</span>
+        </button>
+        <span>💬 <span class="comment-count">${commCount}</span> комментариев</span>
       `;
-    });
-    container.innerHTML = html;
-  } catch (e) {
-    container.innerHTML = '<p class="text-danger">Не удалось загрузить вопросы</p>';
+    }
   }
 }
 
@@ -222,7 +232,12 @@ async function renderQuestions() {
 async function openComments(questionId) {
   currentQuestionId = questionId;
   try {
+    // Загружаем комментарии
     const comments = await getComments(questionId);
+    // Загружаем сам вопрос для статистики (предположим, есть эндпоинт /api/questions/{id})
+    const questionResp = await fetch(`${API_BASE}/questions/${questionId}`);
+    const questionData = questionResp.ok ? await questionResp.json() : {};
+    
     const container = document.getElementById('commentsList');
     if (!comments || comments.length === 0) {
       container.innerHTML = '<p class="text-muted">Комментариев пока нет</p>';
@@ -237,12 +252,27 @@ async function openComments(questionId) {
         </div>
       `).join('');
     }
-    new bootstrap.Offcanvas(document.getElementById('commentsOffcanvas')).show();
+
+    // Отображаем статистику в панели
+    const statsDiv = document.getElementById('questionStatsInPanel');
+    if (questionData) {
+      const likes = questionData.votes || 0;
+      const liked = questionData.is_voted || false;
+      const commCount = questionData.comments_count ?? (comments ? comments.length : 0);
+      statsDiv.innerHTML = `
+        <button class="btn btn-sm ${liked ? 'btn-primary' : 'btn-outline-primary'} like-btn" data-id="${questionId}">
+          👍 <span class="like-count">${likes}</span>
+        </button>
+        <span>💬 <span class="comment-count">${commCount}</span> комментариев</span>
+      `;
+    }
+
+    const offcanvas = new bootstrap.Offcanvas(document.getElementById('commentsOffcanvas'));
+    offcanvas.show();
   } catch (e) {
     console.error('openComments:', e);
   }
 }
-
 // ---------------------- ОБРАБОТЧИКИ ---------------------------
 
 document.addEventListener('click', async function(e) {
@@ -254,7 +284,7 @@ document.addEventListener('click', async function(e) {
     try {
       if (isLiked) await unlikeQuestion(id);
       else await likeQuestion(id);
-      await renderQuestions();
+      await updateSingleQuestionUI(id);   // вместо renderQuestions()
     } catch (e) { alert('Ошибка лайка'); }
   }
 });
@@ -287,8 +317,10 @@ document.getElementById('commentForm').addEventListener('submit', async function
   if (!text || currentQuestionId === null) return;
   try {
     await addComment(currentQuestionId, text);
-    await openComments(currentQuestionId);
-    await renderQuestions();
+    // Перезагружаем список комментариев в панели и статистику
+    await openComments(currentQuestionId); // это заново всё отрисует и обновит статистику
+    // Точечно обновим основной список (или просто renderQuestions, если не жалко)
+    await updateSingleQuestionUI(currentQuestionId);
     input.value = '';
   } catch (e) { alert('Ошибка добавления комментария'); }
 });
