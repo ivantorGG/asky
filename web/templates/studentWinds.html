@@ -39,6 +39,8 @@
 
         <nav>
 
+          <a href="/" class="afff">Главная</a>
+
             <span id="email" class="userEmail"></span>
 
             <button id="themeToggle"
@@ -75,34 +77,23 @@ LEFT
 ======================================================= -->
 
 <aside class="leftColumn">
+    <div class="glassCard qrCard">
+        <h5>
+            <i class="bi bi-qr-code"></i>
+            QR мероприятия
+        </h5>
 
-<div class="glassCard qrCard">
+        <img id="eventQr" class="qrImage" src="" alt="QR Code">
 
-<h5>
-
-<i class="bi bi-qr-code"></i>
-
-QR мероприятия
-
-</h5>
-
-<img
-class="qrImage"
-src="https://upload.wikimedia.org/wikipedia/commons/5/5e/QR_Code_example.png">
-
-<a
-class="lectureLink"
-href="https://upload.wikimedia.org/wikipedia/commons/5/5e/QR_Code_example.png">
-
-<i class="bi bi-link-45deg"></i>
-
-Открыть лекцию
-
-</a>
-
-</div>
-
+        <!-- Кнопка-ссылка стала полноценной стильной кнопкой -->
+        <button id="copyLinkBtn" class="lectureBtn">
+            <i id="btnIcon" class="bi bi-link-45deg"></i>
+            <span id="btnText">Скопировать ссылку</span>
+        </button>
+    </div>
 </aside>
+
+
 
 <!-- =======================================================
 RIGHT
@@ -114,17 +105,6 @@ RIGHT
 
 <div>
 
-<h2>
-
-Вопросы
-
-</h2>
-
-<div class="questionCounter">
-
-Все вопросы мероприятия
-
-</div>
 
 </div>
 
@@ -167,8 +147,7 @@ type="submit">
 </form>
 
 <div
-class="offcanvas offcanvas-end"
-tabindex="-1"
+class="commentsPanel"
 id="commentsOffcanvas">
 
 <div class="offcanvas-header">
@@ -183,8 +162,9 @@ id="commentsOffcanvas">
 
 <button
 type="button"
-class="btn-close"
-data-bs-dismiss="offcanvas">
+class="closeComments">
+
+<i class="bi bi-x-lg"></i>
 
 </button>
 
@@ -223,7 +203,38 @@ type="submit">
 </div>
 
 </div>
+<script>
 
+const commentsPanel = document.getElementById("commentsOffcanvas");
+
+
+document.querySelector(".closeComments")
+.addEventListener("click",()=>{
+
+    closeComments();
+
+});
+
+
+function openPanel(){
+
+    document.body.classList.add("comments-open");
+
+    commentsPanel.classList.add("active");
+
+}
+
+
+function closeComments(){
+
+    document.body.classList.remove("comments-open");
+
+    commentsPanel.classList.remove("active");
+
+}
+
+
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
@@ -511,9 +522,7 @@ ${c.text}
 
   }
 
-  new bootstrap.Offcanvas(
-    document.getElementById("commentsOffcanvas")
-  ).show();
+  openPanel();
 
 }
 
@@ -573,6 +582,56 @@ document.getElementById("questionForm")
   renderQuestions();
 
 });
+
+
+
+async function loadEventData() {
+    const pathSegments = window.location.pathname.split('/').filter(segment => segment !== '');
+    const studentIndex = pathSegments.indexOf('student');
+    const eventCode = studentIndex > 0 ? pathSegments[studentIndex - 1] : pathSegments[pathSegments.length - 1];
+    
+    if (!eventCode) return;
+
+    try {
+        const linkResponse = await fetch(`/api/events/${eventCode}/link`);
+        const linkData = await linkResponse.json();
+        const qrResponse = await fetch(`/api/events/${eventCode}/qrcode`);
+        const qrBlob = await qrResponse.blob();
+        
+        document.getElementById('eventQr').src = URL.createObjectURL(qrBlob);
+        
+        const copyBtn = document.getElementById('copyLinkBtn');
+        const btnText = document.getElementById('btnText');
+        const btnIcon = document.getElementById('btnIcon');
+
+        copyBtn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(linkData.link);
+                
+                // Анимация успеха
+                copyBtn.classList.add('success');
+                btnText.textContent = 'Скопировано!';
+                btnIcon.className = 'bi bi-check2'; // Меняем иконку на галочку
+
+                // Возвращаем всё назад через 2 секунды
+                setTimeout(() => {
+                    copyBtn.classList.remove('success');
+                    btnText.textContent = 'Скопировать ссылку';
+                    btnIcon.className = 'bi bi-link-45deg';
+                }, 2000);
+            } catch (err) {
+                console.error('Ошибка копирования:', err);
+            }
+        });
+
+    } catch (error) {
+        console.error(error);
+    }
+}
+document.addEventListener('DOMContentLoaded', loadEventData);
+
+
+
 
 document.getElementById("commentForm")
 .addEventListener("submit", async e => {

@@ -1249,3 +1249,784 @@ gap:8px;
 }
 
 }
+
+/* =====================================================
+                COMMENTS SLIDE PANEL
+===================================================== */
+
+
+.commentsPanel{
+
+    position:fixed;
+
+    top:0;
+
+    right:0;
+
+    width:420px;
+
+    height:100vh;
+
+    z-index:200;
+
+    background:var(--bg);
+
+    color:var(--text);
+
+    border-left:1px solid var(--border);
+
+    backdrop-filter:blur(25px);
+
+    transform:translateX(100%);
+
+    transition:
+        transform .45s cubic-bezier(.22,1,.36,1);
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+
+
+.commentsPanel.active{
+
+    transform:translateX(0);
+
+}
+
+
+
+/* двигаем основной интерфейс */
+
+.page,
+.questionForm,
+header{
+
+    transition:
+        transform .45s cubic-bezier(.22,1,.36,1),
+        width .45s ease;
+
+}
+
+
+
+
+
+
+/* header имеет свой translateX(-50%) */
+
+
+
+/* чтобы контент не улетал */
+
+@media(max-width:900px){
+
+
+.commentsPanel{
+
+    width:100%;
+
+}
+
+
+body.comments-open .page,
+body.comments-open .questionForm,
+body.comments-open header{
+
+    transform:none;
+
+}
+
+
+}
+
+
+/* HEADER PANEL */
+
+
+.commentsPanel .offcanvas-header{
+
+    padding:22px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    border-bottom:1px solid var(--border);
+
+}
+
+
+.commentsPanel h5{
+
+    display:flex;
+
+    gap:10px;
+
+    align-items:center;
+
+}
+
+
+
+.closeComments{
+
+    width:38px;
+
+    height:38px;
+
+    border-radius:50%;
+
+    background:var(--surface);
+
+    color:var(--text);
+
+    cursor:pointer;
+
+}
+
+
+
+.commentsPanel .offcanvas-body{
+
+    flex:1;
+
+    display:flex;
+
+    flex-direction:column;
+
+    padding:20px;
+
+}
+
+
+
+#commentsList{
+
+    flex:1;
+
+    overflow:auto;
+
+}
+
+/* Стильная кнопка вместо ссылки */
+.lectureBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px 16px;
+    margin-top: 15px;
+    background: rgba(255, 255, 255, 0.08); /* Полупрозрачный фон под стекло */
+    border: 1px solid gray;
+    border-radius: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    backdrop-filter: blur(10px); /* Эффект размытия */
+    -webkit-backdrop-filter: blur(10px);
+    transition: all 0.3s ease; /* Плавность для всех анимаций */
+}
+
+/* Эффект при наведении */
+.lectureBtn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px); /* Легкое всплытие вверх */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Эффект при нажатии */
+.lectureBtn:active {
+    transform: translateY(0);
+}
+
+/* Класс успеха, добавляемый из JS */
+.lectureBtn.success {
+    background: rgba(40, 167, 69, 0.2) !important; /* Полупрозрачный зеленый */
+    border-color: rgba(40, 167, 69, 0.5) !important;
+    color: #2ed573 !important;
+    transform: translateY(0);
+    box-shadow: 0 0 15px rgba(40, 167, 69, 0.3);
+}
+
+/* Небольшая анимация иконок */
+.lectureBtn i {
+    font-size: 16px;
+    transition: transform 0.2s ease;
+}
+/* =====================================================
+                COMMENTS PANEL GLASS STYLE
+===================================================== */
+
+
+.commentsPanel{
+
+    position:fixed;
+
+    top:20px;
+
+    right:20px;
+
+    width:420px;
+
+    height:calc(100vh - 40px);
+
+    z-index:200;
+
+
+    display:flex;
+
+    flex-direction:column;
+
+
+    background:var(--surface);
+
+    backdrop-filter:blur(25px);
+
+
+    border:1px solid var(--border);
+
+    border-radius:30px;
+
+
+    box-shadow:
+
+        0 25px 80px rgba(0,0,0,.35),
+
+        0 0 60px rgba(124,131,255,.12);
+
+
+
+    transform:translateX(calc(100% + 40px));
+
+
+    transition:
+
+        transform .45s cubic-bezier(.22,1,.36,1);
+
+    overflow:hidden;
+
+}
+
+
+
+.commentsPanel.active{
+
+    transform:translateX(0);
+
+}
+
+
+
+/* ===================================
+        HEADER
+=================================== */
+
+
+.commentsPanel .offcanvas-header{
+
+    padding:24px 26px;
+
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+
+    border-bottom:1px solid var(--border);
+
+
+    background:
+
+        linear-gradient(
+
+            180deg,
+
+            rgba(255,255,255,.08),
+
+            transparent
+
+        );
+
+}
+
+
+
+.commentsPanel h5{
+
+
+    margin:0;
+
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+
+    font-size:21px;
+
+    font-weight:800;
+
+}
+
+
+
+.commentsPanel h5 i{
+
+    color:#7c83ff;
+
+    font-size:24px;
+
+}
+
+
+
+.closeComments{
+
+
+    width:40px;
+
+    height:40px;
+
+
+    border-radius:50%;
+
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+
+    cursor:pointer;
+
+
+    color:var(--text);
+
+
+    background:var(--surface);
+
+
+    border:1px solid var(--border);
+
+
+    transition:.3s;
+
+}
+
+
+
+.closeComments:hover{
+
+
+    transform:rotate(90deg);
+
+
+    background:rgba(255,255,255,.12);
+
+}
+
+
+
+/* ===================================
+        BODY
+=================================== */
+
+
+.commentsPanel .offcanvas-body{
+
+
+    flex:1;
+
+
+    display:flex;
+
+    flex-direction:column;
+
+
+    padding:22px;
+
+
+}
+
+
+
+/* список */
+
+
+#commentsList{
+
+
+    flex:1;
+
+
+    overflow-y:auto;
+
+
+    display:flex;
+
+    flex-direction:column;
+
+
+    gap:16px;
+
+
+    padding-right:5px;
+
+}
+
+
+
+/* ===================================
+        COMMENT CARD
+=================================== */
+
+
+.comment{
+
+
+    padding:18px;
+
+
+    border-radius:22px;
+
+
+    background:var(--card);
+
+
+    border:1px solid var(--border);
+
+
+    backdrop-filter:blur(15px);
+
+
+    animation:fadeUp .35s ease;
+
+
+    transition:.3s;
+
+}
+
+
+
+.comment:hover{
+
+
+    transform:translateY(-3px);
+
+
+    background:var(--cardHover);
+
+
+}
+
+
+
+.commentAuthor{
+
+
+    font-size:13px;
+
+
+    font-weight:700;
+
+
+    color:#7c83ff;
+
+
+    margin-bottom:8px;
+
+}
+
+
+
+.commentText{
+
+
+    line-height:1.6;
+
+
+    font-size:15px;
+
+    word-break:break-word;
+
+}
+
+
+
+/* ===================================
+        INPUT
+=================================== */
+
+
+.commentForm{
+
+
+    margin-top:20px;
+
+
+    padding-top:18px;
+
+
+    border-top:1px solid var(--border);
+
+}
+
+
+
+.commentForm input{
+
+
+    width:100%;
+
+
+    padding:15px 18px;
+
+
+    border-radius:20px;
+
+
+    background:var(--card);
+
+
+    border:1px solid var(--border);
+
+
+    color:var(--text);
+
+
+    outline:none;
+
+
+    font-family:inherit;
+
+
+    transition:.3s;
+
+
+}
+
+
+
+.commentForm input:focus{
+
+
+    border-color:#7c83ff;
+
+
+    box-shadow:
+
+        0 0 25px rgba(124,131,255,.2);
+
+}
+
+
+
+.commentForm button{
+
+
+    margin-top:12px;
+
+
+    width:100%;
+
+
+    padding:15px;
+
+
+    border-radius:20px;
+
+
+    border:none;
+
+
+    background:white;
+
+
+    color:black;
+
+
+    font-weight:700;
+
+
+    transition:.3s;
+
+
+}
+
+
+
+.commentForm button:hover{
+
+
+    transform:translateY(-3px);
+
+
+    box-shadow:
+
+        0 10px 35px rgba(255,255,255,.2);
+
+
+}
+
+
+/* =====================================================
+        SHIFT MAIN CONTENT
+===================================================== */
+
+
+
+.page{
+
+    transition:
+        margin-right .45s cubic-bezier(.22,1,.36,1);
+
+}
+
+
+
+header{
+
+    transition:
+        left .45s cubic-bezier(.22,1,.36,1);
+
+}
+
+
+
+.questionForm{
+
+    transition:
+        left .45s cubic-bezier(.22,1,.36,1);
+
+}
+
+
+
+/*
+    ширина панели 420px
+    + отступ 20px
+*/
+
+body.comments-open .page{
+    margin-right:380px;
+}
+
+
+
+body.comments-open header{
+    left:calc(50% - 165px);
+}
+
+
+
+body.comments-open .questionForm{
+
+
+    left:calc(50% - 165px);
+
+
+}
+
+
+
+/* ===================================
+        MOBILE
+=================================== */
+
+
+@media(max-width:900px){
+
+
+.commentsPanel{
+
+
+    top:0;
+
+    right:0;
+
+
+    width:100%;
+
+
+    height:100vh;
+
+
+    border-radius:0;
+
+
+}
+
+
+
+body.comments-open .page{
+
+
+    margin-right:0;
+
+
+}
+
+
+
+body.comments-open header,
+body.comments-open .questionForm{
+
+
+    left:50%;
+
+
+}
+
+
+}
+header{
+    transition:
+        left .45s cubic-bezier(.22,1,.36,1),
+        width .45s ease,
+        padding .45s ease;
+}
+
+body.comments-open header{
+    width:min(980px,78%);
+    padding:14px 20px;
+}
+
+.leftColumn{
+    transition:transform .45s cubic-bezier(.22,1,.36,1);
+}
+
+body.comments-open .leftColumn{
+    transform:translateX(0px);
+}
+
+body.comments-open header{
+    left:calc(50% - 40px);
+}
+
+body.comments-open .questionForm{
+    left:calc(50% - 10px);
+}
+
+.afff{
+    color:var(--text);
+    font-weight:700;
+    margin-left:5px;
+    transition:.3s;
+}
+
+.afff:hover{
+    opacity:.7;
+}

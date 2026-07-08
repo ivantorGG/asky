@@ -363,7 +363,7 @@ func (h *Handler) GetEventLink(w http.ResponseWriter, r *http.Request) {
 		utils.WriteJSONError(w, http.StatusBadRequest, "bad_request")
 		return
 	}
-	link := cfg.Domain + "/events/" + code
+	link := cfg.Domain + "/events/" + code + "/student"
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{
@@ -376,7 +376,7 @@ func (h *Handler) GetEventQRcode(w http.ResponseWriter, r *http.Request) {
 		utils.WriteJSONError(w, http.StatusBadRequest, "bad_request")
 		return
 	}
-	link := cfg.Domain + "/events/" + code
+	link := cfg.Domain + "/events/" + code + "/student"
 
 	png, err := qrcode.Encode(link, qrcode.Medium, 256)
 	if err != nil {
