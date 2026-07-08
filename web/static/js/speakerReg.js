@@ -23,7 +23,7 @@ a7 7 0 1 0 9.79 9.79z"/>
         sendRegs(email, password);
     }
 
-}
+
 
 updateThemeButton();
 

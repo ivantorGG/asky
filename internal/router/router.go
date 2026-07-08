@@ -42,9 +42,9 @@ func New(h *handler.Handler) http.Handler {
 	// Authentication API
 	// =========================================================================
 
-	r.Post("/api/register", h.Register) // Register a new user
-	r.Post("/api/login", h.Login)       // Authenticate user
-	r.With(middleware.Auth(h.DB)).Get("/api/email", h.GetEmail)       // Authenticate user
+	r.Post("/api/register", h.Register)                         // Register a new user
+	r.Post("/api/login", h.Login)                               // Authenticate user
+	r.With(middleware.Auth(h.DB)).Get("/api/email", h.GetEmail) // Authenticate user
 
 	// =========================================================================
 	// Events API
@@ -62,8 +62,9 @@ func New(h *handler.Handler) http.Handler {
 	// Questions API
 	// =========================================================================
 
-	r.Get("/api/events/{code}/questions", h.GetQuestionsByEventCode) // Get all event questions
-	r.Post("/api/events/{code}/questions", h.NewQuestion)            // Create a new question
+	r.Get("/api/events/{code}/questions/count", h.GetQuestionsCountByEventCode) // Get event questions count
+	r.Get("/api/events/{code}/questions", h.GetQuestionsByEventCode)            // Get all event questions
+	r.Post("/api/events/{code}/questions", h.NewQuestion)                       // Create a new question
 
 	r.With(middleware.Auth(h.DB)).Put("/api/questions/{id}/answer", h.AnswerQuestion) // Mark question as answered
 
