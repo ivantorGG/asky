@@ -243,3 +243,73 @@ html[data-theme="light"] .inputGroup input{
     }
 
 }
+
+/* ========================================
+   FOOTER
+======================================== */
+
+footer{
+
+    position:relative;
+
+    margin-top:50px;
+    padding:50px 20px 80px;
+
+    text-align:center;
+
+    border-top:1px solid rgba(255,255,255,.08);
+
+    overflow:hidden;
+}
+
+.footerTitle{
+
+    font-size:110px;
+
+    font-weight:900;
+
+    letter-spacing:12px;
+
+    color:transparent;
+
+    -webkit-text-stroke:1px var(--hero-stroke, rgba(255,255,255,.15));
+
+    background:linear-gradient(
+        90deg,
+        var(--hero-bg-start, rgba(15,23,42,.04)),
+        var(--hero-bg-mid, rgba(15,23,42,.24)),
+        var(--hero-bg-end, rgba(15,23,42,.04))
+    );
+
+    background-size:220%;
+
+    -webkit-background-clip:text;
+
+    background-clip:text;
+
+    animation:shine 7s linear infinite;
+
+    margin-bottom:20px;
+}
+
+footer p{
+
+    color:var(--muted);
+
+    font-size:18px;
+}
+/* По умолчанию скрываем мобильный текст */
+.mobile-text {
+    display: none;
+}
+
+/* На экранах шириной 768px и меньше (мобильные и планшеты) */
+@media (max-width: 768px) {
+    .desktop-text {
+        display: none; /* Скрываем старый текст */
+    }
+    .mobile-text {
+        display: inline; /* Показываем ASKY */
+        font-size:78px;
+    }
+}

@@ -39,6 +39,7 @@
         <nav>
 
             <a href="#how">Как это работает</a>
+            <a href="#team">Наша команда</a>
 
             <button id="themeToggle" class="themeToggle" type="button" aria-label="Переключить тему">
                 ☀️
@@ -121,7 +122,7 @@
 
             <div class="step reveal">
 
-                <span>1</span>
+                <span class="qwer">1</span>
 
                 <h3>Создайте</h3>
 
@@ -131,7 +132,7 @@
 
             <div class="step reveal">
 
-                <span>2</span>
+                <span class="qwer">2</span>
 
                 <h3>Поделитесь</h3>
 
@@ -141,7 +142,7 @@
 
             <div class="step reveal">
 
-                <span>3</span>
+                <span class="qwer">3</span>
 
                 <h3>Получите</h3>
 
@@ -151,7 +152,7 @@
 
             <div class="step reveal">
 
-                <span>4</span>
+                <span class="qwer">4</span>
 
                 <h3>Отвечайте</h3>
 
@@ -164,14 +165,93 @@
     </section>
 
 
+    <section id="team" class="block teamSection">
+        
+        <div class="teamHeader reveal">
+            <div class="sectionTitle">Наша команда</div>
+        </div>
+
+        <div class="teamGrid">
+
+            <!-- Карточка 1: Иван -->
+            <div class="teamCard reveal" data-dept="backend">
+                <div class="cardInner">
+                    <div class="avatarZone">
+                        <div class="glowCircle"></div>
+                        <span class="avatarInitial">И</span>
+                    </div>
+                    <div class="memberInfo">
+                        <span class="deptBadge backendBadge">Backend</span>
+                        <h3>Иван</h3>
+                        <p class="role">База и Архитектура</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Карточка 2: Лев -->
+            <div class="teamCard reveal" data-dept="backend">
+                <div class="cardInner">
+                    <div class="avatarZone">
+                        <div class="glowCircle"></div>
+                        <span class="avatarInitial">Л</span>
+                    </div>
+                    <div class="memberInfo">
+                        <span class="deptBadge backendBadge">Backend</span>
+                        <h3>Лев</h3>
+                        <p class="role">БД & API</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Карточка 3: Сейф -->
+            <div class="teamCard reveal" data-dept="frontend">
+                <div class="cardInner">
+                    <div class="avatarZone">
+                        <div class="glowCircle"></div>
+                        <span class="avatarInitial">С</span>
+                    </div>
+                    <div class="memberInfo">
+                        <span class="deptBadge frontendBadge">Frontend</span>
+                        <h3>Сейф</h3>
+                        <p class="role">UI/UX & Анимации</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Карточка 4: Пётр -->
+            <div class="teamCard reveal" data-dept="frontend">
+                <div class="cardInner">
+                    <div class="avatarZone">
+                        <div class="glowCircle"></div>
+                        <span class="avatarInitial">П</span>
+                    </div>
+                    <div class="memberInfo">
+                        <span class="deptBadge frontendBadge">Frontend</span>
+                        <h3>Пётр</h3>
+                        <p class="role">Сервисная & Клиентская Логика</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
 
 
 
     <footer>
 
-        <div class="footerTitle">
+        <!-- Эта надпись видна только на ПК мониторах -->
+        <div class="footerTitle footerTitle-pc">
 
             ПОЛЬЗОВАТЕЛЬ МУДАК
+
+        </div>
+
+        <!-- Эта надпись активируется только на мобильных телефонах -->
+        <div class="footerTitle footerTitle-mobile">
+
+            ASKY
 
         </div>
 

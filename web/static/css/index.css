@@ -1490,3 +1490,805 @@ section {
     /* Добавьте эту строчку: */
     scroll-margin-top: 110px; 
 }
+
+/* ===========================
+   PREMIUM TEAM SECTION
+=========================== */
+
+.teamSection {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 120px 24px 80px;
+}
+
+.teamHeader {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.teamHeader .badge {
+    margin-bottom: 12px;
+}
+
+.teamGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+    width: 100%;
+}
+
+/* Базовая карточка */
+.teamCard {
+    position: relative;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 28px;
+    padding: 32px 24px;
+    overflow: hidden;
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), 
+                border-color 0.4s, 
+                box-shadow 0.4s;
+}
+
+/* Внутренняя разметка для изоляции слоев */
+.cardInner {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Зона аватарки с динамическим свечением */
+.avatarZone {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.avatarInitial {
+    position: relative;
+    z-index: 3;
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--text);
+    background: var(--surface-strong);
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    transition: 0.4s;
+}
+
+/* Скрытое кольцо пульсации, активирующееся при hover */
+.glowCircle {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, #6f6fff, #8a3dff, #6f6fff);
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.4s, transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    animation: rotateGlow 4s linear infinite;
+}
+
+@keyframes rotateGlow {
+    to { transform: rotate(360deg); }
+}
+
+/* Бэджи отделов */
+.deptBadge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 6px 14px;
+    border-radius: 99px;
+    margin-bottom: 16px;
+    border: 1px solid transparent;
+}
+
+/* Кастомные цвета для Бэкенда и Фронтенда */
+.backendBadge {
+    background: rgba(111, 111, 255, 0.08);
+    color: #8c8cff;
+    border-color: rgba(111, 111, 255, 0.2);
+}
+
+.frontendBadge {
+    background: rgba(138, 61, 255, 0.08);
+    color: #b07eff;
+    border-color: rgba(138, 61, 255, 0.2);
+}
+
+/* Светлая тема для бэджей (чтобы текст не сливался) */
+html[data-theme="light"] .backendBadge,
+html[data-bs-theme="light"] .backendBadge {
+    background: rgba(111, 111, 255, 0.12);
+    color: #4f4fff;
+}
+
+html[data-theme="light"] .frontendBadge,
+html[data-bs-theme="light"] .frontendBadge {
+    background: rgba(138, 61, 255, 0.12);
+    color: #7025e5;
+}
+
+/* Текстовые блоки */
+.memberInfo {
+    text-align: center;
+    width: 100%;
+}
+
+.memberInfo h3 {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+    color: var(--text);
+}
+
+.memberInfo .role {
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 500;
+}
+
+/* ===========================
+   INTERACTIVE HOVER EFFECTS
+=========================== */
+
+.teamCard:hover {
+    transform: translateY(-8px);
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 30px 60px var(--shadow);
+}
+
+/* Индивидуальная неоновая подсветка карт при наведении в зависимости от отдела */
+.teamCard[data-dept="backend"]:hover {
+    box-shadow: 0 25px 50px -12px rgba(111, 111, 255, 0.18);
+}
+
+.teamCard[data-dept="frontend"]:hover {
+    box-shadow: 0 25px 50px -12px rgba(138, 61, 255, 0.18);
+}
+
+.teamCard:hover .glowCircle {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.teamCard:hover .avatarInitial {
+    background: var(--bg);
+    transform: scale(0.96);
+}
+
+/* Интеграция с вашей reveal-анимацией */
+.teamCard.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.teamCard.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Сдвиг анимации для эффекта лесенки (каждая следующая карточка выходит чуть позже) */
+.teamGrid .teamCard:nth-child(2) { transition-delay: 0.1s; }
+.teamGrid .teamCard:nth-child(3) { transition-delay: 0.2s; }
+.teamGrid .teamCard:nth-child(4) { transition-delay: 0.3s; }
+
+/* Мобильные устройства */
+@media (max-width: 768px) {
+    .teamGrid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    .teamCard {
+        padding: 28px 20px;
+    }
+}
+/* По умолчанию скрываем мобильный заголовок футера на десктопах */
+.footerTitle-mobile {
+    display: none !important;
+}
+
+/* Обычный десктопный заголовок показываем */
+.footerTitle-pc {
+    display: block;
+}
+
+/* Стили оптимизации под мобильные телефоны (до 768px ширины экрана) */
+@media (max-width: 768px) {
+    /* Переключаем заголовки футера */
+    .footerTitle-pc {
+        display: none !important;
+    }
+    .footerTitle-mobile {
+        display: block !important;
+    }
+
+    /* Дополнительная оптимизация адаптивности для карточек команды */
+    .teamGrid {
+        grid-template-columns: 1fr !important; /* Карточки выстраиваются строго в 1 колонку */
+        gap: 16px !important;
+        padding: 0 10px;
+    }
+
+    .teamCard {
+        padding: 24px 16px !important; /* Уменьшаем отступы карт, чтобы они не были громоздкими */
+    }
+
+    .avatarZone {
+        width: 80px !important; /* Пропорционально уменьшаем аватарки на телефонах */
+        height: 80px !important;
+        margin-bottom: 16px !important;
+    }
+
+    .avatarInitial {
+        width: 68px !important;
+        height: 68px !important;
+        font-size: 24px !important;
+    }
+
+    /* Оптимизация шагов "Как это работает" под экраны смартфонов */
+    .timeline {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+}
+/* ==========================================================================
+   ПОЛНЫЙ МОБИЛЬНЫЙ ФИКС (ДЛЯ ЭКРАНОВ ДО 768px)
+   ========================================================================== */
+@media (max-width: 768px) {
+
+    /* --- Фикс 1: Наложение шапки на контент Hero --- */
+    header {
+        top: 10px; /* Прижимаем шапку чуть выше к экрану */
+        padding: 10px 16px; /* Делаем шапку уже по вертикали */
+        border-radius: 16px;
+    }
+
+    .hero {
+        padding-top: 100px !important; /* Увеличиваем верхний отступ, выталкивая бейдж из-под шапки */
+        padding-bottom: 40px !important;
+        min-height: auto !important;
+    }
+
+
+    /* --- Фикс 2: Крупный текст вверху (Заголовок Hero) --- */
+    #heroTitle {
+        font-size: 32px !important; /* Уменьшаем гигантский шрифт до читаемого на смартфонах */
+        line-height: 1.15;
+        letter-spacing: -0.5px;
+        margin-bottom: 16px;
+    }
+
+    .heroContent p {
+        font-size: 15px !important; /* Делаем описание под заголовком более компактным */
+        padding: 0 10px;
+        margin-bottom: 24px !important;
+    }
+
+    .heroBackgroundText {
+        font-size: 28vw !important; /* Корректируем масштаб огромных фоновых букв */
+    }
+
+
+    /* --- Фикс 3: Слишком большая кнопка "Начать" --- */
+    .heroContent .primary {
+        display: inline-block;
+        width: 80%; /* Кнопка растягивается по ширине экрана, но не на 100% */
+        max-width: 280px;
+        padding: 14px 24px !important; /* Снижаем внутренние паддинги */
+        font-size: 16px !important;
+        border-radius: 999px;
+        text-align: center;
+    }
+
+
+    /* --- Фикс 4: Огромные промежутки между секциями --- */
+    .block {
+        padding: 50px 0 !important; /* Сокращаем десктопные 100px-120px отступы в два раза */
+    }
+
+    .sectionTitle {
+        font-size: 26px !important; /* Делаем заголовки "Как это работает" и "Наша команда" соразмерными */
+        margin-bottom: 30px !important;
+    }
+
+
+
+
+}
+/* Оптимизация для мобильных устройств (экраны до 768px) */
+@media (max-width: 768px) {
+    
+    /* --- Секция "Как это работает" --- */
+    .timeline {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* Выстраиваем шаги в 2 колонки вместо 1 */
+        gap: 12px; /* Меньше расстояние между карточками */
+        padding: 0 16px;
+    }
+
+    .step .qwer,
+    .step .qwer::before,
+    .step .qwer::after {
+        display: none !important;
+    }
+    .step {
+        padding: 16px 12px; /* Уменьшаем внутренние отступы */
+        text-align: center;
+    }
+
+    .step span {
+        font-size: 1.5rem; /* Уменьшаем размер цифры */
+        margin-bottom: 8px;
+    }
+
+    .step h3 {
+        font-size: 1.1rem; /* Уменьшаем заголовки шагов */
+        margin-bottom: 4px;
+    }
+
+    .step p {
+        font-size: 0.85rem; /* Оптимальный размер текста для мобилок */
+        line-height: 1.3;
+    }
+
+    /* --- Секция "Наша команда" --- */
+    .teamGrid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* Команда теперь по 2 человека в ряд */
+        gap: 12px;
+        padding: 0 16px;
+    }
+
+    .teamCard {
+        width: 100% !important; /* Убираем фиксированную ширину, если она была */
+        box-sizing: border-box;
+    }
+
+    .cardInner {
+        padding: 12px; /* Компактные отступы внутри карточки */
+        display: flex;
+        flex-direction: column; /* Элементы внутри карточки один под другим */
+        align-items: center;
+        text-align: center;
+    }
+
+    .avatarZone {
+        width: 50px; /* Уменьшаем размер аватарки */
+        height: 50px;
+        margin-bottom: 8px;
+    }
+
+    .avatarInitial {
+        font-size: 1.2rem;
+    }
+
+    .memberInfo h3 {
+        font-size: 1rem; /* Компактное имя */
+        margin: 4px 0;
+    }
+
+    .memberInfo .role {
+        font-size: 0.75rem; /* Мелкий, но читаемый текст роли */
+        line-height: 1.2;
+    }
+
+    .deptBadge {
+        font-size: 0.65rem; /* Совсем маленькая плашка тега (Backend/Frontend) */
+        padding: 2px 6px;
+    }
+}
+
+/* Оптимизация для совсем маленьких экранов (до 400px), если нужно */
+@media (max-width: 400px) {
+    .timeline, .teamGrid {
+        grid-template-columns: 1fr; /* Если экран экстремально узкий, возвращаем в 1 колонку, но аккуратную */
+    }
+}
+/* --- НОВЫЙ ДИЗАЙН КОМАНДЫ ТОЛЬКО НА МОБИЛКАХ (до 768px) --- */
+@media (max-width: 768px) {
+    .avatarInitial {
+    position: relative;
+    z-index: 3;
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--text);
+    background: var(--surface-strong);
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    transition: 0.4s;
+}
+
+/* Этот стиль отлично работает на ПК при наведении */
+.teamCard:hover .avatarInitial {
+    background: var(--bg);
+    transform: scale(0.96);
+}
+
+/* --- МОБИЛЬНЫЕ СТИЛИ (до 768px) --- */
+@media (max-width: 768px) { 
+    .avatarInitial {
+        width: 68px !important;
+        height: 68px !important;
+        font-size: 1.2rem !important; /* Объединили два ваших правила в одно читаемое */
+    }
+
+    /* ОТКЛЮЧАЕМ исчезновение фона при тапе на мобилках */
+    .teamCard:hover .avatarInitial,
+    .teamCard:active .avatarInitial {
+        background: var(--surface-strong) !important; /* Возвращаем стандартный видимый фон */
+        transform: none !important; /* Убираем микро-скачок размера */
+    }
+}
+    
+    /* Сетка превращается в один аккуратный вертикальный список, а не сетку огромных блоков */
+    .teamGrid {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 0 16px;
+    }
+
+    /* Карточка становится тонкой горизонтальной строкой */
+    .teamCard {
+        width: 100% !important;
+        background: rgba(255, 255, 255, 0.03); /* Эффект стекла */
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    /* Выравниваем элементы внутри карточки в одну линию (горизонтально) */
+    .cardInner {
+        display: flex;
+        flex-direction: row !important; /* Принудительно в ряд */
+        align-items: center;
+        padding: 12px 16px !important;
+        justify-content: flex-start;
+        text-align: left !important;
+        position: relative;
+    }
+
+    /* Компактная круглая аватарка слева */
+    .avatarZone {
+        width: 42px !important;
+        height: 42px !important;
+        margin-bottom: 0 !important; /* Убираем нижний отступ */
+        margin-right: 14px; /* Отступ справа до текста */
+        flex-shrink: 0;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    /* Отключаем огромные светящиеся круги, чтобы не ломали верстку на мобилках */
+    .glowCircle {
+        display: none !important;
+    }
+
+    .avatarInitial {
+        font-size: 1.1rem !important;
+        font-weight: 600;
+        color: #fff;
+    }
+
+    /* Блок с текстом */
+    .memberInfo {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+    }
+
+    /* Имя разработчика */
+    .memberInfo h3 {
+        font-size: 1rem !important;
+        margin: 0 0 2px 0 !important;
+        color: #fff;
+        font-weight: 600;
+    }
+
+    /* Роль */
+    .memberInfo .role {
+        font-size: 0.75rem !important;
+        color: rgba(255, 255, 255, 0.5);
+        margin: 0 !important;
+    }
+
+    /* Компактный бейдж в правом верхнем углу карточки */
+    .deptBadge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        font-size: 0.6rem !important;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 2px 6px !important;
+        border-radius: 6px;
+    }
+
+    /* Акцентные цвета для мобильных строк */
+    .backendBadge {
+        background: rgba(59, 130, 246, 0.12) !important;
+        color: #60a5fa !important;
+        border: 1px solid rgba(59, 130, 246, 0.2) !important;
+    }
+
+    .frontendBadge {
+        background: rgba(168, 85, 247, 0.12) !important;
+        color: #c084fc !important;
+        border: 1px solid rgba(168, 85, 247, 0.2) !important;
+    }
+    
+    /* Легкая левая цветная полоса для визуального разделения команд */
+    .teamCard[data-dept="backend"] {
+        border-left: 3px solid #3b82f6;
+    }
+    .teamCard[data-dept="frontend"] {
+        border-left: 3px solid #a855f7;
+    }
+}
+@media (max-width: 768px) {
+    
+    /* Базовые настройки для правильного распределения элементов в шапке */
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 16px; /* Комфортные отступы по краям экрана */
+        box-sizing: border-box;
+        width: 100%;
+    }
+
+    /* Навигационный контейнер выстраиваем в компактную строчку */
+    nav {
+        display: flex;
+        align-items: center;
+        gap: 12px; /* Расстояние между переключателем темы и кнопкой Войти */
+    }
+
+    /* Скрываем длинную ссылку на мобилках, чтобы освободить место */
+    nav a[href="#how"] {
+        display: none !important;
+    }
+
+    /* Оптимизируем кнопку переключения темы */
+    .themeToggle {
+        font-size: 1.2rem;
+        padding: 6px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+    }
+
+    /* Делаем кнопку "Войти" компактной и аккуратной */
+    .loginButton {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+        border-radius: 8px;
+        white-space: nowrap; /* Запрещаем перенос текста кнопки */
+    }
+}
+/* ==========================================================================
+   1. БАЗОВЫЕ СТИЛИ ДЛЯ ПК (ВНЕ МЕДИА-ЗАПРОСОВ)
+   ========================================================================== */
+.avatarInitial {
+    position: relative;
+    z-index: 3;
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--text);
+    background: var(--surface-strong);
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    transition: 0.4s;
+}
+
+/* Эффект наведения работает ТОЛЬКО на ПК */
+@media (hover: hover) {
+    .teamCard:hover .avatarInitial {
+        background: var(--bg);
+        transform: scale(0.96);
+    }
+}
+
+
+/* ==========================================================================
+   2. СТИЛИ ДЛЯ СМАРТФОНОВ (ЭКРАНЫ ДО 768px)
+   ========================================================================== */
+@media (max-width: 768px) {
+
+    /* --- Фикс цвета букв при нажатии (тапе) в любой теме --- */
+    .avatarInitial {
+        width: 42px !important;       /* Переписываем фиксированные 84px с ПК */
+        height: 42px !important;
+        font-size: 1.1rem !important;
+        font-weight: 600;
+        /* Переменные инвертируются: фон берет цвет текста темы, буква — цвет подложки */
+        background: var(--text) !important;
+        color: var(--bg) !important;
+        border-color: var(--text) !important;
+    }
+
+    /* Полностью убираем любые изменения цвета и прыжки размера при зажатии карточки */
+    .teamCard:hover .avatarInitial,
+    .teamCard:active .avatarInitial,
+    .teamCard:focus .avatarInitial {
+        background: var(--text) !important;
+        color: var(--bg) !important;
+        transform: none !important;
+    }
+
+    /* --- Шапка сайта --- */
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 16px;
+        box-sizing: border-box;
+        width: 100%;
+    }
+
+    nav {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    nav a[href="#how"] {
+        display: none !important;
+    }
+
+    .themeToggle {
+        font-size: 1.2rem;
+        padding: 6px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+    }
+
+    .loginButton {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+        border-radius: 8px;
+        white-space: nowrap;
+    }
+
+    /* --- Мобильная секция "Наша команда" --- */
+    .teamGrid {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 0 16px;
+    }
+
+    .teamCard {
+        width: 100% !important;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .cardInner {
+        display: flex;
+        flex-direction: row !important;
+        align-items: center;
+        padding: 12px 16px !important;
+        justify-content: flex-start;
+        text-align: left !important;
+        position: relative;
+    }
+
+    .avatarZone {
+        width: 42px !important;
+        height: 42px !important;
+        margin-bottom: 0 !important;
+        margin-right: 14px;
+        flex-shrink: 0;
+        background: transparent !important; /* Убираем лишние подложки */
+        border: none !important;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .glowCircle {
+        display: none !important;
+    }
+
+    .memberInfo {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+    }
+
+    .memberInfo h3 {
+        font-size: 1rem !important;
+        margin: 0 0 2px 0 !important;
+        color: var(--text); /* Привязка к теме сайта */
+        font-weight: 600;
+    }
+
+    .memberInfo .role {
+        font-size: 0.75rem !important;
+        color: rgba(255, 255, 255, 0.5);
+        margin: 0 !important;
+    }
+
+    .deptBadge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        font-size: 0.6rem !important;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 2px 6px !important;
+        border-radius: 6px;
+    }
+
+    .backendBadge {
+        background: rgba(59, 130, 246, 0.12) !important;
+        color: #60a5fa !important;
+        border: 1px solid rgba(59, 130, 246, 0.2) !important;
+    }
+
+    .frontendBadge {
+        background: rgba(168, 85, 247, 0.12) !important;
+        color: #c084fc !important;
+        border: 1px solid rgba(168, 85, 247, 0.2) !important;
+    }
+    
+    .teamCard[data-dept="backend"] {
+        border-left: 3px solid #3b82f6;
+    }
+    .teamCard[data-dept="frontend"] {
+        border-left: 3px solid #a855f7;
+    }
+}
+
+/* ==========================================================================
+   3. СТИЛИ ДЛЯ СОВСЕМ СТАРЫХ/МАЛЕНЬКИХ ТЕЛЕФОНОВ (ДО 400px)
+   ========================================================================== */
+@media (max-width: 400px) {
+    .timeline {
+        grid-template-columns: 1fr;
+    }
+}
