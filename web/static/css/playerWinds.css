@@ -145,147 +145,137 @@ transform:translate(70px,-60px) scale(1.1);
 
 header{
 
-position:fixed;
+    position:fixed;
 
-top:18px;
+    top:18px;
 
-left:50%;
+    left:50%;
 
-transform:translateX(-50%);
+    transform:translateX(-50%);
 
-width:min(1240px,94%);
+    width:min(1200px,92%);
 
-padding:16px 24px;
+    padding:16px 24px;
 
-display:flex;
+    display:flex;
 
-justify-content:space-between;
+    justify-content:space-between;
 
-align-items:center;
+    align-items:center;
 
-background:var(--surface);
+    border-radius:24px;
 
-border:1px solid var(--border);
+    background:var(--surface);
 
-border-radius:24px;
+    backdrop-filter:blur(18px);
 
-backdrop-filter:blur(20px);
+    border:1px solid var(--border);
 
-box-shadow:0 14px 45px var(--shadow);
+    box-shadow:0 15px 40px var(--shadow);
 
-z-index:999;
+    z-index:100;
 
 }
 
 .logo{
 
-display:flex;
+    font-size:20px;
 
-align-items:center;
+    font-weight:800;
 
-gap:14px;
-
-}
-
-.logoTitle{
-
-font-size:21px;
-
-font-weight:800;
-
-letter-spacing:4px;
+    letter-spacing:4px;
 
 }
 
-.logoSubtitle{
+nav{
 
-font-size:13px;
+    display:flex;
 
-color:var(--muted);
+    align-items:center;
 
-}
-
-.headerRight{
-
-display:flex;
-
-align-items:center;
-
-gap:16px;
+    gap:14px;
 
 }
 
-.eventTitle{
+.userEmail{
 
-font-size:15px;
+    color:var(--muted);
 
-font-weight:600;
-
-color:var(--muted);
+    font-size:15px;
 
 }
 
-.studentName{
-
-padding:11px 18px;
-
-border-radius:999px;
-
-background:var(--surfaceStrong);
-
-border:1px solid var(--border);
-
-font-size:14px;
-
-font-weight:600;
-
-}
-
-.logoutButton,
 .themeToggle{
 
-width:46px;
+    width:46px;
 
-height:46px;
+    height:46px;
 
-border-radius:50%;
+    display:flex;
 
-display:flex;
+    align-items:center;
 
-justify-content:center;
+    justify-content:center;
 
-align-items:center;
+    border-radius:50%;
 
-background:var(--surfaceStrong);
+    cursor:pointer;
 
-border:1px solid var(--border);
+    background:var(--surfaceStrong);
 
-cursor:pointer;
+    border:1px solid var(--border);
 
-transition:.3s;
+    color:var(--text);
 
-color:var(--text);
+    transition:.3s;
 
 }
 
-.logoutButton:hover,
 .themeToggle:hover{
 
-background:white;
-
-color:black;
-
-transform:translateY(-3px);
+    transform:translateY(-2px);
 
 }
 
-.themeToggle i,
-.logoutButton i{
+.themeToggle svg{
 
-font-size:18px;
+    width:20px;
+    height:20px;
+
+    stroke:currentColor;
+
+    fill:none;
+
+    stroke-width:1.8;
+    stroke-linecap:round;
+    stroke-linejoin:round;
 
 }
 
+
+.logoutButton{
+
+    padding:12px 22px;
+
+    border-radius:999px;
+
+    background:white;
+
+    color:black;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.logoutButton:hover{
+
+    transform:translateY(-2px);
+
+}
 /* =====================================================
                     PAGE
 ===================================================== */
