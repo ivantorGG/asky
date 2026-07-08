@@ -367,21 +367,14 @@ nav a:hover::after{
    HERO
 =========================== */
 
-.hero{
-
-    position:relative;
-
-    min-height:100vh;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    overflow:hidden;
-
-    padding:120px 30px;
+.hero {
+    position: relative;
+    /* Убираем min-height: 100vh; */
+    padding: 140px 0 100px; /* Большой отступ сверху (под шапку) и умеренный снизу */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
 }
 
 .heroContent{
@@ -1286,7 +1279,8 @@ footer{
 
     position:relative;
 
-    padding:120px 20px 80px;
+    margin-top:50px;
+    padding:50px 20px 80px;
 
     text-align:center;
 
@@ -1455,7 +1449,7 @@ footer p{
 
     .hero{
 
-        padding:100px 20px;
+        padding:0px 0px;
     }
 
     .block{
@@ -1488,4 +1482,11 @@ footer p{
         padding:70px 22px 28px;
     }
 
+}
+
+section {
+    position: relative;
+    width: 100%;
+    /* Добавьте эту строчку: */
+    scroll-margin-top: 110px; 
 }
