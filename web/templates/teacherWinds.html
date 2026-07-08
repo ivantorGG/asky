@@ -271,6 +271,71 @@ async function getComments(id) {
   return await resp.json();
 
 }
+async function addComment(id, text) {
+
+  const resp = await fetch(
+    `${API_BASE}/questions/${id}/comments`,
+    {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify({
+        text
+      })
+    }
+  );
+
+  if (!resp.ok)
+    throw new Error("Ошибка");
+
+  return await resp.json();
+
+}
+document.addEventListener("click", e => {
+
+  const btn = e.target.closest(".commentButton");
+
+  if (!btn)
+    return;
+
+  openComments(Number(btn.dataset.id));
+
+});
+document.getElementById("commentForm")
+.addEventListener("submit", async e => {
+
+    e.preventDefault();
+
+    if (currentQuestionId === null)
+        return;
+
+    const input = document.getElementById("commentInput");
+
+    const text = input.value.trim();
+
+    if (!text)
+        return;
+
+    try {
+
+        await addComment(currentQuestionId, text);
+
+        input.value = "";
+
+        await openComments(currentQuestionId);
+
+        await renderQuestions();
+
+    } catch (err) {
+
+        console.error(err);
+
+    }
+
+});
 
 // ---------------------- РЕНДЕР -------------------------------
 
@@ -376,7 +441,7 @@ async function setEmail() {
 
     if (emailInput) {
 
-      emailInput.textContent = email;
+      emailInput.textContent = email.email;
 
     }
 
