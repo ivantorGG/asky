@@ -50,21 +50,18 @@
 </head>
 <body>
 
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container"> 
+        <a class="navbar-brand" href="#" style="font-weight: bold;">Asky</a>
+        <span class="navbar-text">{имя фамилия}</span>
+        <button class="btn btn-outline-light" onclick="logout()">
+            <i class="bi bi-box-arrow-right"></i>
+        </button>
+    </div>
+    <script src="/static/js/logout.js"></script>
+</nav>
 
-   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        
-        <div class="container"> 
-            <a class="navbar-brand" href="#" style="font-weight: bold;">Asky</a>
-            <span class="navbar-text">{имя фамилия}</span>
-            <button class="btn btn-outline-light" onclick="logout()">
-                <i class="bi bi-box-arrow-right"></i>
-            </button>
-        </div>
-            <script src="/static/js/logout.js"></script>
-    </nav>
-
-
-<div style=" width: 140px; height: 140px; margin-left: 10%; position: fixed; margin-top: 100px;"  >
+<div style=" width: 140px; height: 140px; margin-left: 10%; position: fixed; margin-top: 100px;">
     <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/QR_Code_example.png" alt="" style="display: flex; width: 140px; height: 140px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
     <a href="https://upload.wikimedia.org/wikipedia/commons/5/5e/QR_Code_example.png" style="display: block; text-decoration: none; margin-left: 5px;">ссылка на лекцию</a>
 </div>
@@ -123,7 +120,6 @@ let currentQuestionId = null;
 
 // ---------------------- API-ВЫЗОВЫ -------------------------------
 
-// Получить вопросы (GET /api/events/{code}/questions)
 async function getQuestions() {
   try {
     const resp = await fetch(`${API_BASE}/events/${eventCode}/questions`);
@@ -135,7 +131,6 @@ async function getQuestions() {
   }
 }
 
-// Создать вопрос (POST /api/events/{code}/questions)
 async function addQuestion(text) {
   try {
     const resp = await fetch(`${API_BASE}/events/${eventCode}/questions`, {
@@ -151,50 +146,70 @@ async function addQuestion(text) {
   }
 }
 
-// Лайк (PUT /api/questions/{id}/vote)
 async function likeQuestion(id) {
   const resp = await fetch(`${API_BASE}/questions/${id}/vote`, { method: 'PUT' });
   if (!resp.ok) throw new Error('Ошибка лайка');
   return resp.json();
 }
 
-// Снять лайк (DELETE /api/questions/{id}/vote)
 async function unlikeQuestion(id) {
   const resp = await fetch(`${API_BASE}/questions/${id}/vote`, { method: 'DELETE' });
   if (!resp.ok) throw new Error('Ошибка снятия лайка');
   return resp.json();
 }
 
-// Получить комментарии (GET /api/questions/{id}/comments)
 async function getComments(id) {
   const resp = await fetch(`${API_BASE}/questions/${id}/comments`);
   if (!resp.ok) throw new Error('Ошибка загрузки комментариев');
   return resp.json();
 }
 
-// Добавить комментарий (POST /api/questions/{id}/comments)
 async function addComment(id, text) {
-  const data = {
-        text: text,
-    };
+  const data = { text: text };
   const resp = await fetch(`${API_BASE}/questions/${id}/comments`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
   });
-  if (!resp.ok) throw new Error('Ошибка добавления комментария' + resp);
+  if (!resp.ok) throw new Error('Ошибка добавления комментария');
   return resp.json();
 }
 
 // ---------------------- ОТРИСОВКА -------------------------------
 
+// НОВАЯ ФУНКЦИЯ: отрисовка всего списка вопросов
+async function renderQuestions() {
+  const questions = await getQuestions();
+  const container = document.getElementById('questionsList');
+  if (!questions || questions.length === 0) {
+    container.innerHTML = '<p class="text-muted">Вопросов пока нет</p>';
+    return;
+  }
+  container.innerHTML = questions.map(q => `
+    <div class="list-group-item" data-id="${q.id}">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <p class="mb-1">${q.text}</p>
+          <small class="text-muted">${new Date(q.timestamp).toLocaleString()}</small>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm ${q.is_voted ? 'btn-primary' : 'btn-outline-primary'} like-btn" data-id="${q.id}">
+            👍 <span class="like-count">${q.votes || 0}</span>
+          </button>
+          <button class="btn btn-sm btn-outline-secondary comment-btn" data-id="${q.id}">
+            💬 <span class="comment-count">${q.comments_count ?? 0}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
 async function updateSingleQuestionUI(questionId) {
-  // Запрашиваем свежие данные вопроса
   const resp = await fetch(`${API_BASE}/questions/${questionId}`);
   if (!resp.ok) return;
   const q = await resp.json();
   
-  // Обновляем кнопку в общем списке
   const listItem = document.querySelector(`.list-group-item[data-id="${questionId}"]`);
   if (listItem) {
     const likeBtn = listItem.querySelector('.like-btn');
@@ -204,13 +219,12 @@ async function updateSingleQuestionUI(questionId) {
       likeBtn.className = `btn btn-sm ${liked ? 'btn-primary' : 'btn-outline-primary'} like-btn`;
       likeBtn.querySelector('.like-count').textContent = likes;
     }
-    const commentBtn = listItem.querySelector('.comment-btn .comment-count');
-    if (commentBtn) {
-      commentBtn.textContent = q.comments_count ?? 0;
+    const commentCountSpan = listItem.querySelector('.comment-btn .comment-count');
+    if (commentCountSpan) {
+      commentCountSpan.textContent = q.comments_count ?? 0;
     }
   }
 
-  // Обновляем статистику в боковой панели, если она открыта и относится к этому вопросу
   if (currentQuestionId === questionId) {
     const statsDiv = document.getElementById('questionStatsInPanel');
     if (statsDiv) {
@@ -232,9 +246,7 @@ async function updateSingleQuestionUI(questionId) {
 async function openComments(questionId) {
   currentQuestionId = questionId;
   try {
-    // Загружаем комментарии
     const comments = await getComments(questionId);
-    // Загружаем сам вопрос для статистики (предположим, есть эндпоинт /api/questions/{id})
     const questionResp = await fetch(`${API_BASE}/questions/${questionId}`);
     const questionData = questionResp.ok ? await questionResp.json() : {};
     
@@ -253,7 +265,6 @@ async function openComments(questionId) {
       `).join('');
     }
 
-    // Отображаем статистику в панели
     const statsDiv = document.getElementById('questionStatsInPanel');
     if (questionData) {
       const likes = questionData.votes || 0;
@@ -273,6 +284,7 @@ async function openComments(questionId) {
     console.error('openComments:', e);
   }
 }
+
 // ---------------------- ОБРАБОТЧИКИ ---------------------------
 
 document.addEventListener('click', async function(e) {
@@ -284,7 +296,7 @@ document.addEventListener('click', async function(e) {
     try {
       if (isLiked) await unlikeQuestion(id);
       else await likeQuestion(id);
-      await updateSingleQuestionUI(id);   // вместо renderQuestions()
+      await updateSingleQuestionUI(id);
     } catch (e) { alert('Ошибка лайка'); }
   }
 });
@@ -304,7 +316,7 @@ document.getElementById('questionForm').addEventListener('submit', async functio
   if (!text) return;
   try {
     await addQuestion(text);
-    await renderQuestions();
+    await renderQuestions();  // теперь эта функция существует
     document.getElementById('input2').value = '';
     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
   } catch (e) { alert('Ошибка добавления вопроса'); }
@@ -317,14 +329,15 @@ document.getElementById('commentForm').addEventListener('submit', async function
   if (!text || currentQuestionId === null) return;
   try {
     await addComment(currentQuestionId, text);
-    // Перезагружаем список комментариев в панели и статистику
-    await openComments(currentQuestionId); // это заново всё отрисует и обновит статистику
-    // Точечно обновим основной список (или просто renderQuestions, если не жалко)
+    // Обновляем комментарии и статистику в панели
+    await openComments(currentQuestionId);
+    // Обновляем счетчик комментариев в общем списке
     await updateSingleQuestionUI(currentQuestionId);
     input.value = '';
   } catch (e) { alert('Ошибка добавления комментария'); }
 });
 
+// Первичная загрузка списка вопросов
 renderQuestions();
 </script>
 </body>
