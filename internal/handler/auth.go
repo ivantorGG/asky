@@ -59,11 +59,11 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) RegistrationPage(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "./web/templates/speakerReg.html")
+	http.ServeFile(w, r, "./web/templates/register.html")
 }
 
 func (h *Handler) LoginPage(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "./web/templates/speakerLog.html")
+	http.ServeFile(w, r, "./web/templates/login.html")
 }
 
 type LoginRequest struct {

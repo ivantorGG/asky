@@ -248,15 +248,16 @@ if (header) {
 
 const heroText = document.querySelector(".heroBackgroundText");
 
-document.addEventListener("mousemove", (e) => {
+// Проверяем, есть ли текст на странице, прежде чем вешать событие
+if (heroText) {
+    document.addEventListener("mousemove", (e) => {
+        const x = (e.clientX - window.innerWidth / 2) / 35;
+        const y = (e.clientY - window.innerHeight / 2) / 35;
 
-    const x = (e.clientX - window.innerWidth / 2) / 35;
-    const y = (e.clientY - window.innerHeight / 2) / 35;
-
-    heroText.style.transform =
-        `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
-
-});
+        heroText.style.transform =
+            `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
+    });
+}
 
 // ======================================
 // GLASS CARD LIGHT
@@ -320,6 +321,8 @@ const title = document.getElementById("heroTitle");
 let angle = 0;
 
 function animateTitle() {
+    // Если заголовка нет на странице (например, на странице логина), выходим из функции
+    if (!title) return;
 
     angle += 0.015;
 
@@ -330,43 +333,31 @@ function animateTitle() {
 
 }
 
-animateTitle();
+// Запускаем анимацию только если элемент существует
+if (title) {
+    animateTitle();
+}
 
 // ======================================
 // RANDOM GLOW
 // ======================================
 
-setInterval(() => {
-
-    heroText.animate([
-
-        {
-
-            filter:
-            "drop-shadow(0 0 10px rgba(255,255,255,.15))"
-
-        },
-
-        {
-
-            filter:
-            "drop-shadow(0 0 60px rgba(255,255,255,.45))"
-
-        },
-
-        {
-
-            filter:
-            "drop-shadow(0 0 10px rgba(255,255,255,.15))"
-
-        }
-
-    ], {
-
-        duration: 1800,
-
-        easing: "ease"
-
-    });
-
-}, 4500);
+// Запускаем интервал, только если фоновый текст существует
+if (heroText) {
+    setInterval(() => {
+        heroText.animate([
+            {
+                filter: "drop-shadow(0 0 10px rgba(255,255,255,.15))"
+            },
+            {
+                filter: "drop-shadow(0 0 60px rgba(255,255,255,.45))"
+            },
+            {
+                filter: "drop-shadow(0 0 10px rgba(255,255,255,.15))"
+            }
+        ], {
+            duration: 1800,
+            easing: "ease"
+        });
+    }, 4500);
+}

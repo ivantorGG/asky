@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Регистрация — ASKY</title>
+
+    <link rel="icon" href="/static/img/favicon.ico">
+
+    <link rel="stylesheet" href="/static/css/index.css">
+    <link rel="stylesheet" href="/static/css/register.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <script src="/static/js/themeSwitcher.js"></script>
+</head>
+
+
+<body>
+
+
+<canvas id="particles"></canvas>
+
+
+<div class="gradient gradient1"></div>
+<div class="gradient gradient2"></div>
+<div class="gradient gradient3"></div>
+
+
+
+<header>
+
+    <div class="logo">
+
+        <span>ASKY</span>
+
+    </div>
+
+
+    <nav>
+
+        <a href="/">Главная</a>
+
+
+        <button 
+            id="themeToggle" 
+            class="themeToggle"
+            type="button">
+
+            ☀️
+
+        </button>
+
+
+        <a href="/login" class="loginButton">
+
+            Войти
+
+        </a>
+
+
+    </nav>
+
+
+</header>
+
+
+
+
+
+<main class="registerPage">
+
+
+    <div class="registerBackgroundText">
+
+
+    </div>
+
+
+
+
+    <section class="registerCard">
+
+
+
+        <div class="registerHeader">
+
+
+            <div class="badge">
+
+                Новый аккаунт
+
+            </div>
+
+
+
+            <h1>
+
+                Создайте запись
+
+            </h1>
+
+
+
+            <p>
+
+                чтобы начать управлять мероприятиями
+
+            </p>
+
+
+        </div>
+
+
+
+
+
+
+        <form id="registerForm">
+
+
+
+            <div class="inputGroup">
+
+
+                <label>
+
+                    Электронная почта
+
+                </label>
+
+
+                <input 
+                    id="email"
+                    type="email"
+                    placeholder="example@mail.com"
+                    autocomplete="email">
+
+
+            </div>
+
+
+
+
+
+            <div class="inputGroup">
+
+
+                <label>
+
+                    Пароль
+
+                </label>
+
+
+                <input 
+                    id="password"
+                    type="password"
+                    placeholder="Минимум 6 символов"
+                    autocomplete="new-password">
+
+
+            </div>
+
+
+
+
+
+            <div 
+                class="errorBox"
+                id="loginError">
+
+
+                <span id="errorMessage">
+
+                </span>
+
+
+            </div>
+
+
+
+
+
+
+            <button 
+                class="registerButton"
+                type="submit">
+
+
+                Создать аккаунт
+
+
+            </button>
+
+
+
+
+
+        </form>
+
+
+
+
+
+        <div class="registerFooter">
+
+
+            Уже есть аккаунт?
+
+
+            <a href="/login">
+
+                Войти
+
+            </a>
+
+
+        </div>
+
+
+
+
+    </section>
+
+
+
+</main>
+
+<footer>
+
+        <div class="footerTitle">
+
+            <span class="desktop-text">ПОЛЬЗОВАТЕЛЬ МУДАК</span>
+        <span class="mobile-text">ASKY</span>
+
+        </div>
+
+        <p>
+
+            Платформа для анонимных вопросов. Все права защищены &copy; 2026
+
+        </p>
+
+    </footer>
+
+
+
+
+<script src="/static/js/index.js"></script>
+<script src="/static/js/themeSwitcher.js"></script>
+<script src="/static/js/register.js"></script>
+
+
+</body>
+
+</html>
