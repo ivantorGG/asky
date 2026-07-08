@@ -1,13 +1,13 @@
 package handler
 
 import (
+	"asky/internal/config"
 	"asky/internal/middleware"
 	"asky/internal/utils"
 	"encoding/json"
 	"net/http"
 	"net/url"
 	"time"
-	"asky/internal/config"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/skip2/go-qrcode"
@@ -153,6 +153,31 @@ func (h *Handler) ListUsersEvents(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	json.NewEncoder(w).Encode(events)
+}
+
+func (h *Handler) GetQuestionsCountByEventCode(w http.ResponseWriter, r *http.Request) {
+	eventCode := chi.URLParam(r, "code")
+	if eventCode == "" {
+		utils.WriteJSONError(w, http.StatusBadRequest, "bad_request")
+		return
+	}
+
+	var count int
+	err := h.DB.QueryRow(
+		r.Context(),
+		`SELECT COUNT(*)
+		FROM questions
+		WHERE event_code = $1::uuid`,
+		eventCode,
+	).Scan(&count)
+	if err != nil {
+		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error: "+err.Error())
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]int{"question_count": count})
 }
 
 func (h *Handler) GetQuestionsByEventCode(w http.ResponseWriter, r *http.Request) {
