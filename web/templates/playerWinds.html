@@ -202,7 +202,8 @@ type="submit">
 <script>
 
 const pathParts = window.location.pathname.split('/');
-const eventCode = pathParts[2];
+const uuidMatch = window.location.pathname.match(/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/);
+const eventCode = uuidMatch ? uuidMatch[0] : (pathParts[2] || '');
 const API_BASE = '/api';
 
 let currentQuestionId = null;
@@ -212,7 +213,9 @@ let currentQuestionId = null;
 
 async function getQuestions() {
   try {
-    const resp = await fetch(`${API_BASE}/events/${eventCode}/questions`);
+    const url = `${API_BASE}/events/${eventCode}/questions`;
+    console.debug('Fetching questions from', url);
+    const resp = await fetch(url);
     if (!resp.ok) throw new Error(`Ошибка загрузки: ${resp.status}`);
     return await resp.json();
   } catch (e) {
