@@ -8,7 +8,6 @@ import (
 )
 
 type Config struct {
-	Port        string
 	Domain      string
 	DatabaseURL string
 }
@@ -17,13 +16,8 @@ func Load() *Config {
 	_ = godotenv.Load()
 
 	cfg := &Config{
-		Port:        os.Getenv("PORT"),
 		DatabaseURL: os.Getenv("DATABASE_URL"),
 		Domain:      os.Getenv("DOMAIN"),
-	}
-
-	if cfg.Port == "" {
-		cfg.Port = "8080"
 	}
 
 	if cfg.DatabaseURL == "" {

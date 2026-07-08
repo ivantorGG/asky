@@ -20,7 +20,7 @@ func main() {
 
 	r := router.New(h)
 
-	log.Printf("Listening on http://127.0.0.1:%s", cfg.Port)
+	log.Printf("Listening on %s", cfg.Domain)
 
-	log.Fatal(http.ListenAndServe(":"+cfg.Port, r))
+	log.Fatal(http.ListenAndServe(":8080", r))
 }
