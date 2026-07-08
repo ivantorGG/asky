@@ -1172,3 +1172,68 @@ header{
     font-size: 14px;
     transition: transform 0.4s ease;
 }
+.commentForm{
+
+    margin-top:20px;
+
+}
+
+.commentForm input{
+
+    width:100%;
+
+    padding:14px 18px;
+
+    border-radius:18px;
+
+    background:var(--card);
+
+    border:1px solid var(--border);
+
+    color:var(--text);
+
+    outline:none;
+
+}
+
+.commentForm input::placeholder{
+
+    color:var(--muted);
+
+}
+
+.commentForm input:focus{
+
+    border-color:#6f82ff;
+
+    background:var(--cardHover);
+
+}
+
+.commentForm button{
+
+    margin-top:12px;
+
+    width:100%;
+
+    padding:14px;
+
+    border:none;
+
+    border-radius:18px;
+
+    font-weight:700;
+
+    background:#6f82ff;
+
+    color:white;
+
+    transition:.25s;
+
+}
+
+.commentForm button:hover{
+
+    transform:translateY(-2px);
+
+}
