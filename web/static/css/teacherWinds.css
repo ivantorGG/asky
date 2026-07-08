@@ -1172,3 +1172,43 @@ header{
     font-size: 14px;
     transition: transform 0.4s ease;
 }
+nav a{
+
+    position:relative;
+    text-decoration: none;
+    font-size:15px;
+
+    font-weight:500;
+
+    color:var(--muted);
+
+    transition:.3s;
+}
+nav a:hover{
+
+    color:var(--text);
+}
+
+nav a::after{
+
+    content:"";
+
+    position:absolute;
+
+    left:0;
+
+    bottom:-7px;
+
+    width:0;
+
+    height:2px;
+
+    background:var(--text);
+
+    transition:.3s;
+}
+
+nav a:hover::after{
+
+    width:100%;
+}
