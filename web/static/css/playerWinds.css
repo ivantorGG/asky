@@ -199,6 +199,22 @@ nav{
 
 }
 
+.eventHeaderName{
+
+    color:var(--text);
+
+    font-size:15px;
+
+    font-weight:600;
+
+    margin-left:auto;
+
+    margin-right:16px;
+
+    opacity:.95;
+
+}
+
 .userEmail{
 
     color:var(--muted);

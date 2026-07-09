@@ -191,6 +191,40 @@ if (canvas) {
     animate();
 
 }// ======================================
+// USER NAME IN HEADER
+// ======================================
+
+async function showHeaderName() {
+
+    try {
+
+        const response = await fetch('/api/name', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        });
+
+        if (!response.ok) {
+            return;
+        }
+
+        const data = await response.json();
+        const name = data?.name;
+        const nameEl = document.getElementById('eventHeaderName');
+
+        if (nameEl && name) {
+            nameEl.textContent = name;
+        }
+
+    } catch (error) {
+        console.error('Failed to load header name', error);
+    }
+
+}
+
+showHeaderName();
+
+// ======================================
 // QUESTION CARD GLOW
 // ======================================
 
