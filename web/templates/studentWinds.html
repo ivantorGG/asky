@@ -88,7 +88,7 @@ LEFT
 ======================================================= -->
 
 <aside class="leftColumn d-none d-md-block">
-    <div class="glassCard qrCard" onclick="openFullScreenImage()">
+    <div class="glassCard qrCard">
         <h5>
             <i class="bi bi-qr-code"></i>
             QR мероприятия
@@ -401,26 +401,15 @@ async function renderQuestions() {
 
   const questions = await getQuestions();
 
-
   if (!questions.length) {
 
     container.innerHTML = `
 
 <div class="emptyQuestions">
 
-<i class="bi bi-chat-left-dots"></i>
+    <i class="bi bi-chat-left-dots"></i>
 
-<h3>
-
-Пока нет вопросов
-
-</h3>
-
-<p>
-
-Будьте первым!
-
-</p>
+    <h3>Пока нет вопросов</h3>
 
 </div>
 
@@ -438,55 +427,63 @@ async function renderQuestions() {
 
     const likes = q.votes || 0;
 
-    const comments = q.comments
-      ? q.comments.length
-      : (q.comments_count || 0);
+    const comments =
+      q.comments
+        ? q.comments.length
+        : (q.comments_count || 0);
 
     container.insertAdjacentHTML("beforeend", `
 
-<div class="questionCard" data-id="${q.id}">
+<div class="questionCard"
+     data-id="${q.id}">
 
-<div class="questionText">
+    <div class="questionMain">
 
-${q.text}
+        <div class="questionText">
 
-</div>
+            ${q.text}
 
-<div class="questionActions">
+        </div>
 
-<div class="actionGroup">
+        <div class="questionArrow">
 
-<button
-class="iconButton likeButton ${liked ? "active" : ""}"
-data-id="${q.id}">
+            <i class="bi bi-chevron-right"></i>
 
-<i class="bi bi-heart-fill"></i>
+        </div>
 
-<span class="likeCount">
+    </div>
 
-${likes}
+    <div class="questionFooter">
 
-</span>
+        <button
+            class="miniAction likeButton ${liked ? "active" : ""}"
+            data-id="${q.id}">
 
-</button>
+            <i class="bi bi-heart-fill"></i>
 
-<button
-class="iconButton commentButton"
-data-id="${q.id}">
+            <span class="likeCount">
 
-<i class="bi bi-chat-dots-fill"></i>
+                ${likes}
 
-<span class="commentCount">
+            </span>
 
-${comments}
+        </button>
 
-</span>
+        <button
+            class="miniAction commentButton"
+            data-id="${q.id}">
 
-</button>
+            <i class="bi bi-chat-dots-fill"></i>
 
-</div>
+            <span class="commentCount">
 
-</div>
+                ${comments}
+
+            </span>
+
+        </button>
+
+    </div>
 
 </div>
 
@@ -556,36 +553,53 @@ ${c.text}
 
 document.addEventListener("click", async e => {
 
-  const like = e.target.closest(".likeButton");
+    const like = e.target.closest(".likeButton");
 
-  if (like) {
+    if (like) {
 
-    const id = Number(like.dataset.id);
+        e.stopPropagation();
 
-    const voted = isQuestionVoted(id);
+        const id = Number(like.dataset.id);
 
-    if (voted) {
-      await unlikeQuestion(id);
-      removeVotedQuestion(id);
-    } else {
-      await likeQuestion(id);
-      addVotedQuestion(id);
+        const voted = isQuestionVoted(id);
+
+        if (voted) {
+
+            await unlikeQuestion(id);
+
+            removeVotedQuestion(id);
+
+        } else {
+
+            await likeQuestion(id);
+
+            addVotedQuestion(id);
+
+        }
+
+        renderQuestions();
+
+        return;
     }
 
-    renderQuestions();
+    const comment = e.target.closest(".commentButton");
 
-  }
+    if (comment) {
 
-});
+        e.stopPropagation();
 
-document.addEventListener("click", e => {
+        openComments(Number(comment.dataset.id));
 
-  const btn = e.target.closest(".commentButton");
+        return;
+    }
 
-  if (!btn)
-    return;
+    const card = e.target.closest(".questionCard");
 
-  openComments(Number(btn.dataset.id));
+    if (card) {
+
+        openComments(Number(card.dataset.id));
+
+    }
 
 });
 
