@@ -871,3 +871,52 @@ html[data-bs-theme="light"] .eventsTab.active{
     }
 
 }
+.logo{
+
+    position:relative;
+    text-decoration: none;
+
+    font-weight:500;
+    color:var(--text);
+
+
+    transition:.3s;
+}
+.logo:hover{
+
+    color:var(--text);
+}
+
+.logo::after{
+
+    content:"";
+
+    position:absolute;
+
+    left:0;
+
+    bottom:-7px;
+
+    width:0;
+
+    height:2px;
+
+    background:var(--text);
+
+    transition:.3s;
+}
+
+.logo:hover::after{
+
+    width:100%;
+}
+
+.logo{
+
+    font-size:20px;
+
+    font-weight:800;
+
+    letter-spacing:4px;
+
+}
