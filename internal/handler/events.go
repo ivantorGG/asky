@@ -103,6 +103,33 @@ func (h *Handler) ListTeachersEvents(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(events)
 }
 
+func (h *Handler) GetEventName(w http.ResponseWriter, r *http.Request) {
+	eventCode := chi.URLParam(r, "code")
+	if eventCode == "" {
+		utils.WriteJSONError(w, http.StatusBadRequest, "bad_request")
+		return
+	}
+
+	var title string
+
+	err := h.DB.QueryRow(
+		r.Context(),
+		`SELECT title FROM events WHERE code = $1`,
+		eventCode,
+	).Scan(&title)
+
+	if err != nil {
+		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{
+		"title": title,
+	})
+}
+
 func (h *Handler) ListUsersEvents(w http.ResponseWriter, r *http.Request) {
 	// Студенты смотрят историю через КУКИ, так как у них нет аккаунтов
 	cookie, err := r.Cookie("visited_events")
@@ -233,6 +260,31 @@ func (h *Handler) AnswerQuestion(w http.ResponseWriter, r *http.Request) {
 	cmdTag, err := h.DB.Exec(
 		r.Context(),
 		`UPDATE questions SET answered = TRUE WHERE id = $1`,
+		id,
+	)
+	if err != nil {
+		utils.WriteJSONError(w, http.StatusBadRequest, "db_error")
+		return
+	}
+
+	if cmdTag.RowsAffected() == 0 {
+		utils.WriteJSONError(w, http.StatusNotFound, "question_not_found")
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func (h *Handler) UnAnswerQuestion(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	if id == "" {
+		utils.WriteJSONError(w, http.StatusBadRequest, "bad_request")
+		return
+	}
+
+	cmdTag, err := h.DB.Exec(
+		r.Context(),
+		`UPDATE questions SET answered = False WHERE id = $1`,
 		id,
 	)
 	if err != nil {
