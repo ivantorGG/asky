@@ -15,6 +15,7 @@ import (
 
 type RegisterRequest struct {
 	Email    string `json:"email"`
+	Name     string `json:"name"`
 	Password string `json:"password"`
 }
 
@@ -40,8 +41,9 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 
 	_, err = h.DB.Exec(
 		r.Context(),
-		`INSERT INTO users(email, password_hash) VALUES ($1, $2)`,
+		`INSERT INTO users(email, name, password_hash) VALUES ($1, $2, $3)`,
 		req.Email,
+		req.Name,
 		string(hash),
 	)
 
@@ -164,6 +166,28 @@ func (h *Handler) GetEmail(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{
 		"email": email,
+	})
+}
+func (h *Handler) GetName(w http.ResponseWriter, r *http.Request) {
+	userID := r.Context().Value(middleware.UserIDKey).(int64)
+
+	var name string
+
+	err := h.DB.QueryRow(
+		r.Context(),
+		`SELECT name FROM users WHERE id = $1`,
+		userID,
+	).Scan(&name)
+
+	if err != nil {
+		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{
+		"name": name,
 	})
 }
 

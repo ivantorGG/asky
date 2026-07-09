@@ -19,7 +19,13 @@ async function showEmail() {
 
     const emailEl = document.getElementById('email');
     if (emailEl && email) {
-        emailEl.textContent = email;
+        if (email.length > 8) {
+            let tEmail = email.slice(0, 8) + "...";
+            emailEl.textContent = tEmail;
+        } else {
+
+            emailEl.textContent = email;
+        }
     }
 
     updateAuthNav(email || null);

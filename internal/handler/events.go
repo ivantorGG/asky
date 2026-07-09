@@ -194,7 +194,7 @@ func (h *Handler) GetQuestionsByEventCode(w http.ResponseWriter, r *http.Request
 			(SELECT COUNT(*) FROM comments c WHERE c.question_id = q.id) AS comments_count
 		FROM questions q
 		WHERE q.event_code = $1::uuid
-		ORDER BY q.answered ASC, q.likes DESC`,
+		ORDER BY q.answered ASC, q.likes DESC created_at DESC`,
 		eventCode,
 	)
 	if err != nil {
