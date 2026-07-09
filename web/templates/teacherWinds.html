@@ -36,13 +36,13 @@
 <header>
 
     <div class="logo">
-        <span>ASKY</span>
+        <a href="/" class="logo">ASKY</a>
     </div>
 
     <nav>
       <span id="email" class="userEmail"></span>
-      <a href="/">Главная</a>
-      <a href="/events">К мероприятиям</a>
+      <a href="/events"><i class="bi bi-arrow-left"></i>
+</a>
 
         <button id="themeToggle"
                 class="themeToggle"
@@ -56,12 +56,9 @@
         </button>
 
         <button class="logoutButton" onclick="logout()">
-
-            <i class="bi bi-box-arrow-right"></i>
-
-            Выйти
-
-        </button>
+    <i class="bi bi-box-arrow-right"></i>
+    <span class="d-none d-md-inline">Выйти</span>
+</button>
 
     </nav>
 

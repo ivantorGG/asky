@@ -244,6 +244,41 @@ header:hover{
     letter-spacing:3px;
 
     font-size:18px;
+
+    transition:.3s;
+
+    color:var(--text);
+
+    text-decoration: none !important;
+}
+
+.logo:hover{
+
+    color:var(--text);
+}
+
+.logo::after{
+
+    content:"";
+
+    position:absolute;
+
+    left:0;
+
+    bottom:-7px;
+
+    width:0;
+
+    height:2px;
+
+    background:var(--text);
+
+    transition:.3s;
+}
+
+.logo:hover::after{
+
+    width:100%;
 }
 
 .logo img{
@@ -252,6 +287,7 @@ header:hover{
 
     height:36px;
 }
+
 
 nav{
 
