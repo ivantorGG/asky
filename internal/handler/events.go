@@ -5,7 +5,8 @@ import (
 	"asky/internal/middleware"
 	"asky/internal/utils"
 	"encoding/json"
-	"fmt"
+
+	//"fmt"
 	"net/http"
 	"net/url"
 	"time"
@@ -115,12 +116,15 @@ func (h *Handler) GetEventName(w http.ResponseWriter, r *http.Request) {
 
 	err := h.DB.QueryRow(
 		r.Context(),
-		`SELECT title FROM events WHERE code = $1`,
+		`SELECT title FROM events WHERE code = $1::uuid AND is_active = TRUE`,
 		eventCode,
 	).Scan(&title)
-
 	if err != nil {
-		utils.WriteJSONError(w, http.StatusInternalServerError, "server_error")
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"error": err.Error(),
+		})
 		return
 	}
 

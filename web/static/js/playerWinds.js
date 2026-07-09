@@ -193,7 +193,41 @@ async function showHeaderName() {
 
 }
 
+async function showEventTitle() {
+
+    try {
+
+        const pathParts = window.location.pathname.split('/').filter(Boolean);
+        const eventCode = pathParts.find(part => part.includes('-')) || pathParts[1] || '';
+
+        if (!eventCode) {
+            return;
+        }
+
+        const response = await fetch(`/api/events/${eventCode}/title`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (!response.ok) {
+            return;
+        }
+
+        const data = await response.json();
+        const titleEl = document.getElementById('eventHeaderTitle');
+
+        if (titleEl && data?.title) {
+            titleEl.textContent = data.title;
+        }
+
+    } catch (error) {
+        console.error('Failed to load event title', error);
+    }
+
+}
+
 showHeaderName();
+showEventTitle();
 
 // ======================================
 // QUESTION CARD GLOW

@@ -53,8 +53,9 @@ func New(h *handler.Handler) http.Handler {
 
 	r.With(middleware.Auth(h.DB)).Post("/api/events", h.CreateEvent)                // Create a new event
 	r.With(middleware.Auth(h.DB)).Get("/api/events/teacher", h.ListTeachersEvents)  // Get teacher's events
-	r.Get("/api/events/{code}", h.GetEventName)                                     // Get teacher's events
 	r.Get("/api/events/student", h.ListUsersEvents)                                 // Get recently visited events
+	r.Get("/api/events/{code}/title", h.GetEventName)                               // Get event title by code
+	r.Get("/api/events/{code}", h.GetEventName)                                     // Get teacher's events
 	r.With(middleware.Auth(h.DB)).Delete("/api/events/{code}", h.DeleteEventByCode) // Delete (deactivate) an event
 
 	r.Get("/api/events/{code}/link", h.GetEventLink)     // Get event invitation link
@@ -68,7 +69,7 @@ func New(h *handler.Handler) http.Handler {
 	r.Get("/api/events/{code}/questions", h.GetQuestionsByEventCode)            // Get all event questions
 	r.Post("/api/events/{code}/questions", h.NewQuestion)                       // Create a new question
 
-	r.With(middleware.Auth(h.DB)).Put("/api/questions/{id}/answer", h.AnswerQuestion) // Mark question as answered
+	r.With(middleware.Auth(h.DB)).Put("/api/questions/{id}/answer", h.AnswerQuestion)        // Mark question as answered
 	r.With(middleware.Auth(h.DB)).Delete("/api/questions/{id}/unanswer", h.UnAnswerQuestion) // Mark question as unanswered
 
 	r.Put("/api/questions/{id}/vote", h.Vote)      // Upvote a question

@@ -72,19 +72,34 @@
 
         <div class="container">
 
-            <!-- Переключатель -->
-            <div class="eventsTabs">
+            <!-- Переключатель и кнопка создания -->
+            <div class="eventsControls">
+
+                <div class="eventsTabs">
+
+                    <button
+                        class="eventsTab active"
+                        data-type="teacher">
+                        Мои мероприятия
+                    </button>
+
+                    <button
+                        class="eventsTab"
+                        data-type="student">
+                        Участвовал
+                    </button>
+
+                </div>
 
                 <button
-                    class="eventsTab active"
-                    data-type="teacher">
-                    Мои мероприятия
-                </button>
+                    type="button"
+                    class="createEventButtonInline"
+                    data-bs-toggle="modal"
+                    data-bs-target="#newEventModal">
 
-                <button
-                    class="eventsTab"
-                    data-type="student">
-                    Участвовал
+                    <i class="bi bi-calendar-plus"></i>
+                    <span>Создать</span>
+
                 </button>
 
             </div>
@@ -122,18 +137,6 @@
         </p>
 
     </footer>
-
-    <!-- Кнопка создания -->
-
-    <button
-        type="button"
-        class="createEventButton"
-        data-bs-toggle="modal"
-        data-bs-target="#newEventModal">
-
-        <i class="bi bi-calendar-plus"></i>
-
-    </button>
 
     <!-- Модальное окно -->
 
