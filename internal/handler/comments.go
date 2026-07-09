@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
+	"html"
 	"net/http"
 	"strconv"
 	"time"
@@ -25,12 +26,14 @@ func (h *Handler) NewComment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
 	// 2. Проверка на пустой текст
 	if req.Text == "" {
 		utils.WriteJSONError(w, http.StatusBadRequest, "empty_text")
 		return
 	}
+
+	// 2.1. Экранируем HTML в тексте, чтобы скрипты не могли быть вставлены
+	req.Text = html.EscapeString(req.Text)
 
 	// 3. Получаем ID вопроса из URL
 	idStr := chi.URLParam(r, "id")
@@ -76,6 +79,25 @@ func (h *Handler) NewComment(w http.ResponseWriter, r *http.Request) {
 		visitorID = cookie.Value
 	}
 
+	var last time.Time
+
+	err = h.DB.QueryRow(
+		r.Context(),
+		`
+    SELECT created_at
+    FROM comments
+    WHERE visitor_id=$1
+    ORDER BY created_at DESC
+    LIMIT 1
+    `,
+		visitorID,
+	).Scan(&last)
+
+	if err == nil && time.Since(last) < 15*time.Second {
+		utils.WriteJSONError(w, http.StatusTooManyRequests, "wait_15_seconds")
+		return
+	}
+
 	// 6. Вставляем комментарий в БД
 
 	_, err = h.DB.Exec(
@@ -91,7 +113,6 @@ func (h *Handler) NewComment(w http.ResponseWriter, r *http.Request) {
 		utils.WriteJSONError(w, http.StatusInternalServerError, "db_error: "+err.Error())
 		return
 	}
-
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)

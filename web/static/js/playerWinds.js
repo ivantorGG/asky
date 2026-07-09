@@ -165,70 +165,6 @@ if (canvas) {
 // USER NAME IN HEADER
 // ======================================
 
-async function showHeaderName() {
-
-    try {
-
-        const response = await fetch('/api/name', {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include'
-        });
-
-        if (!response.ok) {
-            return;
-        }
-
-        const data = await response.json();
-        const name = data?.name;
-        const nameEl = document.getElementById('eventHeaderName');
-
-        if (nameEl && name) {
-            nameEl.textContent = name;
-        }
-
-    } catch (error) {
-        console.error('Failed to load header name', error);
-    }
-
-}
-
-async function showEventTitle() {
-
-    try {
-
-        const pathParts = window.location.pathname.split('/').filter(Boolean);
-        const eventCode = pathParts.find(part => part.includes('-')) || pathParts[1] || '';
-
-        if (!eventCode) {
-            return;
-        }
-
-        const response = await fetch(`/api/events/${eventCode}/title`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' }
-        });
-
-        if (!response.ok) {
-            return;
-        }
-
-        const data = await response.json();
-        const titleEl = document.getElementById('eventHeaderTitle');
-
-        if (titleEl && data?.title) {
-            titleEl.textContent = data.title;
-        }
-
-    } catch (error) {
-        console.error('Failed to load event title', error);
-    }
-
-}
-
-showHeaderName();
-showEventTitle();
-
 // ======================================
 // QUESTION CARD GLOW
 // ======================================
@@ -325,22 +261,3 @@ document.addEventListener("questionsRendered", () => {
     observeCards();
 });
 
-async function showTitle() {
-    const path = window.location.pathname;
-
-    const parts = path.split('/');
-
-    const eventCode = parts[2];
-    console.log(eventCode);
-
-    const resp = await fetch(`/api/events/${eventCode}/name`)
-    const data = await resp.json()
-    const title = data.title
-
-    document.getElementById("eventTitle").textContent = title;
-
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-    showTitle();
-});

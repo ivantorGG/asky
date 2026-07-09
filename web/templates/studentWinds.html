@@ -40,8 +40,8 @@
         </div>
 
         <div class="eventHeaderCenter">
-            <div class="eventHeaderTitle" id="eventHeaderTitle">Мероприятие</div>
-            <div class="eventHeaderName" style="text-align: center" id="eventHeaderName">Имя</div>
+            <div class="eventHeaderTitle" style="text-align: center" id="eventHeaderTitle">Имя</div>
+            <div class="eventHeaderName" style="text-align: center" id="eventHeaderName">Слушатель</div>
         </div>
 
         <nav>
@@ -117,7 +117,9 @@ RIGHT
 ======================================================= -->
 
 <section class="questionsColumn">
-
+<div class="eventBadge" id="eventBadge">
+    <span id="eventTitleR">Математика: вопросы</span>
+</div>
 <div
 class="questionsList"
 id="questionsList">
@@ -455,35 +457,47 @@ async function renderQuestions() {
 
     <div class="questionFooter">
 
-        <button
-            class="miniAction likeButton ${liked ? "active" : ""}"
-            data-id="${q.id}">
+    ${
+        q.answered
+        ?
+        `
+        <div class="answerBadge">
+            <i class="bi bi-check-circle-fill"></i>
+            Отвечено
+        </div>
+        `
+        :
+        ""
+    }
 
-            <i class="bi bi-heart-fill"></i>
 
-            <span class="likeCount">
+    <button
+        class="miniAction likeButton ${liked ? "active" : ""}"
+        data-id="${q.id}">
 
-                ${likes}
+        <i class="bi bi-heart-fill"></i>
 
-            </span>
+        <span class="likeCount">
+            ${likes}
+        </span>
 
-        </button>
+    </button>
 
-        <button
-            class="miniAction commentButton"
-            data-id="${q.id}">
 
-            <i class="bi bi-chat-dots-fill"></i>
+    <button
+        class="miniAction commentButton"
+        data-id="${q.id}">
 
-            <span class="commentCount">
+        <i class="bi bi-chat-dots-fill"></i>
 
-                ${comments}
+        <span class="commentCount">
+            ${comments}
+        </span>
 
-            </span>
+    </button>
 
-        </button>
 
-    </div>
+</div>
 
 </div>
 
@@ -767,7 +781,7 @@ async function showHeaderName() {
 
         const data = await response.json();
         const name = data?.name;
-        const nameEl = document.getElementById('eventHeaderName');
+        const nameEl = document.getElementById('eventHeaderTitle');
 
         if (nameEl && name) {
             nameEl.textContent = name;
@@ -800,11 +814,12 @@ async function showEventTitle() {
         }
 
         const data = await response.json();
-        const titleEl = document.getElementById('eventHeaderTitle');
+        const titleEl = document.getElementById('eventTitleR');
 
         if (titleEl && data?.title) {
-            titleEl.textContent = data.title;
+            titleEl.textContent = `${data.title}: вопросы`;
         }
+
 
     } catch (error) {
         console.error('Failed to load event title', error);

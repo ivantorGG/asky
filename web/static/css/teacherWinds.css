@@ -2328,3 +2328,59 @@ body.comments-open .questionForm{
     left:calc(50% - 200px);
     width:min(900px, calc(100vw - 440px));
 }
+
+/* ===========================
+   EVENT BADGE
+=========================== */
+
+.eventBadge{
+    display:flex;
+    justify-content:center;
+    margin-bottom:28px;
+    transition:.45s cubic-bezier(.2,.8,.2,1);
+}
+
+.eventBadge span{
+
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+
+    padding:10px 22px;
+
+    border-radius:999px;
+
+    background:var(--surface);
+
+    border:1px solid var(--border);
+
+    backdrop-filter:blur(20px);
+
+    color:var(--text);
+
+    font-size:20px;
+    font-weight:600;
+}
+
+.eventBadge span::before{
+
+    content:"";
+
+    width:8px;
+    height:8px;
+
+    border-radius:50%;
+
+    background:white;
+
+    box-shadow:
+        0 0 12px rgba(255,255,255,.6),
+        0 0 24px rgba(255,255,255,.3);
+}
+
+.comments-open .eventBadge{
+
+    justify-content:flex-start;
+
+    padding-left:24px;
+}

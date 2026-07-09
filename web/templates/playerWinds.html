@@ -389,6 +389,17 @@ ${q.text}
 
 <div class="questionActions">
 
+<div class="answerBadgeWrapper">
+
+${q.answered ? `
+<span class="answeredBadge">
+    <i class="bi bi-check-circle-fill"></i>
+    Отвечено
+</span>
+` : ""}
+
+</div>
+
 <div class="actionGroup">
 
 <button
@@ -404,6 +415,7 @@ ${likes}
 </span>
 
 </button>
+
 
 <button
 class="iconButton commentButton"

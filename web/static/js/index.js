@@ -361,3 +361,41 @@ if (heroText) {
         });
     }, 4500);
 }
+
+// ======================================
+// AUTH BUTTONS
+// ======================================
+
+async function updateAuthButtons() {
+
+    const loginButton = document.getElementById("authNavLink");
+    const logoutButton = document.getElementById("logoutButton");
+
+    try {
+
+        const response = await fetch("/api/events", {
+            credentials: "include"
+        });
+
+        if (response.ok) {
+
+            loginButton.style.display = "none";
+            logoutButton.style.display = "flex";
+
+        } else {
+
+            loginButton.style.display = "flex";
+            logoutButton.style.display = "none";
+
+        }
+
+    } catch {
+
+        loginButton.style.display = "flex";
+        logoutButton.style.display = "none";
+
+    }
+
+}
+
+updateAuthButtons();

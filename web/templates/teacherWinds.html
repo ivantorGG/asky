@@ -40,8 +40,8 @@
     </div>
 
     <div class="eventHeaderCenter">
-        <div class="eventHeaderTitle" id="eventHeaderTitle">Мероприятие</div>
-        <div class="eventHeaderName" id="eventHeaderName">Имя</div>
+        <div class="eventHeaderTitle" id="eventHeaderTitle">Имя</div>
+        <div class="eventHeaderName" id="eventHeaderName">Лектор</div>
     </div>
 
     <nav>
@@ -114,7 +114,9 @@ RIGHT
 ======================================================= -->
 
 <section class="questionsColumn">
-
+<div class="eventBadge" id="eventBadge">
+    <span id="eventTitleR">Математика: вопросы</span>
+</div>
 <div
 class="questionsList"
 id="questionsList">
@@ -661,7 +663,7 @@ async function showHeaderName() {
 
         const data = await response.json();
         const name = data?.name;
-        const nameEl = document.getElementById('eventHeaderName');
+        const nameEl = document.getElementById('eventHeaderTitle');
 
         if (nameEl && name) {
             nameEl.textContent = name;
@@ -694,10 +696,10 @@ async function showEventTitle() {
         }
 
         const data = await response.json();
-        const titleEl = document.getElementById('eventHeaderTitle');
+        const titleEl = document.getElementById('eventTitleR');
 
         if (titleEl && data?.title) {
-            titleEl.textContent = data.title;
+            titleEl.textContent = `${data.title}: вопросы`;
         }
 
     } catch (error) {

@@ -2195,3 +2195,251 @@ body.comments-open .questionForm{
     border-color:rgba(109,141,255,.28);
 
 }
+
+/* ===========================
+   EVENT BADGE
+=========================== */
+
+.eventBadge{
+    display:flex;
+    justify-content:center;
+    margin-bottom:28px;
+    transition:.45s cubic-bezier(.2,.8,.2,1);
+}
+
+.eventBadge span{
+
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+
+    padding:10px 22px;
+
+    border-radius:999px;
+
+    background:var(--surface);
+
+    border:1px solid var(--border);
+
+    backdrop-filter:blur(20px);
+
+    color:var(--text);
+
+    font-size:20px;
+    font-weight:600;
+}
+
+.eventBadge span::before{
+
+    content:"";
+
+    width:8px;
+    height:8px;
+
+    border-radius:50%;
+
+    background:white;
+
+    box-shadow:
+        0 0 12px rgba(255,255,255,.6),
+        0 0 24px rgba(255,255,255,.3);
+}
+
+.comments-open .eventBadge{
+
+    justify-content:flex-start;
+
+    padding-left:24px;
+}.eventHeaderTitle{
+
+    color:var(--text);
+
+    font-size:18px;
+
+    font-weight:700;
+
+    text-align:center;
+
+    white-space:nowrap;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+
+    max-width:min(320px, 40vw);
+
+}
+/* ===============================
+   ANSWERED BADGE
+================================ */
+
+.answeredBadge {
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:6px;
+
+    padding:6px 12px;
+
+    border-radius:999px;
+
+    background:rgba(40,167,69,0.2) !important;
+
+    border:1px solid rgba(40,167,69,0.5) !important;
+
+    color:#2ed573 !important;
+
+    font-size:13px;
+
+    font-weight:600;
+
+    backdrop-filter:blur(12px);
+
+    transform:translateY(0);
+
+    box-shadow:
+        0 0 15px rgba(40,167,69,0.3);
+
+    transition:.3s ease;
+}
+
+
+.answeredBadge i {
+
+    font-size:14px;
+
+}.answerBadgeWrapper{
+    display:flex;
+    align-items:center;
+}
+
+
+.answeredBadge{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:6px;
+
+    padding:7px 14px;
+
+    border-radius:999px;
+
+    background:rgba(40, 167, 69, 0.2) !important;
+
+    border:1px solid rgba(40, 167, 69, 0.5) !important;
+
+    color:#2ed573 !important;
+
+    font-size:13px;
+
+    font-weight:600;
+
+    line-height:1;
+
+    box-shadow:
+        0 0 15px rgba(40, 167, 69, 0.3);
+
+    transition:.3s ease;
+
+}
+
+
+.answeredBadge:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 0 25px rgba(40, 167, 69, 0.45);
+
+}.questionActions{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:12px;
+
+}.answeredBadge {
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:7px;
+
+    padding:7px 14px;
+
+    border-radius:999px;
+
+    background:rgba(40,167,69,0.2) !important;
+
+    border:1px solid rgba(40,167,69,0.5) !important;
+
+    color:#2ed573 !important;
+
+    font-size:13px;
+
+    font-weight:600;
+
+    transform:translateY(0);
+
+    box-shadow:
+        0 0 15px rgba(40,167,69,0.3);
+
+    transition:.35s ease;
+
+    white-space:nowrap;
+
+}
+
+
+.answeredBadge:hover {
+
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 0 25px rgba(40,167,69,0.45);
+
+}.actionGroup {
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+}.answerBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 6px 14px;
+
+    border-radius: 999px;
+
+    background: rgba(40, 167, 69, 0.2) !important;
+    border: 1px solid rgba(40, 167, 69, 0.5) !important;
+
+    color: #2ed573 !important;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    transform: translateY(0);
+
+    box-shadow: 0 0 15px rgba(40, 167, 69, 0.3);
+
+    backdrop-filter: blur(10px);
+
+    white-space: nowrap;
+}.questionFooter {
+    display:flex;
+    align-items:center;
+    gap:10px;
+}

@@ -20,6 +20,7 @@ CREATE TABLE events (
 CREATE TABLE questions (
     id BIGSERIAL PRIMARY KEY,
     event_code UUID NOT NULL REFERENCES events(code) ON DELETE CASCADE,
+    visitor_id TEXT NOT NULL,
     text TEXT NOT NULL,
     likes INT NOT NULL DEFAULT 0,
     answered BOOLEAN NOT NULL DEFAULT FALSE,
