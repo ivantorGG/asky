@@ -42,6 +42,7 @@
     <nav>
       <span id="email" class="userEmail"></span>
       <a href="/">Главная</a>
+      <a href="/events">К мероприятиям</a>
 
         <button id="themeToggle"
                 class="themeToggle"
@@ -91,7 +92,7 @@ LEFT
         </button>
 
         <!-- Обновленная кнопка с иконкой -->
-        <button class="refreshButton" type="button" onclick="window.location.reload();">
+        <button id="refreshPageBtn" class="refreshButton" type="button" aria-label="Обновить страницу" onclick="event.preventDefault(); event.stopPropagation(); window.location.reload();">
             <i class="bi bi-arrow-clockwise"></i>
             <span>Обновить</span>
         </button>

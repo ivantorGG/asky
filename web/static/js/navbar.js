@@ -1,19 +1,46 @@
 document.addEventListener('DOMContentLoaded', () => {
-    showEmail()
-
+    showEmail();
 });
 
-async function showEmail(){
+async function showEmail() {
     const response = await fetch('/api/email', {
-        method: "GET",
-        headers: {'Content-Type': 'application/json' },
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include'
-    })
-    if (response.ok){
-        const data = await response.json()
-        const email = data.email
+    });
 
+    if (!response.ok) {
+        updateAuthNav(null);
+        return;
+    }
 
-        document.getElementById('email').textContent = email
+    const data = await response.json();
+    const email = data?.email;
+
+    const emailEl = document.getElementById('email');
+    if (emailEl && email) {
+        emailEl.textContent = email;
+    }
+
+    updateAuthNav(email || null);
+}
+
+function updateAuthNav(email) {
+    const authLink = document.getElementById('authNavLink');
+
+    if (!authLink) {
+        return;
+    }
+
+    if (email) {
+        authLink.href = '/events';
+        authLink.textContent = 'Открыть мероприятия';
+        authLink.classList.remove('loginButton');
+        authLink.classList.add('eventsLink');
+    } else {
+        authLink.href = '/login';
+        authLink.textContent = 'Войти';
+        authLink.classList.remove('eventsLink');
+        authLink.classList.add('loginButton');
     }
 }
