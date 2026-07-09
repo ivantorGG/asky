@@ -324,3 +324,23 @@ observeCards();
 document.addEventListener("questionsRendered", () => {
     observeCards();
 });
+
+async function showTitle() {
+    const path = window.location.pathname;
+
+    const parts = path.split('/');
+
+    const eventCode = parts[2];
+    console.log(eventCode);
+
+    const resp = await fetch(`/api/events/${eventCode}/name`)
+    const data = await resp.json()
+    const title = data.title
+
+    document.getElementById("eventTitle").textContent = title;
+
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    showTitle();
+});
