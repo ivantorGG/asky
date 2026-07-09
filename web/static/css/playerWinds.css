@@ -199,7 +199,7 @@ nav{
 
 }
 
-.userEmail{
+.userEmail, .eventTitle{
 
     color:var(--muted);
 
@@ -1168,8 +1168,7 @@ padding:14px 16px;
 
 }
 
-.studentName,
-.eventTitle{
+.studentName{
 
 display:none;
 
