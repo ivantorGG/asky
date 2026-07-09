@@ -9,7 +9,6 @@
     padding:0;
     box-sizing:border-box;
 }
-
 html{
     scroll-behavior:smooth;
 }
@@ -929,4 +928,7 @@ html[data-bs-theme="light"] .eventsTab.active{
 
     letter-spacing:4px;
 
+}
+.eventCard{
+    margin-bottom:24px; /* или 32px, 40px */
 }

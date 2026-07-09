@@ -40,7 +40,7 @@
         </div>
 
         <div class="eventHeaderCenter">
-            <div class="eventHeaderTitle" style="text-align: center" id="eventHeaderTitle">Имя</div>
+            <div class="eventHeaderTitle" style="text-align: center" id="eventHeaderTitle"></div>
             <div class="eventHeaderName" style="text-align: center" id="eventHeaderName">Слушатель</div>
         </div>
 
@@ -782,9 +782,14 @@ async function showHeaderName() {
         const data = await response.json();
         const name = data?.name;
         const nameEl = document.getElementById('eventHeaderTitle');
+        const roleEl = document.getElementById('eventHeaderName');
 
-        if (nameEl && name) {
-            nameEl.textContent = name;
+        if (nameEl) {
+            nameEl.textContent = name || '';
+        }
+
+        if (roleEl) {
+            roleEl.textContent = 'Слушатель';
         }
 
     } catch (error) {

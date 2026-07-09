@@ -2250,7 +2250,29 @@ body.comments-open .questionForm{
     justify-content:flex-start;
 
     padding-left:24px;
-}.eventHeaderTitle{
+}
+
+.eventHeaderCenter{
+
+    display:flex;
+
+    flex-direction:row;
+
+    align-items:center;
+
+    justify-content:center;
+
+    flex:1;
+
+    min-width:0;
+
+    margin:0 16px;
+
+    gap:6px;
+
+}
+
+.eventHeaderTitle{
 
     color:var(--text);
 
@@ -2259,6 +2281,28 @@ body.comments-open .questionForm{
     font-weight:700;
 
     text-align:center;
+
+    white-space:nowrap;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+
+    max-width:min(320px, 40vw);
+
+}
+
+.eventHeaderName{
+
+    color:var(--muted);
+
+    font-size:14px;
+
+    font-weight:600;
+
+    text-align:center;
+
+    margin-top:2px;
 
     white-space:nowrap;
 
