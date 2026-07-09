@@ -1385,7 +1385,29 @@ footer p{
 
     transform:translateY(0);
 }
+.logoutButton{
 
+    padding:12px 22px;
+
+    border-radius:999px;
+
+    background:white;
+
+    color:black;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.logoutButton:hover{
+
+    transform:translateY(-2px);
+
+}
 /* ========================================
    RESPONSIVE
 ======================================== */
@@ -1552,7 +1574,6 @@ section {
     gap: 24px;
     width: 100%;
 }
-
 /* Базовая карточка */
 .teamCard {
     position: relative;
