@@ -44,7 +44,8 @@ func New(h *handler.Handler) http.Handler {
 
 	r.Post("/api/register", h.Register)                         // Register a new user
 	r.Post("/api/login", h.Login)                               // Authenticate user
-	r.With(middleware.Auth(h.DB)).Get("/api/email", h.GetEmail) // Authenticate user
+	r.With(middleware.Auth(h.DB)).Get("/api/email", h.GetEmail) // Email
+	r.With(middleware.Auth(h.DB)).Get("/api/name", h.GetName)   // Name
 
 	// =========================================================================
 	// Events API
