@@ -5,7 +5,6 @@ import (
 	"asky/internal/middleware"
 	"asky/internal/utils"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/url"
 	"time"

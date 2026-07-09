@@ -127,67 +127,77 @@ id="questionsList">
 -->
 
 <div
-class="offcanvas offcanvas-end"
-tabindex="-1"
+class="commentsPanel"
 id="commentsOffcanvas">
 
-<div class="offcanvas-header">
+    <div class="offcanvas-header">
 
-<h5>
+        <h5>
+            <i class="bi bi-chat-dots"></i>
+            Комментарии
+        </h5>
 
-<i class="bi bi-chat-dots"></i>
+        <button
+            type="button"
+            class="closeComments">
 
-Комментарии
+            <i class="bi bi-x-lg"></i>
 
-</h5>
+        </button>
 
-<button
-type="button"
-class="btn-close"
-data-bs-dismiss="offcanvas">
+    </div>
 
-</button>
+    <div class="offcanvas-body">
 
-</div>
+        <div id="commentsList">
+            <p class="text-muted">
+                Комментариев пока нет
+            </p>
+        </div>
 
-<div class="offcanvas-body">
+        <form
+            id="commentForm"
+            class="commentForm">
 
-<div id="commentsList">
+            <input
+                type="text"
+                id="commentInput"
+                placeholder="Напишите комментарий...">
 
-<p class="text-muted">
+            <button type="submit">
+                Отправить
+            </button>
 
-Комментариев пока нет
+        </form>
 
-</p>
-
-</div>
-
-<form
-id="commentForm"
-class="commentForm">
-
-<input
-type="text"
-id="commentInput"
-placeholder="Напишите комментарий...">
-
-<button
-type="submit">
-
-Отправить
-
-</button>
-
-</form>
-
-</div>
+    </div>
 
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+const commentsPanel = document.getElementById("commentsOffcanvas");
 
+document
+    .querySelector(".closeComments")
+    .addEventListener("click", closeComments);
+
+function openPanel(){
+
+    document.body.classList.add("comments-open");
+
+    commentsPanel.classList.add("active");
+
+}
+
+function closeComments(){
+
+    document.body.classList.remove("comments-open");
+
+    commentsPanel.classList.remove("active");
+
+}
 function openFullScreenImage() {
   src = document.getElementById('eventQr').src
 
@@ -293,6 +303,20 @@ async function answerQuestion(id) {
 
 }
 
+async function unanswerQuestion(id) {
+
+  const resp = await fetch(
+    `${API_BASE}/questions/${id}/unanswer`,
+    {
+      method: "DELETE"
+    }
+  );
+
+  if (!resp.ok)
+    throw new Error("Ошибка");
+
+}
+
 async function getComments(id) {
 
   const resp = await fetch(
@@ -328,14 +352,52 @@ async function addComment(id, text) {
   return await resp.json();
 
 }
-document.addEventListener("click", e => {
+document.addEventListener("click", async e => {
 
-  const btn = e.target.closest(".commentButton");
+    const answer = e.target.closest(".answerButton");
 
-  if (!btn)
-    return;
+    if (answer) {
 
-  openComments(Number(btn.dataset.id));
+        e.stopPropagation();
+
+        const id = Number(answer.dataset.id);
+
+        const active = answer.classList.contains("active");
+
+        try {
+
+            if (active)
+                await unanswerQuestion(id);
+            else
+                await answerQuestion(id);
+
+            renderQuestions();
+
+        } catch(err){
+            console.error(err);
+        }
+
+        return;
+    }
+
+    const comment = e.target.closest(".commentButton");
+
+    if (comment) {
+
+        e.stopPropagation();
+
+        openComments(Number(comment.dataset.id));
+
+        return;
+    }
+
+    const card = e.target.closest(".questionCard");
+
+    if (card) {
+
+        openComments(Number(card.dataset.id));
+
+    }
 
 });
 document.getElementById("commentForm")
@@ -413,56 +475,75 @@ async function renderQuestions() {
 
     const answered = q.answered || false;
 
+    const likes = q.votes || 0;
+
     const comments = q.comments
-      ? q.comments.length
-      : (q.comments_count || 0);
+        ? q.comments.length
+        : (q.comments_count || 0);
 
     container.insertAdjacentHTML("beforeend", `
 
 <div class="questionCard" data-id="${q.id}">
 
-<div class="questionText">
+    <div class="questionMain">
 
-${q.text}
+        <div class="questionText">
+            ${q.text}
+        </div>
 
-</div>
+        <div class="questionArrow">
+            <i class="bi bi-chevron-right"></i>
+        </div>
 
-<div class="questionActions">
+    </div>
 
-<div class="actionGroup">
+    <div class="questionFooter">
 
-<button
-class="iconButton answerButton ${answered ? "active" : ""}"
-data-id="${q.id}">
+        <button
+            class="miniAction answerButton ${answered ? "active" : ""}"
+            data-id="${q.id}">
 
-<i class="bi bi-check2-circle"></i>
-
-</button>
-
-<button
-class="iconButton commentButton"
-data-id="${q.id}">
-
-<i class="bi bi-chat-dots-fill"></i>
-
-<span class="commentCount">
-
-${comments}
-
+            <i class="bi bi-check2-circle"></i>
+            <span>
+    ${answered
+        ? "Отмечено как прочитанное"
+        : "Пометить как прочитано"}
 </span>
 
+        </button>
+        <button
+    class="miniAction likeButtonTeacher"
+    disabled>
+
+    <i class="bi bi-heart-fill"></i>
+
+    <span>
+
+        ${likes}
+
+    </span>
+
 </button>
 
-</div>
+        <button
+            class="miniAction commentButton"
+            data-id="${q.id}">
 
-</div>
+            <i class="bi bi-chat-dots-fill"></i>
+
+            <span class="commentCount">
+                ${comments}
+            </span>
+
+        </button>
+
+    </div>
 
 </div>
 
 `);
 
-  });
-
+});
 }
 
 async function setEmail() {
@@ -525,9 +606,7 @@ ${c.text}
 
   }
 
-  new bootstrap.Offcanvas(
-    document.getElementById("commentsOffcanvas")
-  ).show();
+  openPanel();
 
 }
 
@@ -535,37 +614,34 @@ ${c.text}
 
 document.addEventListener("click", async e => {
 
-  const answer = e.target.closest(".answerButton");
+    const answer = e.target.closest(".answerButton");
 
-  if (!answer)
-    return;
+    if (!answer)
+        return;
 
-  const id = Number(answer.dataset.id);
+    const id = Number(answer.dataset.id);
 
-  try {
+    const active = answer.classList.contains("active");
 
-    await answerQuestion(id);
+    try {
 
-    renderQuestions();
+        if (active) {
+            await unanswerQuestion(id);
+        } else {
+            await answerQuestion(id);
+        }
 
-  } catch (err) {
+        renderQuestions();
 
-    console.error(err);
+    } catch (err) {
 
-  }
+        console.error(err);
 
-});
-
-document.addEventListener("click", e => {
-
-  const btn = e.target.closest(".commentButton");
-
-  if (!btn)
-    return;
-
-  openComments(Number(btn.dataset.id));
+    }
 
 });
+
+
 
 renderQuestions();
 
