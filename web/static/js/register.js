@@ -85,9 +85,12 @@ form.addEventListener("submit",(e)=>{
 
     const password =
         document.getElementById("password").value;
+    
+    const name =
+        document.getElementById("name").value;
 
 
-    tryToSend(email,password);
+    tryToSend(email,password,name);
 
 });
 
@@ -96,12 +99,17 @@ form.addEventListener("submit",(e)=>{
 // VALIDATION
 // ================================
 
-function tryToSend(email,password){
+function tryToSend(email,password,name){
 
     const regex =
     /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
     hideError();
+
+    if(name.length === 0){
+        showError("Введите имя");
+        return;
+    }
 
     if(password.length < 6){
 
@@ -123,7 +131,7 @@ function tryToSend(email,password){
 
     }
 
-    sendRegs(email,password);
+    sendRegs(email,password,name);
 
 }
 
@@ -132,7 +140,7 @@ function tryToSend(email,password){
 // REQUEST
 // ================================
 
-async function sendRegs(email,password){
+async function sendRegs(email,password,name){
 
     try{
 
@@ -145,8 +153,9 @@ async function sendRegs(email,password){
             },
 
             body:JSON.stringify({
-                email,
-                password
+                email: email,
+                password: password,
+                name: name
             })
 
         });
