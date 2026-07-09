@@ -43,6 +43,14 @@
       <span id="email" class="userEmail"></span>
       <a href="/events"><i class="bi bi-arrow-left"></i>
 </a>
+<!-- Кнопка QR для мобилок (видна на экранах < 768px) -->
+<button class="btn btn-outline-light d-md-none me-2" 
+        type="button" 
+        data-bs-toggle="modal" 
+        data-bs-target="#qrModal" 
+        aria-label="Открыть QR код">
+    <i class="bi bi-qr-code" style="font-size: 1.2rem;"></i>
+</button>
 
             <button id="themeToggle"
                     class="themeToggle"
@@ -74,8 +82,8 @@
 LEFT
 ======================================================= -->
 
-<aside class="leftColumn">
-    <div class="glassCard qrCard">
+<aside class="leftColumn d-none d-md-block">
+    <div class="glassCard qrCard" onclick="openFullScreenImage()">
         <h5>
             <i class="bi bi-qr-code"></i>
             QR мероприятия
@@ -608,6 +616,7 @@ async function loadEventData() {
         const qrBlob = await qrResponse.blob();
         
         document.getElementById('eventQr').src = URL.createObjectURL(qrBlob);
+        document.getElementById('eventQrMobile').src = URL.createObjectURL(qrBlob);
         
         const copyBtn = document.getElementById('copyLinkBtn');
         const btnText = document.getElementById('btnText');
@@ -665,14 +674,97 @@ document.getElementById("commentForm")
   renderQuestions();
 
 });
+function openFullScreenImage() {
+  src = document.getElementById('eventQr').src
 
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; }
+        img { width: 100vw; height: 100vh; object-fit: contain; }
+      </style>
+    </head>
+    <body>
+      <img src="${src}" />
+    </body>
+    </html>
+  `;
+  const newWindow = window.open('', '_blank');
+  if (newWindow) {
+    newWindow.document.write(htmlContent);
+    newWindow.document.close();
+  } else {
+    window.open(src, '_blank');
+  }
+}
 renderQuestions();
+function openFullScreenImage(imgId = 'eventQr') {
+  // Если id передан, берем его, иначе по умолчанию десктопный 'eventQr'
+  const targetId = typeof imgId === 'string' ? imgId : 'eventQr';
+  const src = document.getElementById(targetId).src;
 
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; }
+        img { width: 100vw; height: 100vh; object-fit: contain; }
+      </style>
+    </head>
+    <body>
+      <img src="${src}" />
+    </body>
+    </html>
+  `;
+  const newWindow = window.open('', '_blank');
+  if (newWindow) {
+    newWindow.document.write(htmlContent);
+    newWindow.document.close();
+  } else {
+    window.open(src, '_blank');
+  }
+}
 </script>
 
 <script src="/static/js/playerWinds.js"></script>
 <script src="/static/js/themeSwitcher.js"></script>
 <script src="/static/js/navbar.js"></script>
+<!-- Модальное окно с оригинальными стилями стеклянной карточки -->
+<div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered px-3">
+    <!-- Убираем стандартные стили Bootstrap через border-0 и bg-transparent, добавляя ваши glassCard qrCard -->
+    <div class="modal-content glassCard qrCard border-0 text-white w-100" style="cursor: default;">
+      
+      <div class="modal-header border-0 p-0 mb-3 d-flex justify-content-between align-items-center">
+        <h5 class="m-0 text-white">
+            <i class="bi bi-qr-code"></i>
+            QR мероприятия
+        </h5>
+        <!-- Кастомный белый крестик закрытия для темного фона -->
+        <button type="button" class="btn-close btn-close-white m-0" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body p-0 text-center d-flex flex-column gap-3">
+        <!-- Ваша оригинальная разметка картинок и кнопок внутри карточки -->
+        <img id="eventQrMobile" class="qrImage img-fluid rounded" src="" alt="QR Code" style="max-height: 50vh; width: auto; margin: 0 auto; cursor: pointer;" onclick="openFullScreenImage('eventQrMobile')">
+        
+        <button id="copyLinkBtnMobile" class="lectureBtn w-100">
+            <i id="btnIconMobile" class="bi bi-link-45deg"></i>
+            <span id="btnTextMobile">Скопировать ссылку</span>
+        </button>
+
+        <button class="refreshButton w-100" type="button" aria-label="Обновить страницу" onclick="event.preventDefault(); event.stopPropagation(); window.location.reload();">
+            <i class="bi bi-arrow-clockwise"></i>
+            <span>Обновить</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
 
 </body>
 
