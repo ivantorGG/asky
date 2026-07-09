@@ -216,7 +216,11 @@ async function getQuestions() {
     const url = `${API_BASE}/events/${eventCode}/questions`;
     console.debug('Fetching questions from', url);
     const resp = await fetch(url);
-    if (!resp.ok) throw new Error(`Ошибка загрузки: ${resp.status}`);
+
+if (!resp.ok) {
+    console.log(await resp.text());
+    throw new Error(`Ошибка загрузки: ${resp.status}`);
+}
     return await resp.json();
   } catch (e) {
     console.error(e);
