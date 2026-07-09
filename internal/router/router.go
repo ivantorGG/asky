@@ -53,7 +53,7 @@ func New(h *handler.Handler) http.Handler {
 
 	r.With(middleware.Auth(h.DB)).Post("/api/events", h.CreateEvent)                // Create a new event
 	r.With(middleware.Auth(h.DB)).Get("/api/events/teacher", h.ListTeachersEvents)  // Get teacher's events
-	r.Get("/api/events/{code}", h.GetEventName)  // Get teacher's events
+	r.Get("/api/events/{code}", h.GetEventName)                                     // Get teacher's events
 	r.Get("/api/events/student", h.ListUsersEvents)                                 // Get recently visited events
 	r.With(middleware.Auth(h.DB)).Delete("/api/events/{code}", h.DeleteEventByCode) // Delete (deactivate) an event
 
